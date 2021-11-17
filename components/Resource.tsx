@@ -7,18 +7,23 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
+  
   View,
 } from "react-native";
+import { TextInput } from "react-native-paper";
 import { ChatIcon, HeartIcon } from "react-native-heroicons/outline";
 import SkeletonContent from "react-native-skeleton-content";
 
-export const Resource_Mobile: React.FC = (props: any) => {
+export const Resource: React.FC<{ slug: string }> = ({ slug }) => {
   const [loading, setLoading] = useState(true);
+  const [props, setProps] = useState<any>(null);
   useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
+    fetch(`http://192.168.0.38:3000/api/resource/${slug}`)
+      .then((res) => res.json())
+      .then((body) => {
+        setProps(body.data.attributes);
+        setLoading(false);
+      });
   }, []);
 
   return (
@@ -80,7 +85,8 @@ export const Resource_Mobile: React.FC = (props: any) => {
                   width: "20%",
                   height: 24,
                   borderRadius: 10,
-                },{
+                },
+                {
                   key: "comment1-text",
                   width: "100%",
                   height: 24,
@@ -92,54 +98,56 @@ export const Resource_Mobile: React.FC = (props: any) => {
         },
       ]}
     >
-      <View style={styles.resource}>
-        <View style={styles.container}>
-          <View style={styles.header}>
-            <Text style={styles.owner}>{props?.owner}</Text>
-            <Text style={styles.createdAt}>
-              posté
-              {" " +
-                formatDistanceToNow(props?.createdAt, {
-                  addSuffix: true,
-                  locale: fr,
-                })}
-            </Text>
+      {!loading && (
+        <View style={styles.resource}>
+          <View style={styles.container}>
+            <View style={styles.header}>
+              <Text style={styles.owner}>{props?.owner}</Text>
+              <Text style={styles.createdAt}>
+                posté
+                {" " +
+                  formatDistanceToNow(new Date(props?.createdAt), {
+                    addSuffix: true,
+                    locale: fr,
+                  })}
+              </Text>
+            </View>
+            <Text>LA RESSOURCE</Text>
+            <View style={styles.footer}>
+              <HeartIcon size={18} style={{ marginRight: 4 }} />
+              <Text style={styles.likes}>{props?.likes}</Text>
+              <ChatIcon size={18} style={{ marginRight: 4 }} />
+
+              <Text style={styles.comments}>{props?.comments?.length}</Text>
+            </View>
           </View>
-          <Text>LA RESSOURCE</Text>
-          <View style={styles.footer}>
-            <HeartIcon size={18} style={{ marginRight: 4 }} />
-            <Text style={styles.likes}>{props?.likes}</Text>
-            <ChatIcon size={18} style={{ marginRight: 4 }} />
 
-            <Text style={styles.comments}>{props?.comments?.length}</Text>
-          </View>
-        </View>
+          <View style={styles.commentsContainer}>
+            <Text style={styles.commentsTitle}>Commentaires</Text>
 
-        <View style={styles.commentsContainer}>
-          <Text style={styles.commentsTitle}>Commentaires</Text>
-
-          <ScrollView>
-            {props?.comments?.map((comment: any, key: number) => (
-              <View style={styles.comment} key={key}>
-                <Image
-                  style={styles.commentOwnerImage}
-                  source={{
-                    uri: comment?.photoUrl,
-                  }}
-                />
-                <View>
-                  <Text style={styles.commentOwner}>{comment.owner}</Text>
-                  <Text style={styles.commentContent}>{comment.content}</Text>
+            <ScrollView>
+              {props?.comments?.map((comment: any, key: number) => (
+                <View style={styles.comment} key={key}>
+                  <Image
+                    style={styles.commentOwnerImage}
+                    source={{
+                      uri: comment?.photoUrl,
+                    }}
+                  />
+                  <View>
+                    <Text style={styles.commentOwner}>{comment.owner}</Text>
+                    <Text style={styles.commentContent}>{comment.content}</Text>
+                  </View>
                 </View>
-              </View>
-            ))}
-          </ScrollView>
-          <TextInput
-            style={styles.commentInput}
-            placeholder="Ajouter un commentaire"
-          />
+              ))}
+            </ScrollView>
+            <TextInput
+              style={styles.commentInput}
+              placeholder="Ajouter un commentaire"
+            />
+          </View>
         </View>
-      </View>
+      )}
     </SkeletonContent>
   );
 };
@@ -187,6 +195,8 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     padding: 12,
     marginTop: 6,
+    flexGrow: 1,
+    height: "55%",
   },
   commentsTitle: {
     fontSize: 16,
@@ -214,12 +224,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   commentInput: {
-    height: 40,
-    borderColor: "gray",
-    borderWidth: 1,
-    padding: 8,
+    flex: 1,
     marginTop: 12,
     marginBottom: 12,
     borderRadius: 12,
+    backgroundColor: "#efefef",
   },
 });

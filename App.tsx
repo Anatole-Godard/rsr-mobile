@@ -1,38 +1,14 @@
 import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { Resource_Mobile } from "./components/Resource";
+import { ChannelInviteBarCode } from "./components/ChannelInvite/BarCode";
+import { Resource } from "./components/Resource";
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Resource_Mobile
-        owner="Léonard Eau 🤌"
-        createdAt={new Date()}
-        likes={12}
-        comments={[
-          {
-            owner: "Léonard Eau",
-            content: "Hello World",
-            photoUrl: "https://i.pravatar.cc/300",
-          },
-          {
-            owner: "Torté Linni",
-            content: "Hello World",
-            photoUrl: "https://i.pravatar.cc/300",
-          },
-          {
-            owner: "Michel Angelo",
-            content: "Hello World",
-            photoUrl: "https://i.pravatar.cc/300",
-          },
-          {
-            owner: "Daunat Tello",
-            content: "Hello World",
-            photoUrl: "https://i.pravatar.cc/300",
-          },
-        ]}
-      />
+      {/* <Resource slug="react" /> */}
+      <ChannelInviteBarCode/>
       <StatusBar style="auto" />
     </View>
   );
