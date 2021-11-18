@@ -58,7 +58,7 @@ export const StackNavigator = () => {
                 </TouchableOpacity>
               )}
               <Appbar.Content
-                title={title === "Feed" ? <ChatIcon /> : title}
+                title={title}
                 titleStyle={{
                   fontSize: 18,
                   fontWeight: "bold",
