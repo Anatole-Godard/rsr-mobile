@@ -9,6 +9,7 @@ import overlay from "libs/overlay";
 import { ChannelSlug } from "pages/channel/Slug";
 import { HomeScreen } from "pages/Home";
 import { StackNavigatorParamlist } from "types/StackNavigatorParamList";
+import {ChannelList} from "pages/channel/List";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -46,7 +47,7 @@ export const BottomTabNavigator = (props: Props) => {
         
         <Tab.Screen
           name="Channel"
-          component={ChannelSlug}
+          component={ChannelList}
           options={{
             tabBarIcon: "message-text-outline",
             tabBarColor,
