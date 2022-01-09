@@ -1,7 +1,7 @@
 export type ChatRoom = {
     id: string,
     picture: string,
-    lastMessage: string,
+    lastMessage: Object,
     name: string,
     timestamp: string
 }

@@ -9,13 +9,17 @@ const socket = io("http://192.168.0.28:3000")
 
 export const ChannelSlug = () => {
     const [chat, setChat] = useState<Message[]>([]);
-    const [msg, setMsg] = useState("");
+    const [msg, setMsg] = useState<string>("");
 
     useEffect(() => {
         fetch('http://192.168.0.28:3000/api/channel/slug/socket').finally(() => {
             if (socket) {
                 socket.once('connect', () => {
                     console.log('Connection')
+                })
+
+                socket.once('refresh-chat', () => {
+                    console.log('Chat refreshed')
                 })
 
                 socket.on('notification', (message) => {
@@ -31,7 +35,7 @@ export const ChannelSlug = () => {
                 })
 
                 return () => {
-                    socket.off('connect');
+                    socket.disconnect()
                 };
             }
         })
@@ -39,10 +43,16 @@ export const ChannelSlug = () => {
 
     const sendMsg = () => {
         console.log("Sending msg...")
-        console.log(socket.connected)
-        if (socket.connected) {
-            socket.emit('new-message', msg)
+        try {
+            if (msg) {
+                socket.emit('new-message', {msg:msg})
+                console.log("message successfully sent")
+            } else {
+                console.log("message send failed")
+            }
             setMsg("");
+        } catch (e) {
+            console.log(e)
         }
         socket.emit('refresh-chat');
     }
@@ -55,7 +65,7 @@ export const ChannelSlug = () => {
             </View>
             <View style={styles.inputZone}>
                 <View style={styles.mainContainer}>
-                    <TextInput style={styles.input} onChangeText={msg => setMsg(msg)}/>
+                    <TextInput style={styles.input} value={msg} onChangeText={msg => setMsg(msg)}/>
                     <Button onPress={sendMsg} title="Send"/>
                 </View>
             </View>
