@@ -1,60 +1,66 @@
 import React, {useEffect, useState} from "react";
 import {View, Text, StyleSheet, FlatList, TextInput, Button} from "react-native";
 import {ChannelMessage} from "pages/channel/Message";
-import {InputZone} from "pages/channel/InputZone";
 import {Message} from "@definitions/Message";
-import io, {Socket} from "socket.io-client";
-
-const socket = io("http://192.168.0.28:3000")
+import io from "socket.io-client";
 
 export const ChannelSlug = () => {
     const [chat, setChat] = useState<Message[]>([]);
-    const [msg, setMsg] = useState<string>("");
+    const [message, setMessage] = useState<string>("");
 
-    useEffect(() => {
-        fetch('http://192.168.0.28:3000/api/channel/slug/socket').finally(() => {
-            if (socket) {
-                socket.once('connect', () => {
-                    console.log('Connection')
-                })
-
-                socket.once('refresh-chat', () => {
-                    console.log('Chat refreshed')
-                })
-
-                socket.on('notification', (message) => {
-                    console.log(message)
-                })
-
-                socket.on('res-new-message', (message: string) => {
-                    console.log("New user message: " + message)
-                })
-
-                socket.on('get-messages', (messages: Message[]) => {
-                    setChat(messages);
-                })
-
-                return () => {
-                    socket.disconnect()
-                };
-            }
-        })
-    }, [])
-
-    const sendMsg = () => {
-        console.log("Sending msg...")
-        try {
-            if (msg) {
-                socket.emit('new-message', {msg:msg})
-                console.log("message successfully sent")
-            } else {
-                console.log("message send failed")
-            }
-            setMsg("");
-        } catch (e) {
-            console.log(e)
+    const user = {
+        data: {
+            _id: "61dd54b50e9bdfb1d20492b5",
+            fullName: "Oph test",
+            birthDate: "2022-01-11T00:00:00.000Z",
+            email: "oph@test.fr",
+            password: "azerty123",
+            role: "user",
+            photoURL: "https://i0.wp.com/sbcf.fr/wp-content/uploads/2018/03/sbcf-default-avatar.png?ssl=1",
+            createdAt: "2022-01-11T09:58:13.119Z",
+            __v: 0
         }
-        socket.emit('refresh-chat');
+    }
+
+    useEffect((): any => {
+        const socket = io("http://172.20.10.8:3000", {
+            path: "/api/channel/[slug]/socket",
+        });
+
+        fetch("http://172.20.10.8:3000/api/channel/"+ "general" +"/all").then((res) => {
+            return res.json()
+        }).then((body) => setChat(body))
+
+        socket.on("connect", () => {
+            console.log("SOCKET CONNECTED!", socket.id);
+        });
+
+        // update chat on new message dispatched
+        socket.on("message", (message: Message) => {
+            // chat.push(message);
+            setChat(oldChat =>[...oldChat, message]);
+        });
+
+        if (socket) return () => socket.disconnect();
+
+    }, []);
+
+    const sendMsg = async () => {
+        const msg: Message = {
+            user: user.data,
+            text: message,
+            attachment: null,
+            channel: "general",
+        };
+
+        const resp = await fetch("http://172.20.10.8:3000/api/channel/"+ "general" +"/all", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(msg),
+        });
+        if (resp.ok) setMessage("");
     }
 
     return (
@@ -65,7 +71,7 @@ export const ChannelSlug = () => {
             </View>
             <View style={styles.inputZone}>
                 <View style={styles.mainContainer}>
-                    <TextInput style={styles.input} value={msg} onChangeText={msg => setMsg(msg)}/>
+                    <TextInput style={styles.input} value={message} onChangeText={msg => setMessage(msg)}/>
                     <Button onPress={sendMsg} title="Send"/>
                 </View>
             </View>

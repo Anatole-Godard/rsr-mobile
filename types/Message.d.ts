@@ -1,7 +1,9 @@
-import {User} from "@definitions/User";
+import {User, UserMinimum} from "@definitions/User";
+import {Resource} from "@definitions/Resource/Resource";
 
 export type Message = {
-    user: User;
+    user: UserMinimum;
     text: string;
-    createdAt: Date | string;
+    attachment: Resource | null;
+    channel: string;
 }
