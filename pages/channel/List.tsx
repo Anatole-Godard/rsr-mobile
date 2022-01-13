@@ -33,8 +33,8 @@ export const ChannelList = () => {
 
     return (
         // TODO: uncomment, <ChannelSlug/> is only for developing socket feature while navigation isn't ready
-        // <FlatList style={styles.container} data={DATA} renderItem={({item}) => <ChannelListItem chatRoom={item}/>} keyExtractor={(item) => item.id}/>
-        <ChannelSlug/>
+        <FlatList style={styles.container} data={DATA} renderItem={({item}) => <ChannelListItem key={item.id} chatRoom={item}/>} keyExtractor={(item) => item.id}/>
+        // <ChannelSlug/>
     );
 };
 

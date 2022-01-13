@@ -67,7 +67,7 @@ export const ChannelSlug = () => {
         //TODO: Hide btn + on this view ?
         <View style={styles.container}>
             <View style={styles.chatZone}>
-                <FlatList data={chat} renderItem={({item}) => <ChannelMessage message={item}/>}/>
+                <FlatList data={chat} renderItem={({item}) => <ChannelMessage key={item.id} message={item}/>}/>
             </View>
             <View style={styles.inputZone}>
                 <View style={styles.mainContainer}>
