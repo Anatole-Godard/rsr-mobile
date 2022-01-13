@@ -19,6 +19,21 @@ import {
 } from "react-native-heroicons/outline";
 
 export function DrawerContent({navigation, ...props}: any) {
+
+  const user = {
+    data: {
+      _id: "61dd54b50e9bdfb1d20492b5",
+      fullName: "Oph test",
+      birthDate: "2022-01-11T00:00:00.000Z",
+      email: "oph@test.fr",
+      password: "azerty123",
+      role: "user",
+      photoURL: "https://i0.wp.com/sbcf.fr/wp-content/uploads/2018/03/sbcf-default-avatar.png?ssl=1",
+      createdAt: "2022-01-11T09:58:13.119Z",
+      __v: 0
+    }
+  }
+
   return (
     <DrawerContentScrollView {...props}>
       <View style={styles.drawerContent}>
@@ -26,12 +41,12 @@ export function DrawerContent({navigation, ...props}: any) {
           <Avatar.Image
             children={undefined}
             source={{
-              uri: "https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg",
+              uri: user.data.photoURL,
             }}
             size={50}
           />
-          <Title style={styles.title}>Dawid Urbaniak</Title>
-          <Caption style={styles.caption}>@trensik</Caption>
+          <Title style={styles.title}>{user.data.fullName}</Title>
+          {/*<Caption style={styles.caption}>@trensik</Caption>*/}
           <View style={styles.row}>
             <View style={styles.section}>
               <Paragraph style={[styles.paragraph, styles.caption]}>
