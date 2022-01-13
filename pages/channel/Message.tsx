@@ -10,12 +10,35 @@ export const ChannelMessage = (props: ChannelMessageProps) => {
 
     const {message} = props;
 
+    const user = {
+        data: {
+            _id: "61dd54b50e9bdfb1d20492b5",
+            fullName: "Oph test",
+            birthDate: "2022-01-11T00:00:00.000Z",
+            email: "oph@test.fr",
+            password: "azerty123",
+            role: "user",
+            photoURL: "https://i0.wp.com/sbcf.fr/wp-content/uploads/2018/03/sbcf-default-avatar.png?ssl=1",
+            createdAt: "2022-01-11T09:58:13.119Z",
+            __v: 0
+        }
+    }
+
+    const isUser = () => {
+        return user.data._id === message.user._id;
+    }
+
     return (
-        <View style={styles.container}>
-            <View style={[message.user.uid === "1234567890" ? styles.messageSent : styles.messageReceived]}>
-                <Text style={[message.user.uid === "1234567890" ? styles.messageSentText : styles.messageReceivedText]}>{message.text}</Text>
+        <>
+            <View style={styles.container}>
+                <View style={[isUser() ? styles.messageSent : styles.messageReceived]}>
+                    <Text style={[isUser() ? styles.userMessageSent : styles.userMessageReceived]}>{isUser() ? "Me" : message.user.fullName}</Text>
+                    <View style={[isUser() ? styles.messageSentBox : styles.messageReceivedBox]}>
+                        <Text style={[isUser() ? styles.messageSentText : styles.messageReceivedText]}>{message.text}</Text>
+                    </View>
+                </View>
             </View>
-        </View>
+        </>
     )
 }
 
@@ -24,24 +47,41 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     messageReceived: {
-        flexDirection: "row",
+        alignSelf: "flex-start",
+        maxWidth: 70 + "%"
+    },
+    messageSent: {
+        flex: 1,
+        flexDirection: "column",
+        alignSelf: "flex-end",
+    },
+    messageReceivedBox: {
         backgroundColor: "#ddd",
         borderRadius: 5,
         padding: 8,
         margin: 10,
-        width: 70 + "%"
+        alignSelf: "flex-start",
+        maxWidth: 70 + "%"
     },
-    messageSent: {
+    messageSentBox: {
         flexDirection: "column",
         alignSelf: "flex-end",
         backgroundColor: "#42a5f5",
         borderRadius: 5,
         padding: 10,
         margin: 10,
-        width: 70 + "%"
+        maxWidth: 70 + "%"
     },
-    messageReceivedText: {
+    userMessageReceived: {
+        fontWeight: "bold",
+        color: "#aaa"
     },
+    userMessageSent: {
+        alignItems: "flex-end",
+        fontWeight: "bold",
+        color: "#2196f3",
+    },
+    messageReceivedText: {},
     messageSentText: {
         color: "white"
     },

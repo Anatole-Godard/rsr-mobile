@@ -12,7 +12,7 @@ export const ChannelSlug = () => {
     const [msg, setMsg] = useState<string>("");
 
     useEffect(() => {
-        fetch('http://192.168.0.28:3000/api/channel/slug/socket').finally(() => {
+        fetch('http://172.20.10.8:3000/api/channel/slug/socket').finally(() => {
             if (socket) {
                 socket.once('connect', () => {
                     console.log('Connection')
