@@ -9,8 +9,8 @@ import { ChatIcon } from "react-native-heroicons/outline";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/core";
 
-
 import { BottomTabNavigator } from "components/ui/BottomTabNavigator";
+import {ChannelSlug} from "pages/channel/Slug";
 
 const Stack = createStackNavigator();
 
@@ -36,13 +36,14 @@ export const StackNavigator = () => {
       initialRouteName="Tabs"
       screenOptions={{
         header: ({ options, navigation, previous }: any) => {
-          
+            // console.log(navigation.getState())
+
           const title =
             options.headerTitle !== undefined
               ? options.headerTitle
               : options.title !== undefined
               ? options.title
-              : navigation.route.name;
+              : navigation?.route?.name || "f";
 
           return (
             <Appbar.Header
@@ -97,6 +98,11 @@ export const StackNavigator = () => {
         component={ResourceSlug}
         options={{ headerTitle: "Tweet" }}
       />
+        <Stack.Screen name="ChannelSlug"
+                      component={ChannelSlug}
+                      options={({route}) => {
+                          return {headerTitle: route.params.title}
+                      }}/>
     </Stack.Navigator>
   );
 };
