@@ -1,9 +1,13 @@
 import React, {useEffect, useState} from "react";
-import { View, Text } from "react-native";
+import {View, Text, ScrollView, StyleSheet} from "react-native";
 import {fetchRSR} from "utils/fetchRSR";
+import {ResourceCard} from "components/Resources/Resource";
+import Collapsible from 'react-native-collapsible';
+import {ChevronRightIcon} from "react-native-heroicons/outline";
 
 export const ResourcesScreen = () => {
     const [resources, setResources] = useState([]);
+    const [isCollapsed, setIsCollapsed] = useState(false);
 
     const user = {
         data: {
@@ -23,13 +27,53 @@ export const ResourcesScreen = () => {
         fetchRSR("http://172.20.10.8:3000/api/resource/all", user).then((res) => {
             return res.json();
         }).then((body) => {
-            setResources(body)
+            setResources(body.data.attributes)
         })
     }, [])
 
+    const returnCategory = (title:string) => {
+        return (
+            <View>
+                <View style={styles.category}>
+                    <ChevronRightIcon size={25} style={isCollapsed ? styles.icon : styles.iconRotated}
+                                      onPress={() => setIsCollapsed(!isCollapsed)}/>
+                    <Text style={styles.title} onPress={() => setIsCollapsed(!isCollapsed)}>{title}</Text>
+                </View>
+                <Collapsible collapsed={isCollapsed}>
+                    {resources.map((resource) => {
+                        console.log(resource)
+                        return <ResourceCard resource={resource} key={resource.id}/>
+                    })}
+                </Collapsible>
+            </View>
+        )
+    }
+
     return (
-        <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-            <Text>{JSON.stringify(resources)}</Text>
-        </View>
+        <ScrollView style={{flex: 1}}>
+            {returnCategory("Top Resources")}
+        </ScrollView>
     )
 }
+
+const styles = StyleSheet.create({
+    title: {
+        fontSize: 20,
+        fontWeight: "bold",
+    },
+    icon: {
+        color: "#000",
+        marginRight: 10,
+    },
+    iconRotated: {
+        color: "#000",
+        marginRight: 10,
+        transform: [{rotate: '90deg'}]
+    },
+    category: {
+        flex: 1,
+        flexDirection: "row",
+        marginLeft: 30,
+        marginTop: 20
+    }
+})
