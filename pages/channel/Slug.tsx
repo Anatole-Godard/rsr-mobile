@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {View, Text, StyleSheet, FlatList, TextInput, Button} from "react-native";
-import {ChannelMessage} from "pages/channel/Message";
+import {ChannelMessage} from "components/Channel/Message";
 import {Message} from "@definitions/Message";
 import io from "socket.io-client";
 
