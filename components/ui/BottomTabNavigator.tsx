@@ -9,7 +9,7 @@ import overlay from "libs/overlay";
 import { ChannelSlug } from "pages/channel/Slug";
 import { HomeScreen } from "pages/Home";
 import { StackNavigatorParamlist } from "types/StackNavigatorParamList";
-import {ChannelList} from "pages/channel/List";
+import {ChannelList} from "components/Channel/List";
 
 const Tab = createMaterialBottomTabNavigator();
 

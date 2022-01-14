@@ -1,7 +1,7 @@
 import React from "react";
 import {View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView, GestureResponderEvent} from "react-native";
-import {ChannelListItem} from "pages/channel/ListItem";
-import {ChannelSlug} from "pages/channel/Slug";
+import {ChannelListItem} from "components/Channel/ListItem";
+import {ChannelSlug} from "@pages/channel/Slug";
 
 export const ChannelList = () => {
     const DATA = [
