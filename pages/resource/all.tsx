@@ -4,10 +4,18 @@ import {fetchRSR} from "utils/fetchRSR";
 import {ResourceCard} from "components/Resources/Resource";
 import Collapsible from 'react-native-collapsible';
 import {ChevronRightIcon} from "react-native-heroicons/outline";
+import {Searchbar} from "components/Search/Searchbar";
+import {Filters} from "components/Search/Filters";
+import {Categories} from "components/Resources/Categories";
 
 export const ResourcesScreen = () => {
     const [resources, setResources] = useState([]);
     const [isCollapsed, setIsCollapsed] = useState(false);
+    const [isSearchbarDisplayed, setIsSearchbarDisplayed] = useState(true);
+    const [areFiltersDisplayed, setAreFiltersDisplayed] = useState(false);
+
+    const filters = ["Animaux", "Santé", "Education", "Environnement", "Sécurité", "Culture", "Sport", "Autre"];
+    const categories = ["Animaux", "Santé", "Education", "Environnement", "Sécurité", "Culture", "Sport", "Autre"];
 
     const user = {
         data: {
@@ -31,28 +39,57 @@ export const ResourcesScreen = () => {
         })
     }, [])
 
-    const returnCategory = (title:string) => {
+    const returnCategory = (title: string) => {
         return (
-            <View>
-                <View style={styles.category}>
-                    <ChevronRightIcon size={25} style={isCollapsed ? styles.icon : styles.iconRotated}
-                                      onPress={() => setIsCollapsed(!isCollapsed)}/>
-                    <Text style={styles.title} onPress={() => setIsCollapsed(!isCollapsed)}>{title}</Text>
+            <View style={styles.container}>
+                <View style={{width: "20%"}}>
+                    <View style={styles.categoryContainer}>
+                        <View style={styles.card}>
+                            <Text style={styles.title}>Categories</Text>
+                            {categories.map((e, i) => {
+                                return (<Categories key={i} name={e}/>)
+                            })}
+                        </View>
+                    </View>
                 </View>
-                <Collapsible collapsed={isCollapsed}>
-                    {resources.map((resource) => {
-                        console.log(resource)
-                        return <ResourceCard resource={resource} key={resource.id}/>
-                    })}
-                </Collapsible>
+                <ScrollView style={{width: "80%"}}>
+                    <View style={isSearchbarDisplayed ? {display: undefined} : {display: 'none'}}>
+                        <Searchbar/>
+                        <View>
+                            <View style={styles.displayFilters}>
+                                <ChevronRightIcon size={15}
+                                                  style={areFiltersDisplayed ? styles.icon : styles.iconRotated}
+                                                  onPress={() => setAreFiltersDisplayed(!areFiltersDisplayed)}/>
+                                <Text onPress={() => setAreFiltersDisplayed(!areFiltersDisplayed)}>Filters</Text>
+                            </View>
+                            <Collapsible style={styles.filters} collapsed={areFiltersDisplayed}>
+                                {filters.map((e, i) => {
+                                    return (
+                                        <Filters key={i} name={e}/>
+                                    )
+                                })}
+                            </Collapsible>
+                        </View>
+                    </View>
+                    {/*<View style={styles.category}>*/}
+                    {/*    <ChevronRightIcon size={25} style={isCollapsed ? styles.icon : styles.iconRotated}*/}
+                    {/*                      onPress={() => setIsCollapsed(!isCollapsed)}/>*/}
+                    {/*    <Text style={styles.title} onPress={() => setIsCollapsed(!isCollapsed)}>{title}</Text>*/}
+                    {/*</View>*/}
+                    <View>
+                        {resources.map((resource) => {
+                            return <ResourceCard resource={resource} key={resource.id}/>
+                        })}
+                    </View>
+                </ScrollView>
             </View>
         )
     }
 
     return (
-        <ScrollView style={{flex: 1}}>
+        <View style={{flex: 1}}>
             {returnCategory("Top Resources")}
-        </ScrollView>
+        </View>
     )
 }
 
@@ -60,6 +97,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 20,
         fontWeight: "bold",
+        marginBottom: 10
     },
     icon: {
         color: "#000",
@@ -74,6 +112,35 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: "row",
         marginLeft: 30,
-        marginTop: 20
-    }
+        marginTop: 20,
+    },
+    filters: {
+        flex: 1,
+        flexDirection: "row",
+        flexWrap: "wrap",
+        alignSelf: "center",
+        width: "90%",
+    },
+    displayFilters: {
+        flex: 1,
+        flexDirection: "row",
+        alignSelf: "flex-start",
+        justifyContent: "center",
+        marginLeft: 50,
+        paddingBottom: 10,
+    },
+    container: {
+        flex: 1,
+        flexDirection: "row",
+    },
+    categoryContainer: {
+        flex: 1,
+        flexDirection: "column",
+    },
+    card: {
+        backgroundColor: "#fff",
+        padding: 15,
+        margin: 10,
+        borderRadius: 10
+    },
 })
