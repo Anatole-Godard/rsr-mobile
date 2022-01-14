@@ -45,7 +45,15 @@ export const BottomTabNavigator = (props: Props) => {
             tabBarColor,
           }}
         />
-        
+          <Tab.Screen
+              name="Catalog"
+              component={ResourcesScreen}
+              options={{
+                  tabBarIcon: "home-account",
+                  tabBarColor,
+              }}
+          />
+
         <Tab.Screen
           name="Channel"
           component={ChannelList}
