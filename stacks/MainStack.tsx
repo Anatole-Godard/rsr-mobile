@@ -10,33 +10,24 @@ import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/core";
 
 import { BottomTabNavigator } from "components/ui/BottomTabNavigator";
-import {ChannelSlug} from "pages/channel/Slug";
+import { ChannelSlug } from "pages/channel/Slug";
+import { useAuth } from "hooks/useAuth";
+
+import { HOST_URL } from "@env";
 
 const Stack = createStackNavigator();
 
 export const StackNavigator = () => {
   const theme = useTheme();
 
-    const user = {
-        data: {
-            _id: "61dd54b50e9bdfb1d20492b5",
-            fullName: "Oph test",
-            birthDate: "2022-01-11T00:00:00.000Z",
-            email: "oph@test.fr",
-            password: "azerty123",
-            role: "user",
-            photoURL: "https://i0.wp.com/sbcf.fr/wp-content/uploads/2018/03/sbcf-default-avatar.png?ssl=1",
-            createdAt: "2022-01-11T09:58:13.119Z",
-            __v: 0
-        }
-    }
+  const { user } = useAuth();
 
   return (
     <Stack.Navigator
       initialRouteName="Tabs"
       screenOptions={{
         header: ({ options, navigation, previous }: any) => {
-            // console.log(navigation.getState())
+          // console.log(navigation.getState())
 
           const title =
             options.headerTitle !== undefined
@@ -67,7 +58,7 @@ export const StackNavigator = () => {
                     children={undefined}
                     size={40}
                     source={{
-                      uri: user.data.photoURL,
+                      uri: HOST_URL + user.data.photoURL,
                     }}
                   />
                 </TouchableOpacity>
@@ -98,11 +89,13 @@ export const StackNavigator = () => {
         component={ResourceSlug}
         options={{ headerTitle: "Tweet" }}
       />
-        <Stack.Screen name="ChannelSlug"
-                      component={ChannelSlug}
-                      options={({route}) => {
-                          return {headerTitle: route.params.title}
-                      }}/>
+      <Stack.Screen
+        name="ChannelSlug"
+        component={ChannelSlug}
+        options={({ route }) => {
+          return { headerTitle: route.params.title };
+        }}
+      />
     </Stack.Navigator>
   );
 };

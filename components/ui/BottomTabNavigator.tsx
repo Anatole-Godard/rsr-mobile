@@ -1,16 +1,15 @@
 import React from "react";
 import color from "color";
-import {createMaterialBottomTabNavigator} from "@react-navigation/material-bottom-tabs";
-import {useTheme, Portal, FAB} from "react-native-paper";
-import {useSafeArea} from "react-native-safe-area-context";
-import {useIsFocused, RouteProp} from "@react-navigation/native";
+import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
+import { useTheme, Portal, FAB } from "react-native-paper";
+import { useSafeArea } from "react-native-safe-area-context";
+import { useIsFocused, RouteProp } from "@react-navigation/native";
 
 import overlay from "libs/overlay";
-import { ChannelSlug } from "pages/channel/Slug";
-import {ResourcesScreen} from "pages/resource/all";
+import { ResourcesScreen } from "pages/resource/all";
 import { HomeScreen } from "pages/Home";
 import { StackNavigatorParamlist } from "types/StackNavigatorParamList";
-import {ChannelList} from "components/Channel/List";
+import { ChannelList } from "components/Channel/List";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -45,14 +44,14 @@ export const BottomTabNavigator = (props: Props) => {
             tabBarColor,
           }}
         />
-          <Tab.Screen
-              name="Catalog"
-              component={ResourcesScreen}
-              options={{
-                  tabBarIcon: "home-account",
-                  tabBarColor,
-              }}
-          />
+        <Tab.Screen
+          name="Catalog"
+          component={ResourcesScreen}
+          options={{
+            tabBarIcon: "home-account",
+            tabBarColor,
+          }}
+        />
 
         <Tab.Screen
           name="Channel"

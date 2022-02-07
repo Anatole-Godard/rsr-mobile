@@ -16,23 +16,14 @@ import {
   ChatIcon,
   ShoppingBagIcon,
   UserCircleIcon,
+  UserRemoveIcon,
 } from "react-native-heroicons/outline";
+import { useAuth } from "hooks/useAuth";
 
-export function DrawerContent({navigation, ...props}: any) {
+import { HOST_URL } from "@env";
 
-  const user = {
-    data: {
-      _id: "61dd54b50e9bdfb1d20492b5",
-      fullName: "Oph test",
-      birthDate: "2022-01-11T00:00:00.000Z",
-      email: "oph@test.fr",
-      password: "azerty123",
-      role: "user",
-      photoURL: "https://i0.wp.com/sbcf.fr/wp-content/uploads/2018/03/sbcf-default-avatar.png?ssl=1",
-      createdAt: "2022-01-11T09:58:13.119Z",
-      __v: 0
-    }
-  }
+export function DrawerContent({ navigation, ...props }: any) {
+  const { user, signOut } = useAuth();
 
   return (
     <DrawerContentScrollView {...props}>
@@ -41,26 +32,12 @@ export function DrawerContent({navigation, ...props}: any) {
           <Avatar.Image
             children={undefined}
             source={{
-              uri: user.data.photoURL,
+              uri: HOST_URL + user.data.photoURL,
             }}
             size={50}
           />
           <Title style={styles.title}>{user.data.fullName}</Title>
           {/*<Caption style={styles.caption}>@trensik</Caption>*/}
-          <View style={styles.row}>
-            <View style={styles.section}>
-              <Paragraph style={[styles.paragraph, styles.caption]}>
-                202
-              </Paragraph>
-              <Caption style={styles.caption}>Following</Caption>
-            </View>
-            <View style={styles.section}>
-              <Paragraph style={[styles.paragraph, styles.caption]}>
-                159
-              </Paragraph>
-              <Caption style={styles.caption}>Followers</Caption>
-            </View>
-          </View>
         </View>
         <Drawer.Section style={styles.drawerSection}>
           <DrawerItem
@@ -108,6 +85,14 @@ export function DrawerContent({navigation, ...props}: any) {
               </View>
             </View>
           </TouchableRipple>
+        </Drawer.Section>
+
+        <Drawer.Section title="Déconnexion">
+          <DrawerItem
+            icon={() => <UserRemoveIcon />}
+            label="Se déconnecter"
+            onPress={() => signOut()}
+          />
         </Drawer.Section>
       </View>
     </DrawerContentScrollView>

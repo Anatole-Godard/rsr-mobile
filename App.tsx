@@ -19,31 +19,18 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import { DrawerContent } from "components/ui/Drawer";
 import { StackNavigator } from "stacks/MainStack";
 import { PreferencesContext } from "context/preferencesContext";
+import { AuthProvider } from "hooks/useAuth";
+import { colors } from "core/theme";
+import { useFonts } from "expo-font";
+import AppLoading from "expo-app-loading";
 
 const Drawer = createDrawerNavigator();
-
-export const RootNavigator = () => {
-  const theme = useTheme();
-  const navigationTheme = theme.dark ? DarkTheme : DefaultTheme;
-
-  return (
-    <NavigationContainer theme={navigationTheme}>
-      <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />}>
-        <Drawer.Screen
-          name="App"
-          options={{
-            headerShown: false,
-          }}
-          component={StackNavigator}
-        />
-      </Drawer.Navigator>
-    </NavigationContainer>
-  );
-};
 
 /// Main
 export default function App() {
   const colorScheme = useColorScheme();
+  // const themePaper = useTheme();
+  // const navigationTheme = themePaper.dark ? DarkTheme : DefaultTheme;
   const [theme, setTheme] = React.useState<"light" | "dark">(
     colorScheme === "dark" ? "dark" : "light"
   );
@@ -60,27 +47,64 @@ export default function App() {
     [theme]
   );
 
+  let [fontsLoaded] = useFonts({
+    Marianne: require("./assets/fonts/Marianne-Regular.ttf"),
+    "Marianne-ExtraBold": require("./assets/fonts/Marianne-ExtraBold.ttf"),
+    Spectral: require("./assets/fonts/Spectral-Regular.ttf"),
+  });
+
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  }
+
   return (
     <SafeAreaProvider>
-      <AppearanceProvider>
-        <PreferencesContext.Provider value={preferences}>
-          <PaperProvider
-            theme={
-              theme === "light"
-                ? {
-                    ...PaperDefaultTheme,
-                    colors: { ...PaperDefaultTheme.colors, primary: "#1ba1f2" },
-                  }
-                : {
-                    ...PaperDarkTheme,
-                    colors: { ...PaperDarkTheme.colors, primary: "#1ba1f2" },
-                  }
-            }
-          >
-            <RootNavigator />
-          </PaperProvider>
-        </PreferencesContext.Provider>
-      </AppearanceProvider>
+      <NavigationContainer
+      // theme={navigationTheme}
+      >
+        <AuthProvider>
+          <AppearanceProvider>
+            <PreferencesContext.Provider value={preferences}>
+              <PaperProvider
+                theme={
+                  PaperDefaultTheme
+                  // theme === "light"
+                  //   ? {
+                  //       ...PaperDefaultTheme,
+                  //       colors: {
+                  //         ...PaperDefaultTheme.colors,
+                  //         ...colors,
+                  //       },
+                  //     }
+                  //   : {
+                  //       ...PaperDarkTheme,
+                  //       colors: {
+                  //         ...PaperDarkTheme.colors,
+                  //         ...colors,
+                  //       },
+                  //     }
+                }
+              >
+                <RootNavigator />
+              </PaperProvider>
+            </PreferencesContext.Provider>
+          </AppearanceProvider>
+        </AuthProvider>
+      </NavigationContainer>
     </SafeAreaProvider>
   );
 }
+
+export const RootNavigator = () => {
+  return (
+    <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />}>
+      <Drawer.Screen
+        name="App"
+        options={{
+          headerShown: false,
+        }}
+        component={StackNavigator}
+      />
+    </Drawer.Navigator>
+  );
+};
