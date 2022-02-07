@@ -3,10 +3,12 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 const AuthContext = createContext({});
 import { AuthStack } from "stacks/AuthStack";
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import { API_URL } from "@env";
 
 /**
- * Provider that handles authentication with Gardian
+ * Provider that handles authentication
  *
  * Returns children if logged in, otherwise returns NotLogged
  *
@@ -18,10 +20,7 @@ export function AuthProvider({
 }: {
   children: React.ReactNode;
 }): JSX.Element {
-  //   const [cookie, setCookie, removeCookie] = useCookies(["user"]);
-  //todo: link with async storage
-
-  const [user, setUser] = useState<any | null>(null); // todo: get from async storage
+  const [user, setUser] = useState<any | null>(null);
 
   const signIn = async (email: string, password: string) => {
     // let API_URL = "http:/192.168.0.23:3000/api";
@@ -48,14 +47,12 @@ export function AuthProvider({
     });
     const body = await response.json();
     if (body.error) {
-      // remove AsyncStorage
-
+      await AsyncStorage.removeItem("@user");
       setUser(null);
     }
 
     if (response.ok) {
-      // remove AsyncStorage
-
+      await AsyncStorage.removeItem("@user");
       setUser(null);
     }
   };
@@ -90,6 +87,25 @@ export function AuthProvider({
 
     // set AsyncStorage
   };
+
+  useEffect(() => {}, [user]);
+
+  useEffect(() => {
+    if (user)
+      AsyncStorage.setItem("@user", JSON.stringify(user))
+    else {
+      if (user === null)
+        AsyncStorage.getItem("@user")
+          .then((user) => {
+            if (user) {
+              setUser(JSON.parse(user));
+            }
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+    }
+  }, [user]);
 
   return (
     <AuthContext.Provider

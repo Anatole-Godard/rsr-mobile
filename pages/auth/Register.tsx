@@ -67,7 +67,7 @@ const RegisterScreen = ({ navigation }: Props) => {
       />
 
       <TextInput
-        label="Adresse mail"
+        label="Adresse e-mail"
         returnKeyType="next"
         value={email.value}
         onChangeText={(text) => setEmail({ value: text, error: "" })}

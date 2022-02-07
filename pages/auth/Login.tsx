@@ -48,7 +48,7 @@ const LoginScreen = ({ navigation }: Props) => {
       <Header>Enfin de retour. 👋</Header>
 
       <TextInput
-        label="Email"
+        label="Adresse e-mail"
         returnKeyType="next"
         value={email.value}
         onChangeText={(text) => setEmail({ value: text, error: "" })}
@@ -63,7 +63,7 @@ const LoginScreen = ({ navigation }: Props) => {
       />
 
       <TextInput
-        label="Password"
+        label="Mot de passe"
         returnKeyType="done"
         value={password.value}
         onChangeText={(text) => setPassword({ value: text, error: "" })}

@@ -37,7 +37,7 @@ const ForgotPasswordScreen = ({ navigation }: Props) => {
       <Header>Réinitialiser mon mot de passe</Header>
 
       <TextInput
-        label="Adresse email"
+        label="Adresse e-mail"
         returnKeyType="done"
         value={email.value}
         onChangeText={(text) => setEmail({ value: text, error: "" })}
