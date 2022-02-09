@@ -9,12 +9,14 @@ import TextInput from "components/ui/TextInput";
 import Button from "components/ui/Button";
 import { theme } from "core/theme";
 import { Navigation } from "types/Navigation";
+import { usePreferences } from "hooks/usePreferences";
 
 type Props = {
   navigation: Navigation;
 };
 
 const ForgotPasswordScreen = ({ navigation }: Props) => {
+  const { colorScheme } = usePreferences();
   const [email, setEmail] = useState({ value: "", error: "" });
 
   const _onSendPressed = () => {
@@ -57,7 +59,14 @@ const ForgotPasswordScreen = ({ navigation }: Props) => {
         style={styles.back}
         onPress={() => navigation.navigate("LoginScreen")}
       >
-        <Text style={styles.label}>← Se connecter</Text>
+        <Text
+          style={{
+            ...styles.label,
+            color: theme[colorScheme].colors.secondary,
+          }}
+        >
+          ← Se connecter
+        </Text>
       </TouchableOpacity>
     </Background>
   );
@@ -72,7 +81,6 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   label: {
-    color: theme.colors.secondary,
     width: "100%",
   },
 });

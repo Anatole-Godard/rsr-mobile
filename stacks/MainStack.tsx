@@ -2,10 +2,9 @@ import React from "react";
 
 import { TouchableOpacity } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { Appbar, Avatar, useTheme } from "react-native-paper";
+import { Appbar, Avatar } from "react-native-paper";
 
 import { ResourceSlug } from "pages/resource/Slug";
-import { ChatIcon } from "react-native-heroicons/outline";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/core";
 
@@ -14,13 +13,15 @@ import { ChannelSlug } from "pages/channel/Slug";
 import { useAuth } from "hooks/useAuth";
 
 import { HOST_URL } from "@env";
+import { theme } from "core/theme";
+import { usePreferences } from "hooks/usePreferences";
 
 const Stack = createStackNavigator();
 
 export const StackNavigator = () => {
-  const theme = useTheme();
-
   const { user } = useAuth();
+
+  const { colorScheme } = usePreferences();
 
   return (
     <Stack.Navigator
@@ -38,12 +39,16 @@ export const StackNavigator = () => {
 
           return (
             <Appbar.Header
-              theme={{ colors: { primary: theme.colors.surface } }}
+              theme={{ colors: { primary: theme[colorScheme].colors.surface } }}
+              style={{
+                backgroundColor: theme[colorScheme].colors.surface,
+                elevation: 0,
+              }}
             >
               {previous ? (
                 <Appbar.BackAction
                   onPress={navigation.goBack}
-                  color={theme.colors.primary}
+                  color={theme[colorScheme].colors.primary}
                 />
               ) : (
                 <TouchableOpacity
@@ -68,7 +73,7 @@ export const StackNavigator = () => {
                 titleStyle={{
                   fontSize: 18,
                   fontWeight: "bold",
-                  color: theme.colors.primary,
+                  color: theme[colorScheme].colors.primary,
                 }}
               />
             </Appbar.Header>
@@ -93,7 +98,9 @@ export const StackNavigator = () => {
         name="ChannelSlug"
         component={ChannelSlug}
         options={({ route }) => {
-          return { headerTitle: route.params.title };
+          return {
+            headerTitle: (route?.params?.title as unknown as string) || "Home",
+          };
         }}
       />
     </Stack.Navigator>

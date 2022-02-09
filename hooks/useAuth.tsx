@@ -6,6 +6,7 @@ import { AuthStack } from "stacks/AuthStack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { API_URL } from "@env";
+import { Vibration } from "react-native";
 
 /**
  * Provider that handles authentication
@@ -35,8 +36,7 @@ export function AuthProvider({
 
     const body = await response.json();
     if (response.ok && body.session && body.data) {
-      // set AsyncStorage
-
+      Vibration.vibrate([1000]);
       setUser(body);
     } else setUser(null);
   };
@@ -75,7 +75,7 @@ export function AuthProvider({
     if (response.ok && body.session && body.data) {
       setUser(body);
 
-      // set AsyncStorage
+      Vibration.vibrate([1000]);
     } else setUser(null);
   };
 
@@ -91,8 +91,7 @@ export function AuthProvider({
   useEffect(() => {}, [user]);
 
   useEffect(() => {
-    if (user)
-      AsyncStorage.setItem("@user", JSON.stringify(user))
+    if (user) AsyncStorage.setItem("@user", JSON.stringify(user));
     else {
       if (user === null)
         AsyncStorage.getItem("@user")

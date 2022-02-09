@@ -11,6 +11,7 @@ import { emailValidator, passwordValidator } from "core/validators";
 import { Navigation } from "types/Navigation";
 import { useAuth } from "hooks/useAuth";
 import Logo from "components/ui/Logo";
+import { usePreferences } from "hooks/usePreferences";
 
 type Props = {
   navigation: Navigation;
@@ -18,6 +19,7 @@ type Props = {
 
 const LoginScreen = ({ navigation }: Props) => {
   const { signIn } = useAuth();
+  const { colorScheme } = usePreferences();
 
   const [email, setEmail] = useState({ value: "", error: "" });
   const [password, setPassword] = useState({ value: "", error: "" });
@@ -89,7 +91,7 @@ const LoginScreen = ({ navigation }: Props) => {
       <View style={styles.row}>
         <Text style={styles.label}>Vous n'avez pas de compte? </Text>
         <TouchableOpacity onPress={() => navigation.navigate("RegisterScreen")}>
-          <Text style={styles.link}>S'inscrire</Text>
+          <Text style={{...styles.link, color: theme[colorScheme].colors.primary}}>S'inscrire</Text>
         </TouchableOpacity>
       </View>
     </Background>
@@ -107,11 +109,10 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   label: {
-    color: theme.colors.secondary,
+    color: theme.light.colors.secondary,
   },
   link: {
     fontWeight: "bold",
-    color: theme.colors.primary,
   },
 });
 

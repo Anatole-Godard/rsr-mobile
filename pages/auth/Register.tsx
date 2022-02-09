@@ -15,6 +15,7 @@ import {
 } from "core/validators";
 import { useAuth } from "hooks/useAuth";
 import { UserIcon } from "react-native-heroicons/outline";
+import { usePreferences } from "hooks/usePreferences";
 
 type Props = {
   navigation: Navigation;
@@ -22,6 +23,7 @@ type Props = {
 
 const RegisterScreen = ({ navigation }: Props) => {
   const { register } = useAuth();
+  const { colorScheme } = usePreferences();
 
   const [name, setName] = useState({ value: "", error: "" });
   const [email, setEmail] = useState({ value: "", error: "" });
@@ -98,9 +100,9 @@ const RegisterScreen = ({ navigation }: Props) => {
       </Button>
 
       <View style={styles.row}>
-        <Text style={styles.label}>Vous avez déjà un compte? </Text>
+        <Text style={{color: theme[colorScheme].colors.secondary}}>Vous avez déjà un compte? </Text>
         <TouchableOpacity onPress={() => navigation.navigate("LoginScreen")}>
-          <Text style={styles.link}>Se connecter</Text>
+          <Text style={{...styles.link, color: theme[colorScheme].colors.primary}}>Se connecter</Text>
         </TouchableOpacity>
       </View>
     </Background>
@@ -108,9 +110,7 @@ const RegisterScreen = ({ navigation }: Props) => {
 };
 
 const styles = StyleSheet.create({
-  label: {
-    color: theme.colors.secondary,
-  },
+
   button: {
     marginTop: 24,
   },
@@ -120,7 +120,6 @@ const styles = StyleSheet.create({
   },
   link: {
     fontWeight: "bold",
-    color: theme.colors.primary,
   },
 });
 

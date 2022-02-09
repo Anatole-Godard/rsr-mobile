@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   DarkTheme as PaperDarkTheme,
   DefaultTheme as PaperDefaultTheme,
   Provider as PaperProvider,
-  useTheme,
 } from "react-native-paper";
 import {
   NavigationContainer,
@@ -11,40 +10,27 @@ import {
   DarkTheme,
 } from "@react-navigation/native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { AppearanceProvider, useColorScheme } from "react-native-appearance";
+import { useColorScheme } from "react-native";
 
 /// Navigation
 import { createDrawerNavigator } from "@react-navigation/drawer";
 
 import { DrawerContent } from "components/ui/Drawer";
 import { StackNavigator } from "stacks/MainStack";
-import { PreferencesContext } from "context/preferencesContext";
 import { AuthProvider } from "hooks/useAuth";
-import { colors } from "core/theme";
 import { useFonts } from "expo-font";
 import AppLoading from "expo-app-loading";
+import { PreferencesProvider, usePreferences } from "hooks/usePreferences";
+import { colors } from "core/theme";
 
 const Drawer = createDrawerNavigator();
 
 /// Main
 export default function App() {
-  const colorScheme = useColorScheme();
-  // const themePaper = useTheme();
-  // const navigationTheme = themePaper.dark ? DarkTheme : DefaultTheme;
-  const [theme, setTheme] = React.useState<"light" | "dark">(
-    colorScheme === "dark" ? "dark" : "light"
-  );
+  const _colorScheme = useColorScheme();
 
-  function toggleTheme() {
-    setTheme((theme) => (theme === "light" ? "dark" : "light"));
-  }
-
-  const preferences = React.useMemo(
-    () => ({
-      toggleTheme,
-      theme,
-    }),
-    [theme]
+  const [colorScheme, setColorScheme] = useState<"light" | "dark">(
+    _colorScheme || "light"
   );
 
   let [fontsLoaded] = useFonts({
@@ -63,32 +49,33 @@ export default function App() {
       // theme={navigationTheme}
       >
         <AuthProvider>
-          <AppearanceProvider>
-            <PreferencesContext.Provider value={preferences}>
-              <PaperProvider
-                theme={
-                  PaperDefaultTheme
-                  // theme === "light"
-                  //   ? {
-                  //       ...PaperDefaultTheme,
-                  //       colors: {
-                  //         ...PaperDefaultTheme.colors,
-                  //         ...colors,
-                  //       },
-                  //     }
-                  //   : {
-                  //       ...PaperDarkTheme,
-                  //       colors: {
-                  //         ...PaperDarkTheme.colors,
-                  //         ...colors,
-                  //       },
-                  //     }
-                }
-              >
-                <RootNavigator />
-              </PaperProvider>
-            </PreferencesContext.Provider>
-          </AppearanceProvider>
+          <PreferencesProvider
+            colorScheme={colorScheme}
+            setColorScheme={setColorScheme}
+          >
+            <PaperProvider
+              theme={
+                
+                colorScheme === "light"
+                  ? {
+                      ...PaperDefaultTheme,
+                      colors: {
+                        ...PaperDefaultTheme.colors,
+                        // ...colors,
+                      },
+                    }
+                  : {
+                      ...PaperDarkTheme,
+                      colors: {
+                        ...PaperDarkTheme.colors,
+                        // ...colors,
+                      },
+                    }
+              }
+            >
+              <RootNavigator />
+            </PaperProvider>
+          </PreferencesProvider>
         </AuthProvider>
       </NavigationContainer>
     </SafeAreaProvider>
