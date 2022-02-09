@@ -3,11 +3,11 @@
   "compilerOptions": {
     "strict": true,
     "baseUrl": ".",
-    "paths": {
-      "@definitions/*": ["types/*"],
-      "@utils/*": ["utils/*"],
-      "@components/*": ["components/*"],
-      "@pages/*": ["pages/*"],
-    }
+    // "paths": {
+    //   "@definitions/*": ["types/*"],
+    //   "@utils/*": ["utils/*"],
+    //   "@components/*": ["components/*"],
+    //   "@pages/*": ["pages/*"],
+    // }
   }
 }

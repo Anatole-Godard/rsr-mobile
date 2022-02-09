@@ -1,16 +1,17 @@
 import React from "react";
 import color from "color";
-import {createMaterialBottomTabNavigator} from "@react-navigation/material-bottom-tabs";
-import {useTheme, Portal, FAB} from "react-native-paper";
-import {useSafeArea} from "react-native-safe-area-context";
-import {useIsFocused, RouteProp} from "@react-navigation/native";
+import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
+import {Portal, FAB } from "react-native-paper";
+import { useSafeArea } from "react-native-safe-area-context";
+import { useIsFocused, RouteProp } from "@react-navigation/native";
 
 import overlay from "libs/overlay";
-import { ChannelSlug } from "pages/channel/Slug";
-import {ResourcesScreen} from "pages/resource/all";
+import { ResourcesScreen } from "pages/resource/all";
 import { HomeScreen } from "pages/Home";
 import { StackNavigatorParamlist } from "types/StackNavigatorParamList";
-import {ChannelList} from "components/Channel/List";
+import { ChannelList } from "components/Channel/List";
+import { theme } from "core/theme";
+import { usePreferences } from "hooks/usePreferences";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -19,13 +20,14 @@ type Props = {
 };
 
 export const BottomTabNavigator = (props: Props) => {
-  const theme = useTheme();
   const safeArea = useSafeArea();
   const isFocused = useIsFocused();
 
+  const { colorScheme } = usePreferences();
+
   const tabBarColor = theme.dark
-    ? (overlay(6, theme.colors.surface) as string)
-    : theme.colors.surface;
+    ? (overlay(6, theme[colorScheme].colors.surface) as string)
+    : theme[colorScheme].colors.surface;
 
   return (
     <React.Fragment>
@@ -33,8 +35,8 @@ export const BottomTabNavigator = (props: Props) => {
         initialRouteName="Home"
         backBehavior="initialRoute"
         shifting={true}
-        activeColor={theme.colors.primary}
-        inactiveColor={color(theme.colors.text).alpha(0.6).rgb().string()}
+        activeColor={theme[colorScheme].colors.primary}
+        inactiveColor={color(theme[colorScheme].colors.text).alpha(0.6).rgb().string()}
         sceneAnimationEnabled={false}
       >
         <Tab.Screen
@@ -45,14 +47,14 @@ export const BottomTabNavigator = (props: Props) => {
             tabBarColor,
           }}
         />
-          <Tab.Screen
-              name="Catalog"
-              component={ResourcesScreen}
-              options={{
-                  tabBarIcon: "home-account",
-                  tabBarColor,
-              }}
-          />
+        <Tab.Screen
+          name="Catalog"
+          component={ResourcesScreen}
+          options={{
+            tabBarIcon: "home-account",
+            tabBarColor,
+          }}
+        />
 
         <Tab.Screen
           name="Channel"
@@ -75,7 +77,7 @@ export const BottomTabNavigator = (props: Props) => {
           color="white"
           theme={{
             colors: {
-              accent: theme.colors.primary,
+              accent: theme[colorScheme].colors.primary,
             },
           }}
           onPress={() => {}}

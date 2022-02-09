@@ -2,41 +2,33 @@ import React from "react";
 
 import { TouchableOpacity } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { Appbar, Avatar, useTheme } from "react-native-paper";
+import { Appbar, Avatar } from "react-native-paper";
 
 import { ResourceSlug } from "pages/resource/Slug";
-import { ChatIcon } from "react-native-heroicons/outline";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/core";
 
 import { BottomTabNavigator } from "components/ui/BottomTabNavigator";
-import {ChannelSlug} from "pages/channel/Slug";
+import { ChannelSlug } from "pages/channel/Slug";
+import { useAuth } from "hooks/useAuth";
+
+import { HOST_URL } from "@env";
+import { theme } from "core/theme";
+import { usePreferences } from "hooks/usePreferences";
 
 const Stack = createStackNavigator();
 
 export const StackNavigator = () => {
-  const theme = useTheme();
+  const { user } = useAuth();
 
-    const user = {
-        data: {
-            _id: "61dd54b50e9bdfb1d20492b5",
-            fullName: "Oph test",
-            birthDate: "2022-01-11T00:00:00.000Z",
-            email: "oph@test.fr",
-            password: "azerty123",
-            role: "user",
-            photoURL: "https://i0.wp.com/sbcf.fr/wp-content/uploads/2018/03/sbcf-default-avatar.png?ssl=1",
-            createdAt: "2022-01-11T09:58:13.119Z",
-            __v: 0
-        }
-    }
+  const { colorScheme } = usePreferences();
 
   return (
     <Stack.Navigator
       initialRouteName="Tabs"
       screenOptions={{
         header: ({ options, navigation, previous }: any) => {
-            // console.log(navigation.getState())
+          // console.log(navigation.getState())
 
           const title =
             options.headerTitle !== undefined
@@ -47,12 +39,16 @@ export const StackNavigator = () => {
 
           return (
             <Appbar.Header
-              theme={{ colors: { primary: theme.colors.surface } }}
+              theme={{ colors: { primary: theme[colorScheme].colors.surface } }}
+              style={{
+                backgroundColor: theme[colorScheme].colors.surface,
+                elevation: 0,
+              }}
             >
               {previous ? (
                 <Appbar.BackAction
                   onPress={navigation.goBack}
-                  color={theme.colors.primary}
+                  color={theme[colorScheme].colors.primary}
                 />
               ) : (
                 <TouchableOpacity
@@ -67,7 +63,7 @@ export const StackNavigator = () => {
                     children={undefined}
                     size={40}
                     source={{
-                      uri: user.data.photoURL,
+                      uri: HOST_URL + user.data.photoURL,
                     }}
                   />
                 </TouchableOpacity>
@@ -77,7 +73,7 @@ export const StackNavigator = () => {
                 titleStyle={{
                   fontSize: 18,
                   fontWeight: "bold",
-                  color: theme.colors.primary,
+                  color: theme[colorScheme].colors.primary,
                 }}
               />
             </Appbar.Header>
@@ -98,11 +94,15 @@ export const StackNavigator = () => {
         component={ResourceSlug}
         options={{ headerTitle: "Tweet" }}
       />
-        <Stack.Screen name="ChannelSlug"
-                      component={ChannelSlug}
-                      options={({route}) => {
-                          return {headerTitle: route.params.title}
-                      }}/>
+      <Stack.Screen
+        name="ChannelSlug"
+        component={ChannelSlug}
+        options={({ route }) => {
+          return {
+            headerTitle: (route?.params?.title as unknown as string) || "Home",
+          };
+        }}
+      />
     </Stack.Navigator>
   );
 };

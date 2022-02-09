@@ -2,112 +2,95 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { DrawerItem, DrawerContentScrollView } from "@react-navigation/drawer";
 import {
-  useTheme,
   Avatar,
   Title,
-  Caption,
-  Paragraph,
   Drawer,
-  Text,
-  TouchableRipple,
   Switch,
 } from "react-native-paper";
 import {
   ChatIcon,
+  MoonIcon,
   ShoppingBagIcon,
+  SunIcon,
   UserCircleIcon,
+  UserRemoveIcon,
 } from "react-native-heroicons/outline";
+import { useAuth } from "hooks/useAuth";
 
-export function DrawerContent({navigation, ...props}: any) {
+import { HOST_URL } from "@env";
+import { usePreferences } from "hooks/usePreferences";
+import { theme } from "core/theme";
 
-  const user = {
-    data: {
-      _id: "61dd54b50e9bdfb1d20492b5",
-      fullName: "Oph test",
-      birthDate: "2022-01-11T00:00:00.000Z",
-      email: "oph@test.fr",
-      password: "azerty123",
-      role: "user",
-      photoURL: "https://i0.wp.com/sbcf.fr/wp-content/uploads/2018/03/sbcf-default-avatar.png?ssl=1",
-      createdAt: "2022-01-11T09:58:13.119Z",
-      __v: 0
-    }
-  }
+export function DrawerContent({ navigation, ...props }: any) {
+  const { user, signOut } = useAuth();
+  const { colorScheme, toggleColorScheme } = usePreferences();
+
+  const textStyle = {
+    color: theme[colorScheme].colors.secondary,
+  };
 
   return (
-    <DrawerContentScrollView {...props}>
+    <DrawerContentScrollView
+      {...props}
+      style={{
+        backgroundColor: theme[colorScheme].colors.background,
+        color: theme[colorScheme].colors.text,
+      }}
+    >
       <View style={styles.drawerContent}>
         <View style={styles.userInfoSection}>
           <Avatar.Image
             children={undefined}
             source={{
-              uri: user.data.photoURL,
+              uri: HOST_URL + user.data.photoURL,
             }}
-            size={50}
+            size={64}
           />
           <Title style={styles.title}>{user.data.fullName}</Title>
           {/*<Caption style={styles.caption}>@trensik</Caption>*/}
-          <View style={styles.row}>
-            <View style={styles.section}>
-              <Paragraph style={[styles.paragraph, styles.caption]}>
-                202
-              </Paragraph>
-              <Caption style={styles.caption}>Following</Caption>
-            </View>
-            <View style={styles.section}>
-              <Paragraph style={[styles.paragraph, styles.caption]}>
-                159
-              </Paragraph>
-              <Caption style={styles.caption}>Followers</Caption>
-            </View>
-          </View>
         </View>
         <Drawer.Section style={styles.drawerSection}>
           <DrawerItem
             icon={() => <UserCircleIcon />}
-            label="Profile"
+            label="Profil"
             onPress={() => {}}
-          />
+            labelStyle={textStyle}
+/>
           <DrawerItem
             icon={() => <ChatIcon />}
-            label="Preferences"
+            label="Salons"
             onPress={() => {}}
+            labelStyle={textStyle}
           />
           <DrawerItem
             icon={() => <ShoppingBagIcon />}
-            label="Bookmarks"
+            label="Catalogue"
             onPress={() => {}}
+            labelStyle={textStyle}
           />
         </Drawer.Section>
-        <Drawer.Section title="Preferences">
-          <TouchableRipple onPress={() => {}}>
-            <View style={styles.preference}>
-              <Text
-                onPressIn={undefined}
-                onPressOut={undefined}
-                android_hyphenationFrequency={undefined}
-              >
-                Dark Theme
-              </Text>
-              <View pointerEvents="none">
-                <Switch children={undefined} value={false} />
-              </View>
-            </View>
-          </TouchableRipple>
-          <TouchableRipple onPress={() => {}}>
-            <View style={styles.preference}>
-              <Text
-                onPressIn={undefined}
-                onPressOut={undefined}
-                android_hyphenationFrequency={undefined}
-              >
-                RTL
-              </Text>
-              <View pointerEvents="none">
-                <Switch value={false} children={undefined} />
-              </View>
-            </View>
-          </TouchableRipple>
+        <Drawer.Section title="Préferences">
+          <Drawer.Item
+            icon={() => (colorScheme === "dark" ? <SunIcon /> : <MoonIcon />)}
+            label="Dark Mode"
+            onPress={toggleColorScheme}
+            active={colorScheme === "dark"}
+            right={() => (
+              <Switch
+                value={colorScheme === "dark"}
+                onChange={() => toggleColorScheme()}
+              />
+            )}
+          />
+        </Drawer.Section>
+
+        <Drawer.Section title="Déconnexion">
+          <DrawerItem
+            icon={() => <UserRemoveIcon />}
+            label="Se déconnecter"
+            onPress={() => signOut()}
+            labelStyle={textStyle}
+          />
         </Drawer.Section>
       </View>
     </DrawerContentScrollView>
@@ -120,10 +103,13 @@ const styles = StyleSheet.create({
   },
   userInfoSection: {
     paddingLeft: 20,
+    flexDirection: "column",
   },
   title: {
     marginTop: 20,
-    fontWeight: "bold",
+    fontWeight: "900",
+    fontFamily: "Marianne-ExtraBold",
+    fontSize: 32,
   },
   caption: {
     fontSize: 14,
@@ -145,11 +131,5 @@ const styles = StyleSheet.create({
   },
   drawerSection: {
     marginTop: 15,
-  },
-  preference: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
   },
 });

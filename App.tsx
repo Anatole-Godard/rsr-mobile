@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   DarkTheme as PaperDarkTheme,
   DefaultTheme as PaperDefaultTheme,
   Provider as PaperProvider,
-  useTheme,
 } from "react-native-paper";
 import {
   NavigationContainer,
@@ -11,76 +10,88 @@ import {
   DarkTheme,
 } from "@react-navigation/native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { AppearanceProvider, useColorScheme } from "react-native-appearance";
+import { useColorScheme } from "react-native";
 
 /// Navigation
 import { createDrawerNavigator } from "@react-navigation/drawer";
 
 import { DrawerContent } from "components/ui/Drawer";
 import { StackNavigator } from "stacks/MainStack";
-import { PreferencesContext } from "context/preferencesContext";
+import { AuthProvider } from "hooks/useAuth";
+import { useFonts } from "expo-font";
+import AppLoading from "expo-app-loading";
+import { PreferencesProvider, usePreferences } from "hooks/usePreferences";
+import { colors } from "core/theme";
 
 const Drawer = createDrawerNavigator();
 
-export const RootNavigator = () => {
-  const theme = useTheme();
-  const navigationTheme = theme.dark ? DarkTheme : DefaultTheme;
-
-  return (
-    <NavigationContainer theme={navigationTheme}>
-      <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />}>
-        <Drawer.Screen
-          name="App"
-          options={{
-            headerShown: false,
-          }}
-          component={StackNavigator}
-        />
-      </Drawer.Navigator>
-    </NavigationContainer>
-  );
-};
-
 /// Main
 export default function App() {
-  const colorScheme = useColorScheme();
-  const [theme, setTheme] = React.useState<"light" | "dark">(
-    colorScheme === "dark" ? "dark" : "light"
+  const _colorScheme = useColorScheme();
+
+  const [colorScheme, setColorScheme] = useState<"light" | "dark">(
+    _colorScheme || "light"
   );
 
-  function toggleTheme() {
-    setTheme((theme) => (theme === "light" ? "dark" : "light"));
+  let [fontsLoaded] = useFonts({
+    Marianne: require("./assets/fonts/Marianne-Regular.ttf"),
+    "Marianne-ExtraBold": require("./assets/fonts/Marianne-ExtraBold.ttf"),
+    Spectral: require("./assets/fonts/Spectral-Regular.ttf"),
+  });
+
+  if (!fontsLoaded) {
+    return <AppLoading />;
   }
-
-  const preferences = React.useMemo(
-    () => ({
-      toggleTheme,
-      theme,
-    }),
-    [theme]
-  );
 
   return (
     <SafeAreaProvider>
-      <AppearanceProvider>
-        <PreferencesContext.Provider value={preferences}>
-          <PaperProvider
-            theme={
-              theme === "light"
-                ? {
-                    ...PaperDefaultTheme,
-                    colors: { ...PaperDefaultTheme.colors, primary: "#1ba1f2" },
-                  }
-                : {
-                    ...PaperDarkTheme,
-                    colors: { ...PaperDarkTheme.colors, primary: "#1ba1f2" },
-                  }
-            }
+      <NavigationContainer
+      // theme={navigationTheme}
+      >
+        <AuthProvider>
+          <PreferencesProvider
+            colorScheme={colorScheme}
+            setColorScheme={setColorScheme}
           >
-            <RootNavigator />
-          </PaperProvider>
-        </PreferencesContext.Provider>
-      </AppearanceProvider>
+            <PaperProvider
+              theme={
+                
+                colorScheme === "light"
+                  ? {
+                      ...PaperDefaultTheme,
+                      colors: {
+                        ...PaperDefaultTheme.colors,
+                        // ...colors,
+                      },
+                    }
+                  : {
+                      ...PaperDarkTheme,
+                      colors: {
+                        ...PaperDarkTheme.colors,
+                        // ...colors,
+                      },
+                    }
+              }
+            >
+              <RootNavigator />
+            </PaperProvider>
+          </PreferencesProvider>
+        </AuthProvider>
+      </NavigationContainer>
     </SafeAreaProvider>
   );
 }
+
+export const RootNavigator = () => {
+  return (
+    <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />}>
+      <Drawer.Screen
+        name="App"
+        options={{
+          headerShown: false,
+        }}
+        component={StackNavigator}
+      />
+    </Drawer.Navigator>
+  );
+};
