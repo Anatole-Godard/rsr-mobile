@@ -23,6 +23,8 @@ export const theme = {
     ...DarkTheme,
     colors: {
       ...DarkTheme.colors,
+      primary: "#66BAA8",
+
       secondary: DarkTheme.colors.text,
     },
   },

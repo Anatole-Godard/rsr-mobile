@@ -1,233 +1,266 @@
-import { formatDistanceToNow } from "date-fns";
-import fr from "date-fns/locale/fr";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import {
-  Dimensions,
-  Image,
-  ScrollView,
-  StyleSheet,
+  Surface,
+  Title,
+  Caption,
   Text,
-  
-  View,
-} from "react-native";
-import { TextInput } from "react-native-paper";
-import { ChatIcon, HeartIcon } from "react-native-heroicons/outline";
-import SkeletonContent from "react-native-skeleton-content";
+  Avatar,
+  TouchableRipple,
+  useTheme,
+} from "react-native-paper";
+import color from "color";
+import { Resource } from "types/Resource";
+import { usePreferences } from "hooks/usePreferences";
+import { theme } from "core/theme";
 
-export const Resource: React.FC<{ slug: string }> = ({ slug }) => {
-  const [loading, setLoading] = useState(true);
-  const [props, setProps] = useState<any>(null);
-  useEffect(() => {
-    fetch(`http://192.168.0.38:3000/api/resource/${slug}`)
-      .then((res) => res.json())
-      .then((body) => {
-        setProps(body.data.attributes);
-        setLoading(false);
+import { HOST_URL, API_URL } from "@env";
+import {
+  ChatAlt2Icon,
+  HeartIcon as HeartIconOutline,
+} from "react-native-heroicons/outline";
+import { HeartIcon as HeartIconSolid } from "react-native-heroicons/solid";
+
+import { formatDistance } from "date-fns";
+import fr from "date-fns/locale/fr";
+import { Swipeable } from "react-native-gesture-handler";
+import { UserMinimum } from "types/User";
+import { useAuth } from "hooks/useAuth";
+import { useToast } from "react-native-paper-toast";
+import { fetchRSR } from "utils/fetchRSR";
+
+interface Props extends Resource {
+  onPress: (slug: string) => void;
+}
+
+export const ResourceHome = (props: Props) => {
+  const { colorScheme } = usePreferences();
+  const { user } = useAuth();
+  const toaster = useToast();
+
+  const [likes, setLikes] = useState(props.likes);
+
+  const iconColor = color(theme[colorScheme].colors.text)
+    .alpha(0.54)
+    .rgb()
+    .string();
+
+  const contentColor = color(theme[colorScheme].colors.text)
+    .alpha(0.8)
+    .rgb()
+    .string();
+
+  const imageBorderColor = color(theme[colorScheme].colors.text)
+    .alpha(0.15)
+    .rgb()
+    .string();
+
+  const like = async () => {
+    if (user) {
+      const res = await fetchRSR(
+        `${API_URL}/resource/${props.slug}/like`,
+        user.session
+      );
+      const body = await res.json();
+      console.log(res.headers);
+      if (res.ok && body.data) {
+        toaster.show({
+          message: `Succès`,
+          type: "success",
+        });
+        setLikes(body.data.attributes.likes);
+      } else {
+        toaster.show({
+          message: `${body.error.name} - ${body.error.message}`,
+          type: "error",
+        });
+      }
+    } else {
+      toaster.show({
+        message: `Vous devez être connecté pour liker une ressource`,
+        type: "error",
       });
-  }, []);
+    }
+  };
+
+  const rightAction = () => (
+    <View
+      style={{
+        backgroundColor: "#FF4F5B",
+        justifyContent: "center",
+        alignItems: "flex-end",
+      }}
+    >
+      <TouchableOpacity
+        onPress={like}
+        style={{
+          justifyContent: "center",
+          alignItems: "center",
+          padding: 10,
+          width: 132,
+          flexDirection: "row",
+        }}
+      >
+        {likes.find((u: UserMinimum) => u.uid === user.data.uid) ? (
+          <>
+            <HeartIconSolid
+              size={24}
+              color={theme[colorScheme].colors.surface}
+            />
+            <Text
+              style={{
+                color: theme[colorScheme].colors.surface,
+                marginLeft: 8,
+                fontFamily: "Marianne-ExtraBold",
+              }}
+            >
+              J'aime déjà
+            </Text>
+          </>
+        ) : (
+          <>
+            <HeartIconOutline
+              size={24}
+              color={theme[colorScheme].colors.surface}
+            />
+            <Text
+              style={{
+                color: theme[colorScheme].colors.surface,
+                marginLeft: 8,
+                fontFamily: "Marianne-ExtraBold",
+              }}
+            >
+              Aimer
+            </Text>
+          </>
+        )}
+      </TouchableOpacity>
+    </View>
+  );
 
   return (
-    <SkeletonContent
-      containerStyle={{
-        height: Dimensions.get("window").height,
-        width: Dimensions.get("window").width,
-        padding: 12,
-      }}
-      isLoading={loading}
-      layout={[
-        {
-          key: "owner",
-          width: "100%",
-          height: 48,
-          marginBottom: 10,
-          borderRadius: 10,
-        },
-        {
-          key: "date",
-          width: "40%",
-          height: 24,
-          marginBottom: 10,
-          borderRadius: 10,
-        },
-        {
-          key: "resource",
-          width: "100%",
-          height: 150,
-          marginBottom: 10,
-          borderRadius: 10,
-        },
-        {
-          key: "likes",
-          right: 0,
-
-          width: "40%",
-          height: 24,
-          borderRadius: 10,
-          marginBottom: 10,
-        },
-        {
-          key: "comment1",
-          flexDirection: "row",
-          width: "100%",
-          height: "100%",
-          children: [
-            {
-              key: "comment1-image",
-              width: 48,
-              height: 48,
-              borderRadius: 24,
-            },
-            {
-              key: "comment1-content",
-              children: [
-                {
-                  key: "comment1-owner",
-                  width: "20%",
-                  height: 24,
-                  borderRadius: 10,
-                },
-                {
-                  key: "comment1-text",
-                  width: "100%",
-                  height: 24,
-                  borderRadius: 10,
-                },
-              ],
-            },
-          ],
-        },
-      ]}
-    >
-      {!loading && (
-        <View style={styles.resource}>
-          <View style={styles.container}>
-            <View style={styles.header}>
-              <Text style={styles.owner}>{props?.owner}</Text>
-              <Text style={styles.createdAt}>
-                posté
-                {" " +
-                  formatDistanceToNow(new Date(props?.createdAt), {
-                    addSuffix: true,
-                    locale: fr,
-                  })}
-              </Text>
-            </View>
-            <Text>LA RESSOURCE</Text>
-            <View style={styles.footer}>
-              <HeartIcon size={18} style={{ marginRight: 4 }} />
-              <Text style={styles.likes}>{props?.likes}</Text>
-              <ChatIcon size={18} style={{ marginRight: 4 }} />
-
-              <Text style={styles.comments}>{props?.comments?.length}</Text>
-            </View>
-          </View>
-
-          <View style={styles.commentsContainer}>
-            <Text style={styles.commentsTitle}>Commentaires</Text>
-
-            <ScrollView>
-              {props?.comments?.map((comment: any, key: number) => (
-                <View style={styles.comment} key={key}>
-                  <Image
-                    style={styles.commentOwnerImage}
-                    source={{
-                      uri: comment?.photoUrl,
-                    }}
-                  />
-                  <View>
-                    <Text style={styles.commentOwner}>{comment.owner}</Text>
-                    <Text style={styles.commentContent}>{comment.content}</Text>
-                  </View>
-                </View>
-              ))}
-            </ScrollView>
-            <TextInput
-              style={styles.commentInput}
-              placeholder="Ajouter un commentaire"
+    <Swipeable renderRightActions={rightAction}>
+      <TouchableRipple onPress={() => props.onPress(props.slug)}>
+        <Surface style={styles.container}>
+          <View style={styles.leftColumn}>
+            <Avatar.Image
+              style={{ marginTop: -5 }}
+              source={{ uri: HOST_URL + props.owner.photoURL }}
+              size={48}
             />
           </View>
-        </View>
-      )}
-    </SkeletonContent>
+          <View style={styles.rightColumn}>
+            <View style={styles.topRow}>
+              <Title style={{ fontFamily: "Marianne-ExtraBold" }}>
+                {props.data.attributes.properties.name}
+              </Title>
+            </View>
+            <Text style={{ color: contentColor }}>{props.description}</Text>
+            {/* <Image
+            source={{ uri: props.image }}
+            style={[
+              styles.image,
+              {
+                borderColor: imageBorderColor,
+              },
+            ]}
+          /> */}
+            <View style={styles.bottomRow}>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Caption style={styles.handle}>{props.owner.fullName}</Caption>
+                <Caption style={[styles.handle, styles.dot]}>
+                  {"\u2B24"}
+                </Caption>
+                <Caption>
+                  {formatDistance(
+                    new Date(props.createdAt.toString()),
+                    new Date(),
+                    { locale: fr }
+                  )}
+                </Caption>
+              </View>
+
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <TouchableOpacity
+                  onPress={() => {}}
+                  hitSlop={{ top: 10, bottom: 10 }}
+                >
+                  <View style={styles.iconContainer}>
+                    <ChatAlt2Icon size={14} color={iconColor} />
+                    <Caption style={styles.iconDescription}>
+                      {props.comments?.length || 0}
+                    </Caption>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {}}
+                  hitSlop={{ top: 10, bottom: 10 }}
+                >
+                  <View style={styles.iconContainer}>
+                    {likes.find((u: UserMinimum) => u.uid === user.data.uid) ? (
+                      <HeartIconSolid size={14} color={"#FF4F5B"} />
+                    ) : (
+                      <HeartIconOutline size={14} color={iconColor} />
+                    )}
+                    <Caption style={styles.iconDescription}>
+                      {likes?.length || 0}
+                    </Caption>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Surface>
+      </TouchableRipple>
+    </Swipeable>
   );
 };
 
 const styles = StyleSheet.create({
-  resource: {
-    flexDirection: "column",
-    width: Dimensions.get("window").width - 24,
-  },
   container: {
-    flexDirection: "column",
-    justifyContent: "space-between",
-    minHeight: 256,
-    backgroundColor: "#e8e8e8",
-    padding: 24,
-    borderRadius: 12,
-    width: "100%",
-  },
-  header: {
-    marginBottom: 12,
-  },
-  owner: {
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-  createdAt: {
-    fontSize: 16,
-    color: "#666",
-  },
-  footer: {
     flexDirection: "row",
-    justifyContent: "flex-end",
+    paddingTop: 5,
+    paddingRight: 15,
+    elevation: 1,
+  },
+  leftColumn: {
+    width: 72,
     alignItems: "center",
+    justifyContent: "center",
   },
-  likes: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginRight: 12,
-  },
-  comments: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  commentsContainer: {
-    flexDirection: "column",
-    padding: 12,
-    marginTop: 6,
-    flexGrow: 1,
-    height: "55%",
-  },
-  commentsTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 12,
-  },
-  comment: {
-    flexDirection: "row",
-    marginBottom: 6,
-    padding: 12,
-    borderRadius: 12,
-    // backgroundColor: "#efefef",
-  },
-  commentOwner: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  commentOwnerImage: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    marginRight: 12,
-  },
-  commentContent: {
-    fontSize: 14,
-  },
-  commentInput: {
+  rightColumn: {
     flex: 1,
-    marginTop: 12,
-    marginBottom: 12,
-    borderRadius: 12,
-    backgroundColor: "#efefef",
+  },
+  topRow: {
+    flexDirection: "row",
+    alignItems: "baseline",
+  },
+  handle: {
+    marginRight: 3,
+  },
+  dot: {
+    fontSize: 3,
+  },
+  image: {
+    borderWidth: StyleSheet.hairlineWidth,
+    marginTop: 10,
+    borderRadius: 20,
+    width: "100%",
+    height: 150,
+  },
+  bottomRow: {
+    paddingVertical: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  iconContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: 4,
+  },
+  iconDescription: {
+    marginLeft: 2,
+    lineHeight: 12,
   },
 });

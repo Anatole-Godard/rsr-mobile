@@ -5426,6 +5426,11 @@ react-native-modern-header@^1.0.2:
   resolved "https://registry.yarnpkg.com/react-native-modern-header/-/react-native-modern-header-1.0.2.tgz#84650d036b4b1d959ce699a73b6215882e5859d0"
   integrity sha512-oSQ3VRGV3/52StefbVy2+hMT2z52hHA8WLc7YDFfju6NW/5piK933+YBgJdUX9NwRQHGicQHIYF+FH3ac4A37Q==
 
+react-native-paper-toast@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/react-native-paper-toast/-/react-native-paper-toast-1.2.0.tgz#5093a258dee12e1fee9c62ac2a62d2b611992279"
+  integrity sha512-BWrPqJ27DC4NXNFKKG8tSqWHCSpZp+nBzsipFfnOa1k6UJ3cAy4N/XKO4gsQGl4KoHi5fcWR1BFwyw451fVjkw==
+
 react-native-paper@^4.10.1:
   version "4.10.1"
   resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-4.10.1.tgz#aafbc83747a503c8b4cce634aa20a7eb4be8c1d2"
