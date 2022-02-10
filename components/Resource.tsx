@@ -7,17 +7,19 @@ import {
   Text,
   Avatar,
   TouchableRipple,
-  useTheme,
 } from "react-native-paper";
 import color from "color";
 import { Resource } from "types/Resource";
 import { usePreferences } from "hooks/usePreferences";
-import { theme } from "core/theme";
+import { colors, theme } from "core/theme";
 
 import { HOST_URL, API_URL } from "@env";
 import {
-  ChatAlt2Icon,
+  ChatIcon,
+  ExternalLinkIcon,
+  HandIcon,
   HeartIcon as HeartIconOutline,
+  LocationMarkerIcon,
 } from "react-native-heroicons/outline";
 import { HeartIcon as HeartIconSolid } from "react-native-heroicons/solid";
 
@@ -28,6 +30,75 @@ import { UserMinimum } from "types/User";
 import { useAuth } from "hooks/useAuth";
 import { useToast } from "react-native-paper-toast";
 import { fetchRSR } from "utils/fetchRSR";
+import Paragraph from "./ui/Paragraph";
+import { types } from "constants/resourceTypes";
+
+const ResourceDataView = ({
+  type,
+}: {
+  type: "location" | "physical_item" | "external_link" | string;
+}) => {
+  const { colorScheme } = usePreferences();
+  let style;
+
+  if (type === "location")
+    style = {
+      backgroundColor:
+        colorScheme === "light" ? colors.indigo[100] : colors.indigo[800],
+      borderColor: colors.indigo[500],
+    };
+  if (type === "physical_item")
+    style = {
+      backgroundColor:
+        colorScheme === "light" ? colors.emerald[100] : colors.emerald[800],
+      borderColor: colors.emerald[500],
+    };
+  if (type === "external_link")
+    style = {
+      backgroundColor:
+        colorScheme === "light" ? colors.amber[100] : colors.amber[800],
+      borderColor: colors.amber[500],
+    };
+  return (
+    <View
+      style={{
+        ...styles.image,
+        ...style,
+        alignItems: "center",
+        justifyContent: "center",
+        flexDirection: "column",
+      }}
+    >
+      {type === "location" && (
+        <LocationMarkerIcon
+          size={32}
+          color={
+            colorScheme === "light" ? colors.indigo[700] : colors.indigo[300]
+          }
+        />
+      )}
+      {type === "physical_item" && (
+        <HandIcon
+          size={32}
+          color={
+            colorScheme === "light" ? colors.emerald[700] : colors.emerald[300]
+          }
+        />
+      )}
+      {type === "external_link" && (
+        <ExternalLinkIcon
+          size={32}
+          color={
+            colorScheme === "light" ? colors.amber[700] : colors.amber[300]
+          }
+        />
+      )}
+      <Text style={{ fontFamily:"Spectral" }}>
+        {types.find((r) => r.value === type)?.label}
+      </Text>
+    </View>
+  );
+};
 
 interface Props extends Resource {
   onPress: (slug: string) => void;
@@ -144,7 +215,7 @@ export const ResourceHome = (props: Props) => {
         <Surface style={styles.container}>
           <View style={styles.leftColumn}>
             <Avatar.Image
-              style={{ marginTop: -5 }}
+              style={{ marginTop: 10 }}
               source={{ uri: HOST_URL + props.owner.photoURL }}
               size={48}
             />
@@ -155,16 +226,12 @@ export const ResourceHome = (props: Props) => {
                 {props.data.attributes.properties.name}
               </Title>
             </View>
-            <Text style={{ color: contentColor }}>{props.description}</Text>
-            {/* <Image
-            source={{ uri: props.image }}
-            style={[
-              styles.image,
-              {
-                borderColor: imageBorderColor,
-              },
-            ]}
-          /> */}
+            <Paragraph
+              style={{ color: contentColor, lineHeight: -5, fontSize: 15 }}
+            >
+              {props.description}
+            </Paragraph>
+            <ResourceDataView type={props.data.type} />
             <View style={styles.bottomRow}>
               <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <Caption style={styles.handle}>{props.owner.fullName}</Caption>
@@ -186,7 +253,7 @@ export const ResourceHome = (props: Props) => {
                   hitSlop={{ top: 10, bottom: 10 }}
                 >
                   <View style={styles.iconContainer}>
-                    <ChatAlt2Icon size={14} color={iconColor} />
+                    <ChatIcon size={14} color={iconColor} />
                     <Caption style={styles.iconDescription}>
                       {props.comments?.length || 0}
                     </Caption>
@@ -226,7 +293,7 @@ const styles = StyleSheet.create({
   leftColumn: {
     width: 72,
     alignItems: "center",
-    justifyContent: "center",
+    // justifyContent: "center",
   },
   rightColumn: {
     flex: 1,
@@ -243,10 +310,10 @@ const styles = StyleSheet.create({
   },
   image: {
     borderWidth: StyleSheet.hairlineWidth,
-    marginTop: 10,
+    marginTop: -5,
     borderRadius: 20,
     width: "100%",
-    height: 150,
+    height: 100,
   },
   bottomRow: {
     paddingVertical: 10,
