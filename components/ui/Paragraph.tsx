@@ -5,11 +5,22 @@ import { usePreferences } from "hooks/usePreferences";
 
 type Props = {
   children: React.ReactNode;
+  style?: any;
 };
 
-const Paragraph = ({ children }: Props) => {
+const Paragraph = ({ children, style = null }: Props) => {
   const { colorScheme } = usePreferences();
-  return <Text style={{...styles.text, color: theme[colorScheme].colors.secondary}}>{children}</Text>;
+  return (
+    <Text
+      style={{
+        ...styles.text,
+        color: theme[colorScheme].colors.secondary,
+        ...(style || null),
+      }}
+    >
+      {children}
+    </Text>
+  );
 };
 
 const styles = StyleSheet.create({

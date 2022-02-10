@@ -1,14 +1,10 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { DrawerItem, DrawerContentScrollView } from "@react-navigation/drawer";
+import { Avatar, Title, Drawer, Switch } from "react-native-paper";
 import {
-  Avatar,
-  Title,
-  Drawer,
-  Switch,
-} from "react-native-paper";
-import {
-  ChatIcon,
+  ChatAlt2Icon,
+  HomeIcon,
   MoonIcon,
   ShoppingBagIcon,
   SunIcon,
@@ -51,27 +47,45 @@ export function DrawerContent({ navigation, ...props }: any) {
         </View>
         <Drawer.Section style={styles.drawerSection}>
           <DrawerItem
-            icon={() => <UserCircleIcon />}
+            icon={() => (
+              <UserCircleIcon color={theme[colorScheme].colors.primary} />
+            )}
             label="Profil"
-            onPress={() => {}}
-            labelStyle={textStyle}
-/>
-          <DrawerItem
-            icon={() => <ChatIcon />}
-            label="Salons"
-            onPress={() => {}}
+            onPress={() => navigation.navigate("Profil")}
             labelStyle={textStyle}
           />
           <DrawerItem
-            icon={() => <ShoppingBagIcon />}
+            icon={() => (
+              <HomeIcon color={theme[colorScheme].colors.primary} />
+            )}
+            label="Accueil"
+            onPress={() => navigation.navigate("Accueil")}
+            labelStyle={textStyle}
+          />
+          <DrawerItem
+            icon={() => (
+              <ShoppingBagIcon color={theme[colorScheme].colors.primary} />
+            )}
             label="Catalogue"
-            onPress={() => {}}
+            onPress={() => navigation.navigate("Catalogue")}
+            labelStyle={textStyle}
+          />
+          <DrawerItem
+            icon={() => <ChatAlt2Icon color={theme[colorScheme].colors.primary} />}
+            label="Salons"
+            onPress={() => navigation.navigate("Salons")}
             labelStyle={textStyle}
           />
         </Drawer.Section>
         <Drawer.Section title="Préferences">
           <Drawer.Item
-            icon={() => (colorScheme === "dark" ? <SunIcon /> : <MoonIcon />)}
+            icon={() =>
+              colorScheme === "dark" ? (
+                <SunIcon color={theme[colorScheme].colors.primary} />
+              ) : (
+                <MoonIcon color={theme[colorScheme].colors.primary} />
+              )
+            }
             label="Dark Mode"
             onPress={toggleColorScheme}
             active={colorScheme === "dark"}
@@ -79,6 +93,7 @@ export function DrawerContent({ navigation, ...props }: any) {
               <Switch
                 value={colorScheme === "dark"}
                 onChange={() => toggleColorScheme()}
+                trackColor={{ true: theme[colorScheme].colors.primary }}
               />
             )}
           />
@@ -86,7 +101,9 @@ export function DrawerContent({ navigation, ...props }: any) {
 
         <Drawer.Section title="Déconnexion">
           <DrawerItem
-            icon={() => <UserRemoveIcon />}
+            icon={() => (
+              <UserRemoveIcon color={theme[colorScheme].colors.primary} />
+            )}
             label="Se déconnecter"
             onPress={() => signOut()}
             labelStyle={textStyle}

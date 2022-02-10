@@ -1,22 +1,27 @@
 import React from "react";
 import color from "color";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
-import {Portal, FAB } from "react-native-paper";
+import { Portal, FAB } from "react-native-paper";
 import { useSafeArea } from "react-native-safe-area-context";
-import { useIsFocused, RouteProp } from "@react-navigation/native";
+import { useIsFocused } from "@react-navigation/native";
 
 import overlay from "libs/overlay";
 import { ResourcesScreen } from "pages/resource/all";
 import { HomeScreen } from "pages/Home";
-import { StackNavigatorParamlist } from "types/StackNavigatorParamList";
 import { ChannelList } from "components/Channel/List";
 import { theme } from "core/theme";
 import { usePreferences } from "hooks/usePreferences";
+import { Navigation } from "types/Navigation";
+import {
+  ChatAlt2Icon,
+  HomeIcon,
+  ShoppingBagIcon,
+} from "react-native-heroicons/outline";
 
 const Tab = createMaterialBottomTabNavigator();
 
 type Props = {
-  route: RouteProp<StackNavigatorParamlist, "FeedList">;
+  navigation: Navigation;
 };
 
 export const BottomTabNavigator = (props: Props) => {
@@ -32,35 +37,45 @@ export const BottomTabNavigator = (props: Props) => {
   return (
     <React.Fragment>
       <Tab.Navigator
-        initialRouteName="Home"
+        barStyle={{
+          backgroundColor: tabBarColor,
+          elevation: 0,
+        }}
+        initialRouteName="Accueil"
         backBehavior="initialRoute"
         shifting={true}
         activeColor={theme[colorScheme].colors.primary}
-        inactiveColor={color(theme[colorScheme].colors.text).alpha(0.6).rgb().string()}
+        inactiveColor={color(theme[colorScheme].colors.text)
+          .alpha(0.6)
+          .rgb()
+          .string()}
         sceneAnimationEnabled={false}
+        style={{
+          elevation: 0,
+        }}
       >
         <Tab.Screen
-          name="Home"
+          name="Accueil"
           component={HomeScreen}
           options={{
-            tabBarIcon: "home-account",
+            tabBarIcon: (props) => <HomeIcon color={props.color} />,
             tabBarColor,
           }}
         />
         <Tab.Screen
-          name="Catalog"
+          name="Catalogue"
           component={ResourcesScreen}
           options={{
-            tabBarIcon: "home-account",
+            tabBarIcon: (props) => <ShoppingBagIcon color={props.color} />,
             tabBarColor,
           }}
         />
 
         <Tab.Screen
-          name="Channel"
+          name="Salons"
           component={ChannelList}
           options={{
-            tabBarIcon: "message-text-outline",
+            tabBarIcon: (props) => <ChatAlt2Icon color={props.color} />,
             tabBarColor,
           }}
         />
@@ -73,6 +88,8 @@ export const BottomTabNavigator = (props: Props) => {
             position: "absolute",
             bottom: safeArea.bottom + 65,
             right: 16,
+            borderRadius: 16,
+            elevation: 1,
           }}
           color="white"
           theme={{
@@ -80,7 +97,7 @@ export const BottomTabNavigator = (props: Props) => {
               accent: theme[colorScheme].colors.primary,
             },
           }}
-          onPress={() => {}}
+          onPress={() => props.navigation.navigate("ResourceCreate")}
         />
       </Portal>
     </React.Fragment>

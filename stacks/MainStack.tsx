@@ -15,6 +15,8 @@ import { useAuth } from "hooks/useAuth";
 import { HOST_URL } from "@env";
 import { theme } from "core/theme";
 import { usePreferences } from "hooks/usePreferences";
+import { ResourceCreate } from "pages/resource/Create";
+import { MenuIcon } from "react-native-heroicons/outline";
 
 const Stack = createStackNavigator();
 
@@ -28,14 +30,17 @@ export const StackNavigator = () => {
       initialRouteName="Tabs"
       screenOptions={{
         header: ({ options, navigation, previous }: any) => {
-          // console.log(navigation.getState())
-
           const title =
             options.headerTitle !== undefined
               ? options.headerTitle
               : options.title !== undefined
               ? options.title
-              : navigation?.route?.name || "f";
+              : navigation?.route?.name || "";
+
+          const subtitle =
+            (options.subtitle !== undefined
+              ? options.subtitle
+              : navigation?.route?.name) || undefined;
 
           return (
             <Appbar.Header
@@ -43,6 +48,7 @@ export const StackNavigator = () => {
               style={{
                 backgroundColor: theme[colorScheme].colors.surface,
                 elevation: 0,
+                justifyContent: "flex-start",
               }}
             >
               {previous ? (
@@ -59,21 +65,26 @@ export const StackNavigator = () => {
                     ).openDrawer();
                   }}
                 >
-                  <Avatar.Image
-                    children={undefined}
-                    size={40}
-                    source={{
-                      uri: HOST_URL + user.data.photoURL,
-                    }}
+                  <MenuIcon
+                    size={24}
+                    color={
+                      theme[colorScheme === "dark" ? "light" : "dark"].colors
+                        .surface
+                    }
                   />
                 </TouchableOpacity>
               )}
               <Appbar.Content
                 title={title}
+                subtitle={subtitle}
                 titleStyle={{
                   fontSize: 18,
                   fontWeight: "bold",
-                  color: theme[colorScheme].colors.primary,
+                  textTransform: "uppercase",
+                  fontFamily: "Marianne-ExtraBold",
+                  color:
+                    theme[colorScheme === "dark" ? "light" : "dark"].colors
+                      .surface,
                 }}
               />
             </Appbar.Header>
@@ -85,21 +96,29 @@ export const StackNavigator = () => {
         name="Tabs"
         component={BottomTabNavigator}
         options={({ route }) => {
-          const routeName = getFocusedRouteNameFromRoute(route) ?? "Feed";
+          const routeName = getFocusedRouteNameFromRoute(route) ?? "Accueil";
           return { headerTitle: routeName };
         }}
       />
       <Stack.Screen
         name="Details"
         component={ResourceSlug}
-        options={{ headerTitle: "Tweet" }}
+        options={{ headerTitle: "Ressource" }}
+      />
+
+      <Stack.Screen
+        name="ResourceCreate"
+        component={ResourceCreate}
+        options={{ headerTitle: "Créer une ressource" }}
       />
       <Stack.Screen
         name="ChannelSlug"
         component={ChannelSlug}
         options={({ route }) => {
           return {
-            headerTitle: (route?.params?.title as unknown as string) || "Home",
+            headerTitle:
+              ((route?.params as unknown as { title?: string })
+                ?.title as unknown as string) || "Salons",
           };
         }}
       />
