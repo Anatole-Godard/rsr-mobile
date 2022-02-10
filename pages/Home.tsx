@@ -29,7 +29,12 @@ export const HomeScreen = (props: Props) => {
     setLoading(true);
     const res = await fetchRSR(API_URL + "/resource", user);
     const body = await res.json();
-    setResources(body.data.attributes);
+    setResources(
+      body.data.attributes.sort(
+        (a: { createdAt: string }, b: { createdAt: string }) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )
+    );
     setLoading(false);
   };
 

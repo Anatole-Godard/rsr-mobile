@@ -93,7 +93,7 @@ const ResourceDataView = ({
           }
         />
       )}
-      <Text style={{ fontFamily:"Spectral" }}>
+      <Text style={{ fontFamily: "Spectral" }}>
         {types.find((r) => r.value === type)?.label}
       </Text>
     </View>
@@ -238,12 +238,24 @@ export const ResourceHome = (props: Props) => {
                 <Caption style={[styles.handle, styles.dot]}>
                   {"\u2B24"}
                 </Caption>
-                <Caption>
+                <Caption style={styles.handle}>
                   {formatDistance(
                     new Date(props.createdAt.toString()),
                     new Date(),
                     { locale: fr }
                   )}
+                </Caption>
+                <Caption style={[styles.handle, styles.dot]}>
+                  {"\u2B24"}
+                </Caption>
+                <Caption
+                  style={{
+                    color: props.validated
+                      ? colors.green[700]
+                      : colors.gray[500],
+                  }}
+                >
+                  {props.validated ? "validée" : "en attente"}
                 </Caption>
               </View>
 

@@ -18,7 +18,6 @@ import { PreferencesProvider } from "hooks/usePreferences";
 import { theme } from "core/theme";
 import { ToastProvider } from "react-native-paper-toast";
 
-
 /// Main
 export default function App() {
   const _colorScheme = useColorScheme();
@@ -29,6 +28,7 @@ export default function App() {
 
   let [fontsLoaded] = useFonts({
     Marianne: require("./assets/fonts/Marianne-Regular.ttf"),
+    "Marianne-Bold": require("./assets/fonts/Marianne-Bold.ttf"),
     "Marianne-ExtraBold": require("./assets/fonts/Marianne-ExtraBold.ttf"),
     Spectral: require("./assets/fonts/Spectral-Regular.ttf"),
   });
@@ -42,18 +42,18 @@ export default function App() {
       <NavigationContainer
       // theme={navigationTheme}
       >
-        <AuthProvider>
+        <PaperProvider theme={theme[colorScheme]}>
           <PreferencesProvider
             colorScheme={colorScheme}
             setColorScheme={setColorScheme}
           >
-            <PaperProvider theme={theme[colorScheme]}>
+            <AuthProvider>
               <ToastProvider>
                 <RootNavigator />
               </ToastProvider>
-            </PaperProvider>
+            </AuthProvider>
           </PreferencesProvider>
-        </AuthProvider>
+        </PaperProvider>
       </NavigationContainer>
     </SafeAreaProvider>
   );
