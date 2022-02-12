@@ -14,7 +14,7 @@ const Button = ({ mode, style, children, ...props }: Props) => {
         styles.button,
         mode === "outlined"
           ? {
-              backgroundColor: theme[colorScheme].colors.surface,
+              backgroundColor: theme[colorScheme].colors.background,
               borderColor: theme[colorScheme].colors.primary,
             }
           : { backgroundColor: theme[colorScheme].colors.primary },

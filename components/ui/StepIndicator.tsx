@@ -10,7 +10,6 @@ interface StepIndicatorProps {
     name: string;
   };
   style?: ViewStyle;
-  order: any;
   progress: any[];
 }
 
@@ -29,20 +28,20 @@ export function StepIndicator(props: StepIndicatorProps) {
           <Text
             style={{
               color: theme.colors.primary,
-              fontSize: props.order ? 14 : 18,
+              fontSize:  18,
               fontWeight: "bold",
             }}
           >
             {props.steps.current}
           </Text>
-          <Text style={{ fontSize: props.order ? 14 : 18, color: "#777" }}>
+          <Text style={{ fontSize: 18, color: "#777" }}>
             {" "}
             sur {props.steps.total} :{" "}
           </Text>
           <Text
             style={{
               color: theme.colors.primary,
-              fontSize: props.order ? 14 : 18,
+              fontSize: 18,
               fontWeight: "bold",
             }}
           >

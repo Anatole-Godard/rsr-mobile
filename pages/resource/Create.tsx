@@ -5,20 +5,30 @@ import { types } from "constants/resourceTypes";
 import { theme } from "core/theme";
 import { nameValidator } from "core/validators";
 import { usePreferences } from "hooks/usePreferences";
-import React, { useState } from "react";
-import { View, StyleSheet } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, StyleSheet, Image, Dimensions } from "react-native";
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
   BookOpenIcon,
   CheckIcon,
+  CurrencyDollarIcon,
   ExternalLinkIcon,
   HandIcon,
   LocationMarkerIcon,
+  PhotographIcon,
   TagIcon,
+  TrashIcon,
+  XIcon,
 } from "react-native-heroicons/outline";
-import { RadioButton, Text } from "react-native-paper";
+import { IconButton, RadioButton, Text } from "react-native-paper";
 import { Navigation } from "types/Navigation";
+
+import * as ImagePicker from "expo-image-picker";
+import { Resource } from "types/Resource";
+
+import MapInput, { MapInputVariants } from "react-native-map-input";
+import { fetchXHR } from "utils/fetchXHR";
 
 interface Props {
   navigation: Navigation;
@@ -33,18 +43,122 @@ export const ResourceCreate = (props: Props) => {
   const [description, setDescription] = useState({ value: "", error: "" });
   const [type, setType] = useState(types[0].value);
 
-  const _onNextStep = async () => {
-    const nameError = nameValidator(name.value);
+  const [price, setPrice] = useState({ value: "0.00", error: "" });
+  const [category, setCategory] = useState({ value: "", error: "" });
 
-    if (nameError) {
-      setName({ ...name, error: nameError });
-      return;
+  const [image, setImage] = useState<string | null>(null);
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+      setImage(result.uri);
     }
-    setStep(1);
   };
 
-  const _previousStep = () => setStep(0);
-  const _onSubmit = async () => {};
+  const [position, setPosition] = useState<{
+    latitude: number;
+    longitude: number;
+    latitudeDelta: number;
+    longitudeDelta: number;
+  }>({
+    latitude: 49.441147,
+    longitude: 1.089014,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  });
+  const [location, setLocation] = useState<string | null>(null);
+
+  const [externalLink, setExternalLink] = useState({ value: "", error: "" });
+
+  const _onNextStep = async () => {
+    if (step === 0) {
+      const nameError = nameValidator(name.value);
+
+      if (nameError) {
+        setName({ ...name, error: nameError });
+        return;
+      }
+      setStep((old) => old + 1);
+    } else if (step === 1) {
+      setStep((old) => old + 1);
+    }
+  };
+
+  const _previousStep = () => setStep((old) => old - 1);
+  const _onSubmit = async () => {
+    console.log(formatResource());
+  };
+
+  const formatResource = () => {
+    let data: Resource["data"] = {
+      type: type,
+      attributes: {},
+    };
+    if (type === "physical_item") {
+      data.attributes = {
+        properties: {
+          name: name.value,
+          description: description.value,
+          price: parseFloat(price.value),
+          category: category.value,
+          image: null,
+        },
+      };
+    } else if (type === "location") {
+      data.attributes = {
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [position.latitude, position.longitude],
+        },
+        properties: {
+          name: name.value,
+          location,
+        },
+      };
+    } else if (type === "external_link") {
+      data.attributes = {
+        properties: {
+          name: name.value,
+          description: description.value,
+          externalLink: externalLink.value,
+          image: null,
+        },
+      };
+    }
+
+    return {
+      description: description.value,
+      // tags: tags.map((tag) => tag.value),
+      data,
+    };
+  };
+
+  useEffect(() => {
+    const fetchLocation = async () => {
+      const response = await fetchXHR(
+        "GET",
+        `https://api-adresse.data.gouv.fr/reverse/?lat=${position.latitude}&lon=${position.longitude}&format=json`
+      );
+      //   const body = await response.json();
+      let json = JSON.parse(response as string);
+      if (json?.features[0] != null)
+        setLocation(json.features[0]?.properties?.label);
+      else setLocation("");
+    };
+
+    const delayDebounce = setTimeout(() => {
+      if (position != null) fetchLocation();
+    }, 2000);
+
+    return () => clearTimeout(delayDebounce);
+  }, [position]);
 
   return (
     <View
@@ -57,12 +171,25 @@ export const ResourceCreate = (props: Props) => {
         style={{ marginBottom: 20 }}
         steps={{
           current: step + 1,
-          total: 2,
-          name: ["Définir la ressource", "Détailler la ressource"][step],
+          total: 3,
+          name: [
+            "Définir la ressource",
+            "Détailler la ressource",
+            "Confirmation",
+          ][step],
         }}
         progress={[
-          step === 0 ? { value: 0, indeterminate: true } : { value: 1 },
-          step === 0 ? { value: 0 } : { value: 0, indeterminate: true },
+          ...(step === 0
+            ? [{ value: 0, indeterminate: true }]
+            : [{ value: 1 }]),
+          ...(step === 1
+            ? [{ value: 0, indeterminate: true }]
+            : step !== 2
+            ? [{ value: 0 }]
+            : [{ value: 1 }]),
+          ...(step === 2
+            ? [{ value: 0, indeterminate: true }]
+            : [{ value: 0 }]),
         ]}
       />
 
@@ -77,7 +204,6 @@ export const ResourceCreate = (props: Props) => {
             style={{
               ...styles.separator,
               borderColor: theme[colorScheme].colors.secondary,
-
               marginTop: 0,
               // ...styles.topSeparator,
             }}
@@ -174,15 +300,166 @@ export const ResourceCreate = (props: Props) => {
           <View
             style={{
               ...styles.separator,
-              ...styles.topSeparator,
+              borderColor: theme[colorScheme].colors.secondary,
+              marginTop: 0,
             }}
           >
             <BookOpenIcon
               size={24}
               color={theme[colorScheme].colors.secondary}
             />
-            <Text style={styles.label}>Détails de la ressource</Text>
+            <Text style={styles.label}>
+              Détails de la ressource :{" "}
+              {types.find((t) => t.value === type)?.label}
+            </Text>
           </View>
+
+          {type === "physical_item" && (
+            <View>
+              <Button
+                mode="outlined"
+                onPress={pickImage}
+                icon={(props) => (
+                  <PhotographIcon size={props.size} color={props.color} />
+                )}
+              >
+                Prendre une photo
+              </Button>
+              {image && (
+                <View
+                  style={{
+                    width: "100%",
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Image
+                    source={{ uri: image }}
+                    style={{ width: "80%", height: 96, borderRadius: 4 }}
+                  />
+                  <IconButton
+                    onPress={() => setImage(null)}
+                    size={36}
+                    icon={(props) => (
+                      <TrashIcon size={props.size} color={props.color} />
+                    )}
+                  />
+                </View>
+              )}
+
+              <TextInput
+                label="Prix de l'objet"
+                returnKeyType="next"
+                value={price.value}
+                onChangeText={(text) => setPrice({ value: text, error: "" })}
+                error={!!price.error}
+                errorText={price.error}
+                style={styles.input}
+                // autoCapitalize="none"
+                left={(props: {
+                  size: number | undefined;
+                  color: Color | undefined;
+                }) => (
+                  <CurrencyDollarIcon size={props.size} color={props.color} />
+                )}
+              />
+              <TextInput
+                label="Catégorie de l'objet"
+                returnKeyType="next"
+                value={category.value}
+                onChangeText={(text) => setCategory({ value: text, error: "" })}
+                error={!!category.error}
+                errorText={category.error}
+                style={styles.input}
+              />
+            </View>
+          )}
+          {type === "location" && (
+            <View>
+              <MapInput
+                region={position}
+                onChange={(coordinates) =>
+                  setPosition({
+                    ...position,
+                    longitude: coordinates.longitude,
+                    latitude: coordinates.latitude,
+                  })
+                }
+                variant={MapInputVariants.BY_MARKER}
+                style={{
+                  height: Dimensions.get("window").height / 2.75,
+                  borderRadius: 8,
+                }}
+                zoomEnabled
+              />
+              <TextInput
+                label="Adresse"
+                returnKeyType="next"
+                value={location?.toString()}
+                onChangeText={(text) => setLocation(text)}
+                style={styles.input}
+              />
+            </View>
+          )}
+          {type === "external_link" && (
+            <View>
+              <Button
+                mode="outlined"
+                onPress={pickImage}
+                icon={(props) => (
+                  <PhotographIcon size={props.size} color={props.color} />
+                )}
+              >
+                Prendre une photo
+              </Button>
+              {image && (
+                <View
+                  style={{
+                    width: "100%",
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Image
+                    source={{ uri: image }}
+                    style={{ width: "80%", height: 96, borderRadius: 4 }}
+                  />
+                  <IconButton
+                    onPress={() => setImage(null)}
+                    size={36}
+                    icon={(props) => (
+                      <TrashIcon size={props.size} color={props.color} />
+                    )}
+                  />
+                </View>
+              )}
+
+              <TextInput
+                label="Lien externe"
+                returnKeyType="next"
+                value={externalLink.value}
+                onChangeText={(text) =>
+                  setExternalLink({ value: text, error: "" })
+                }
+                error={!!externalLink.error}
+                errorText={externalLink.error}
+                style={styles.input}
+              />
+            </View>
+          )}
+        </View>
+      )}
+
+      {step === 2 && (
+        <View
+          style={{
+            ...styles.container,
+            backgroundColor: theme[colorScheme].colors.background,
+          }}
+        >
+          <Text>{JSON.stringify(formatResource(), undefined, 1)}</Text>
         </View>
       )}
 
@@ -199,6 +476,29 @@ export const ResourceCreate = (props: Props) => {
       )}
 
       {step === 1 && (
+        <View>
+          <Button
+            icon={(props) => (
+              <ArrowLeftIcon size={props.size} color={props.color} />
+            )}
+            mode="outlined"
+            onPress={_previousStep}
+          >
+            Précédent
+          </Button>
+          <Button
+            icon={(props) => (
+              <ArrowRightIcon size={props.size} color={props.color} />
+            )}
+            mode="contained"
+            onPress={_onNextStep}
+          >
+            Suivant
+          </Button>
+        </View>
+      )}
+
+      {step === 2 && (
         <View>
           <Button
             icon={(props) => (
@@ -229,7 +529,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     justifyContent: "space-between",
-    paddingBottom: 64,
+    paddingBottom: 48,
     padding: 20,
   },
   container: {

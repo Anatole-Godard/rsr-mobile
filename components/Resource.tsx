@@ -133,7 +133,6 @@ export const ResourceHome = (props: Props) => {
         user.session
       );
       const body = await res.json();
-      console.log(res.headers);
       if (res.ok && body.data) {
         toaster.show({
           message: `Succès`,
