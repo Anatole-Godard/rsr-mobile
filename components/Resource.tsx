@@ -251,7 +251,7 @@ export const ResourceHome = (props: Props) => {
                   style={{
                     color: props.validated
                       ? colors.green[700]
-                      : colors.gray[500],
+                      : colors.trueGray[500],
                   }}
                 >
                   {props.validated ? "validée" : "en attente"}

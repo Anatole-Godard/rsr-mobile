@@ -62,6 +62,7 @@ const LoginScreen = ({ navigation }: Props) => {
         autoCompleteType="email"
         textContentType="emailAddress"
         keyboardType="email-address"
+        autoCorrect={false}
       />
 
       <TextInput

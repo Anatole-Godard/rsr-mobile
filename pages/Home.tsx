@@ -37,6 +37,7 @@ export const HomeScreen = (props: Props) => {
 
   const fetchData = async () => {
     setLoading(true);
+    console.log(API_URL);
     const res = await fetchRSR(API_URL + "/resource", user);
     const body = await res.json();
     setResources(
@@ -69,7 +70,7 @@ export const HomeScreen = (props: Props) => {
         // Just click the one you like, place that file in the 'assets' folder to the left, and replace the above 'require' statement
       />
       <Paragraph style={{ marginTop: 16 }}>
-        Oh! Il n'y a pas encore de ressources de disponible...
+        Oh! Il n'y a pas encore de ressources disponibles...
       </Paragraph>
       <Paragraph style={{ marginTop: -12, fontSize: 12 }}>
         Peut-être avez-vous un problème de réseau ?

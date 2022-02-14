@@ -39,7 +39,9 @@
     "react-native-collapsible": "^1.6.0",
     "react-native-dotenv": "^3.3.1",
     "react-native-elegant-header": "^0.1.0",
+    "react-native-exploding-heart": "^1.0.0",
     "react-native-gesture-handler": "~1.10.2",
+    "react-native-get-random-values": "^1.7.2",
     "react-native-gorgeous-header": "^0.1.0",
     "react-native-heroicons": "^2.0.1",
     "react-native-map-input": "^0.3.1",
@@ -55,15 +57,18 @@
     "react-native-status-bar-height": "^2.6.0",
     "react-native-svg": "^12.1.1",
     "react-native-tags-input": "^1.0.10",
+    "react-native-view-more-text": "^2.1.0",
     "react-native-web": "~0.13.12",
     "socket.io": "^4.4.0",
-    "socket.io-client": "^4.4.0"
+    "socket.io-client": "^4.4.0",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
     "@types/color": "^3.0.2",
     "@types/react": "~16.9.35",
     "@types/react-native": "~0.63.2",
+    "@types/uuid": "^8.3.4",
     "babel-plugin-module-resolver": "^4.1.0",
     "concurrently": "^6.3.0",
     "typescript": "~4.0.0"

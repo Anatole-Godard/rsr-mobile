@@ -29,15 +29,68 @@ import { Resource } from "types/Resource";
 
 import MapInput, { MapInputVariants } from "react-native-map-input";
 import { fetchXHR } from "utils/fetchXHR";
+import { DetailedResource } from "components/Resources/DetailledResource";
+import { useAuth } from "hooks/useAuth";
 
 interface Props {
   navigation: Navigation;
 }
 
 export const ResourceCreate = (props: Props) => {
+  const { user } = useAuth();
   const { colorScheme } = usePreferences();
 
   const [step, setStep] = useState<number>(0);
+  const [stepIndicator, setStepIndicator] = useState({
+    progress: [{ value: 0, indeterminate: true }, { value: 0 }, { value: 0 }],
+    steps: {
+      current: 1,
+      total: 3,
+      name: "Définir la ressource",
+    },
+  });
+
+  useEffect(() => {
+    if (step === 0)
+      setStepIndicator({
+        progress: [
+          { value: 0, indeterminate: true },
+          { value: 0 },
+          { value: 0 },
+        ],
+        steps: {
+          current: 1,
+          total: 3,
+          name: "Définir la ressource",
+        },
+      });
+    if (step === 1)
+      setStepIndicator({
+        progress: [
+          { value: 1 },
+          { value: 0, indeterminate: true },
+          { value: 0 },
+        ],
+        steps: {
+          current: 2,
+          total: 3,
+          name: "Détailler la ressource",
+        },
+      });
+    if (step === 2)
+      setStepIndicator({
+        progress: [
+          { value: 1 },
+          { value: 1 },
+          { value: 0, indeterminate: true },
+        ],
+        steps: {
+          current: 3,
+          total: 3,
+          name: "Confirmer",
+        },
+      });
+  }, [step]);
 
   const [name, setName] = useState({ value: "", error: "" });
   const [description, setDescription] = useState({ value: "", error: "" });
@@ -169,28 +222,8 @@ export const ResourceCreate = (props: Props) => {
     >
       <StepIndicator
         style={{ marginBottom: 20 }}
-        steps={{
-          current: step + 1,
-          total: 3,
-          name: [
-            "Définir la ressource",
-            "Détailler la ressource",
-            "Confirmation",
-          ][step],
-        }}
-        progress={[
-          ...(step === 0
-            ? [{ value: 0, indeterminate: true }]
-            : [{ value: 1 }]),
-          ...(step === 1
-            ? [{ value: 0, indeterminate: true }]
-            : step !== 2
-            ? [{ value: 0 }]
-            : [{ value: 1 }]),
-          ...(step === 2
-            ? [{ value: 0, indeterminate: true }]
-            : [{ value: 0 }]),
-        ]}
+        steps={stepIndicator.steps}
+        progress={stepIndicator.progress}
       />
 
       {step === 0 && (
@@ -218,18 +251,17 @@ export const ResourceCreate = (props: Props) => {
             onChangeText={(text) => setName({ value: text, error: "" })}
             error={!!name.error}
             errorText={name.error}
-            style={styles.input}
             // autoCapitalize="none"
           />
           <TextInput
             label="Description de la ressource"
             returnKeyType="next"
+            dense
             value={description.value}
             onChangeText={(text) => setDescription({ value: text, error: "" })}
             error={!!description.error}
             errorText={description.error}
             style={{
-              ...styles.input,
               height: 48 * 2,
               justifyContent: "flex-start",
             }}
@@ -456,10 +488,33 @@ export const ResourceCreate = (props: Props) => {
         <View
           style={{
             ...styles.container,
+            elevation: 0,
+            borderRadius: 8,
             backgroundColor: theme[colorScheme].colors.background,
           }}
         >
-          <Text>{JSON.stringify(formatResource(), undefined, 1)}</Text>
+          <DetailedResource
+            navigation={{
+              navigate: function (scene: string): void {
+                throw new Error("Function not implemented.");
+              },
+              push: function (scene: string, params: any): void {
+                throw new Error("Function not implemented.");
+              },
+            }}
+            slug={""}
+            owner={{
+              fullName: user.data.fullName,
+              photoURL: user.data.photoURL,
+              uid: user.data.uid,
+            }}
+            createdAt={new Date().toISOString()}
+            likes={[]}
+            comments={[]}
+            validated={false}
+            {...formatResource()}
+            page={false}
+          />
         </View>
       )}
 

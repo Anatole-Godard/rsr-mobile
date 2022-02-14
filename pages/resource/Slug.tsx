@@ -1,9 +1,12 @@
+import { DetailedResource } from "components/Resources/DetailledResource";
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
+import { useTheme } from "react-native-paper";
+import { Navigation } from "types/Navigation";
 import { Resource } from "types/Resource";
 
 interface Props {
-  navigate: (route: string) => void;
+  navigation: Navigation;
   route: {
     params: Resource;
     name: string;
@@ -11,9 +14,16 @@ interface Props {
 }
 
 export const ResourceSlug = (props: Props) => {
+  const theme = useTheme();
   return (
-    <View style={styles.container}>
-      <Text>{JSON.stringify(props, undefined, 1)}</Text>
+    <View
+      style={{ ...styles.container, backgroundColor: theme.colors.surface }}
+    >
+      <DetailedResource
+        page
+        {...props.route.params}
+        navigation={props.navigation}
+      />
     </View>
   );
 };
@@ -21,7 +31,5 @@ export const ResourceSlug = (props: Props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
   },
 });

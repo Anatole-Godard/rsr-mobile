@@ -1,4 +1,6 @@
-import React from "react";
+import React, { Fragment } from "react";
+import "react-native-get-random-values";
+
 import { View, Dimensions, ViewStyle } from "react-native";
 import { ProgressBar, useTheme, Text } from "react-native-paper";
 
@@ -28,7 +30,7 @@ export function StepIndicator(props: StepIndicatorProps) {
           <Text
             style={{
               color: theme.colors.primary,
-              fontSize:  18,
+              fontSize: 18,
               fontWeight: "bold",
             }}
           >
@@ -68,19 +70,20 @@ export function StepIndicator(props: StepIndicatorProps) {
             key: number
           ) => {
             return (
-              <ProgressBar
-                key={key}
-                progress={el.value}
-                style={{
-                  width:
-                    Dimensions.get("window").width /
-                    (props.progress.length * 1.14),
-                  marginRight: 5,
-                  ...el.style,
-                }}
-                indeterminate={el.indeterminate}
-                color={theme.colors.primary}
-              />
+              <Fragment key={"progress" + key}>
+                <ProgressBar
+                  progress={el.value}
+                  style={{
+                    width:
+                      Dimensions.get("window").width /
+                      (props.progress.length * 1.14),
+                    marginRight: 5,
+                    ...el.style,
+                  }}
+                  indeterminate={el.indeterminate}
+                  color={theme.colors.primary}
+                />
+              </Fragment>
             );
           }
         )}
