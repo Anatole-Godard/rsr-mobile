@@ -2,13 +2,24 @@ import { theme } from "core/theme";
 import { useAuth } from "hooks/useAuth";
 import { usePreferences } from "hooks/usePreferences";
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, FlatList, RefreshControl } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  RefreshControl,
+  Dimensions,
+} from "react-native";
 import { fetchRSR } from "utils/fetchRSR";
 
-import { API_URL } from "@env";
 import { Resource } from "types/Resource";
 import { Navigation } from "types/Navigation";
 import { ResourceHome } from "components/Resource";
+
+import LottieView from "lottie-react-native";
+import Paragraph from "components/ui/Paragraph";
+
+import { API_URL } from "constants/env";
 
 type Props = {
   navigation: Navigation;
@@ -29,7 +40,12 @@ export const HomeScreen = (props: Props) => {
     setLoading(true);
     const res = await fetchRSR(API_URL + "/resource", user);
     const body = await res.json();
-    setResources(body.data.attributes);
+    setResources(
+      body.data.attributes.sort(
+        (a: { createdAt: string }, b: { createdAt: string }) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )
+    );
     setLoading(false);
   };
 
@@ -41,8 +57,30 @@ export const HomeScreen = (props: Props) => {
     return <ResourceHome {...item} />;
   }
 
+  const listEmptyComponent = () => (
+    <View style={styles.animationContainer}>
+      <LottieView
+        autoPlay={true}
+        style={{
+          width: 128,
+          height: 128,
+        }}
+        source={require("../assets/lotties/empty.json")}
+        // OR find more Lottie files @ https://lottiefiles.com/featured
+        // Just click the one you like, place that file in the 'assets' folder to the left, and replace the above 'require' statement
+      />
+      <Paragraph style={{ marginTop: 16 }}>
+        Oh! Il n'y a pas encore de ressources disponibles...
+      </Paragraph>
+      <Paragraph style={{ marginTop: -12, fontSize: 12 }}>
+        Peut-être avez-vous un problème de réseau ?
+      </Paragraph>
+    </View>
+  );
+
   return (
     <FlatList
+      ListEmptyComponent={listEmptyComponent}
       contentContainerStyle={{
         backgroundColor: theme[colorScheme].colors.background,
       }}
@@ -82,5 +120,11 @@ export const HomeScreen = (props: Props) => {
 const styles = StyleSheet.create({
   home: {
     flex: 1,
+  },
+  animationContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    height: Dimensions.get("window").height / 2,
   },
 });

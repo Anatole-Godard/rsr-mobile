@@ -13,7 +13,8 @@ import { Resource } from "types/Resource";
 import { usePreferences } from "hooks/usePreferences";
 import { colors, theme } from "core/theme";
 
-import { HOST_URL, API_URL } from "@env";
+import { API_URL, HOST_URL } from "constants/env";
+
 import {
   ChatIcon,
   ExternalLinkIcon,
@@ -93,7 +94,7 @@ const ResourceDataView = ({
           }
         />
       )}
-      <Text style={{ fontFamily:"Spectral" }}>
+      <Text style={{ fontFamily: "Spectral" }}>
         {types.find((r) => r.value === type)?.label}
       </Text>
     </View>
@@ -108,6 +109,8 @@ export const ResourceHome = (props: Props) => {
   const { colorScheme } = usePreferences();
   const { user } = useAuth();
   const toaster = useToast();
+
+  // console.log("resource", API_URL, HOST_URL);
 
   const [likes, setLikes] = useState(props.likes);
 
@@ -133,7 +136,6 @@ export const ResourceHome = (props: Props) => {
         user.session
       );
       const body = await res.json();
-      console.log(res.headers);
       if (res.ok && body.data) {
         toaster.show({
           message: `Succès`,
@@ -238,12 +240,24 @@ export const ResourceHome = (props: Props) => {
                 <Caption style={[styles.handle, styles.dot]}>
                   {"\u2B24"}
                 </Caption>
-                <Caption>
+                <Caption style={styles.handle}>
                   {formatDistance(
                     new Date(props.createdAt.toString()),
                     new Date(),
                     { locale: fr }
                   )}
+                </Caption>
+                <Caption style={[styles.handle, styles.dot]}>
+                  {"\u2B24"}
+                </Caption>
+                <Caption
+                  style={{
+                    color: props.validated
+                      ? colors.green[700]
+                      : colors.trueGray[500],
+                  }}
+                >
+                  {props.validated ? "validée" : "en attente"}
                 </Caption>
               </View>
 

@@ -14,7 +14,7 @@ const Button = ({ mode, style, children, ...props }: Props) => {
         styles.button,
         mode === "outlined"
           ? {
-              backgroundColor: theme[colorScheme].colors.surface,
+              backgroundColor: theme[colorScheme].colors.background,
               borderColor: theme[colorScheme].colors.primary,
             }
           : { backgroundColor: theme[colorScheme].colors.primary },
@@ -34,6 +34,7 @@ const styles = StyleSheet.create({
   button: {
     width: "100%",
     marginVertical: 10,
+    
   },
   text: {
     fontWeight: "bold",

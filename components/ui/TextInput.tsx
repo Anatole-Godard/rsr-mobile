@@ -1,25 +1,40 @@
 import React, { memo } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { StyleSheet, Text, KeyboardAvoidingView, Platform, View } from "react-native";
 import { TextInput as Input } from "react-native-paper";
-import { theme } from "core/theme";
+import { colors, theme } from "core/theme";
 import { usePreferences } from "hooks/usePreferences";
+import color from "color";
 
-type Props = React.ComponentProps<typeof Input> & { errorText?: string };
+type Props = React.ComponentProps<typeof Input> & {
+  errorText?: string;
+  style?: any;
+};
 
 const TextInput = ({ errorText, ...props }: Props) => {
   const { colorScheme } = usePreferences();
+  const borderColor = color(theme[colorScheme].colors.text)
+    .alpha(0.4)
+    .rgb()
+    .string();
+
   return (
     <View style={styles.container}>
       <Input
-        style={{
-          ...styles.input,
-          backgroundColor: theme[colorScheme].colors.surface,
-        }}
-        selectionColor={theme[colorScheme].colors.primary}
+        outlineColor="transparent"
+        activeOutlineColor={borderColor}
+        activeUnderlineColor="transparent"
         underlineColor="transparent"
         mode="outlined"
-        activeOutlineColor={theme[colorScheme].colors.primary}
         {...props}
+        style={{
+          ...props.style,
+          backgroundColor:
+            colorScheme === "light"
+              ? colors.trueGray[200]
+              : colors.trueGray[800],
+          borderRadius: 8,
+          height: 48,
+        }}
       />
       {errorText ? (
         <Text
@@ -41,6 +56,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     paddingHorizontal: 4,
     paddingTop: 4,
+    fontFamily: "Spectral",
   },
 });
 

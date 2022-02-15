@@ -5,7 +5,9 @@ import { AuthStack } from "stacks/AuthStack";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { API_URL } from "@env";
+import { API_URL } from "constants/env";
+
+
 import { Vibration } from "react-native";
 
 /**
