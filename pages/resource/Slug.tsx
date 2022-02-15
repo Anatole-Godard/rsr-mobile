@@ -1,6 +1,6 @@
 import { DetailedResource } from "components/Resources/DetailledResource";
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, KeyboardAvoidingView } from "react-native";
 import { useTheme } from "react-native-paper";
 import { Navigation } from "types/Navigation";
 import { Resource } from "types/Resource";
@@ -16,7 +16,10 @@ interface Props {
 export const ResourceSlug = (props: Props) => {
   const theme = useTheme();
   return (
-    <View
+    <KeyboardAvoidingView
+    enabled
+    behavior="padding"
+    keyboardVerticalOffset={56}
       style={{ ...styles.container, backgroundColor: theme.colors.surface }}
     >
       <DetailedResource
@@ -24,7 +27,7 @@ export const ResourceSlug = (props: Props) => {
         {...props.route.params}
         navigation={props.navigation}
       />
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 

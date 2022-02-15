@@ -1,11 +1,14 @@
 import React, { memo } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { StyleSheet, Text, KeyboardAvoidingView, Platform, View } from "react-native";
 import { TextInput as Input } from "react-native-paper";
 import { colors, theme } from "core/theme";
 import { usePreferences } from "hooks/usePreferences";
 import color from "color";
 
-type Props = React.ComponentProps<typeof Input> & { errorText?: string, style?: any };
+type Props = React.ComponentProps<typeof Input> & {
+  errorText?: string;
+  style?: any;
+};
 
 const TextInput = ({ errorText, ...props }: Props) => {
   const { colorScheme } = usePreferences();
@@ -25,7 +28,10 @@ const TextInput = ({ errorText, ...props }: Props) => {
         {...props}
         style={{
           ...props.style,
-          backgroundColor: colorScheme === "light" ? colors.trueGray[200] : colors.trueGray[800],
+          backgroundColor:
+            colorScheme === "light"
+              ? colors.trueGray[200]
+              : colors.trueGray[800],
           borderRadius: 8,
           height: 48,
         }}

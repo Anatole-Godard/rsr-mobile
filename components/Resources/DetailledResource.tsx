@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { StyleSheet, View, FlatList, Dimensions } from "react-native";
+import {
+  StyleSheet,
+  View,
+  FlatList,
+  Dimensions,
+  KeyboardAvoidingView,
+} from "react-native";
 import {
   Title,
   Caption,
@@ -12,7 +18,7 @@ import {
 import color from "color";
 import { Resource } from "types/Resource";
 
-import { HOST_URL, API_URL } from "@env";
+import { API_URL, HOST_URL } from "constants/env";
 import { Navigation } from "types/Navigation";
 import Paragraph from "components/ui/Paragraph";
 import { useAuth } from "hooks/useAuth";
@@ -37,6 +43,10 @@ import TextInput from "components/ui/TextInput";
 import { colors } from "core/theme";
 
 import { TextInput as PaperInput } from "react-native-paper";
+import { usePreferences } from "hooks/usePreferences";
+import { ExternalLink } from "./ExternalLink";
+import { PhysicalItem } from "./PhysicalItem";
+import { Location } from "./Location";
 
 interface Props extends Resource {
   navigation: Navigation;
@@ -50,6 +60,7 @@ export const DetailedResource = (props: Props) => {
 
   const [comments, setComments] = useState<Comment[]>(props.comments || []);
   const [comment, setComment] = useState({ value: "", error: "" });
+  const [commentsLoading, setCommentsLoading] = useState(false);
 
   const like = async () => {
     if (user) {
@@ -79,6 +90,21 @@ export const DetailedResource = (props: Props) => {
         setComments(body?.data.attributes.comments);
         setComment({ value: "", error: "" });
       }
+    }
+  };
+
+  const refreshComments = async () => {
+    if (user) {
+      setCommentsLoading(true);
+      const res = await fetchRSR(
+        `${API_URL}/resource/${props.slug}`,
+        user?.session
+      );
+      const body = await res.json();
+      if (res.ok && body.data) {
+        setComments(body?.data.attributes.comments);
+      }
+      setCommentsLoading(false);
     }
   };
 
@@ -180,15 +206,29 @@ export const DetailedResource = (props: Props) => {
           size={60}
         />
         <View>
-          <Title style={{ fontFamily: "Marianne-ExtraBold" }}>
+          <Title
+            style={{
+              fontFamily: "Marianne-ExtraBold",
+              lineHeight: 24,
+              width: "60%",
+            }}
+          >
             {props.data.attributes.properties.name}
           </Title>
           <Caption style={styles.handle}>{props.owner.fullName}</Caption>
         </View>
       </View>
-      <Paragraph style={{ ...styles.content, color: contentColor }}>
+      <Paragraph
+        style={{
+          ...styles.content,
+          color: contentColor,
+          fontSize: 18,
+          lineHeight: 24,
+        }}
+      >
         {props.description}
       </Paragraph>
+      <ResourceView {...props} />
       {/* <Image
         source={{ uri: props.image }}
         style={[
@@ -201,7 +241,17 @@ export const DetailedResource = (props: Props) => {
       {props.page && (
         <>
           <View style={styles.bottomRow}>
-            <View style={styles.bottomRowLeft}></View>
+            <View style={styles.bottomRowLeft}>
+              <Paragraph
+                style={{ lineHeight: 24, fontSize: 16, marginTop: 12 }}
+              >
+                {formatDistance(
+                  new Date(props.createdAt.toString()),
+                  new Date(),
+                  { locale: fr }
+                )}
+              </Paragraph>
+            </View>
             <View style={styles.bottomRowRight}>
               <IconButton
                 style={{ marginRight: -2 }}
@@ -252,6 +302,8 @@ export const DetailedResource = (props: Props) => {
                     }}
                   />
                 )}
+                refreshing={commentsLoading}
+                onRefresh={refreshComments}
               />
             </View>
 
@@ -277,6 +329,55 @@ export const DetailedResource = (props: Props) => {
           </View>
         </>
       )}
+    </View>
+  );
+};
+
+const ResourceView = (props: Resource) => {
+  const { colorScheme } = usePreferences();
+  const {
+    data: { type, attributes },
+  } = props;
+
+  let style;
+
+  if (type === "location")
+    style = {
+      backgroundColor:
+        colorScheme === "light" ? colors.indigo[100] : colors.indigo[800],
+      borderColor: colors.indigo[500],
+    };
+  if (type === "physical_item")
+    style = {
+      backgroundColor:
+        colorScheme === "light" ? colors.emerald[100] : colors.emerald[800],
+      borderColor: colors.emerald[500],
+    };
+  if (type === "external_link")
+    style = {
+      backgroundColor:
+        colorScheme === "light" ? colors.amber[100] : colors.amber[800],
+      borderColor: colors.amber[500],
+    };
+
+  return (
+    <View
+      style={{
+        ...style,
+        height:
+          type === "location"
+            ? Dimensions.get("screen").width / 2.25
+            : Dimensions.get("screen").height / 6,
+        borderRadius: 8,
+        borderWidth: StyleSheet.hairlineWidth,
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 8,
+      }}
+    >
+      {type === "external_link" && <ExternalLink {...attributes} />}
+      {type === "physical_item" && <PhysicalItem {...attributes} />}
+      {type === "location" && <Location {...attributes} />}
     </View>
   );
 };

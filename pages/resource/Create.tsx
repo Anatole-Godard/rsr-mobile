@@ -2,7 +2,7 @@ import Button from "components/ui/Button";
 import { StepIndicator } from "components/ui/StepIndicator";
 import TextInput from "components/ui/TextInput";
 import { types } from "constants/resourceTypes";
-import { theme } from "core/theme";
+import { colors, theme } from "core/theme";
 import { nameValidator } from "core/validators";
 import { usePreferences } from "hooks/usePreferences";
 import React, { useEffect, useState } from "react";
@@ -31,6 +31,10 @@ import MapInput, { MapInputVariants } from "react-native-map-input";
 import { fetchXHR } from "utils/fetchXHR";
 import { DetailedResource } from "components/Resources/DetailledResource";
 import { useAuth } from "hooks/useAuth";
+
+import { TextInput as PaperInput } from "react-native-paper";
+import { fetchRSR } from "utils/fetchRSR";
+import { API_URL } from "constants/env";
 
 interface Props {
   navigation: Navigation;
@@ -145,7 +149,23 @@ export const ResourceCreate = (props: Props) => {
 
   const _previousStep = () => setStep((old) => old - 1);
   const _onSubmit = async () => {
-    console.log(formatResource());
+    //TODO validators
+    if (user) {
+      try {
+        const res = await fetchRSR(API_URL + "/resource/create", user.session, {
+          method: "POST",
+          body: JSON.stringify(formatResource()),
+        });
+        const body = await res.json();
+        if (res.ok && body.data.attributes) {
+          props.navigation.push("Details", {
+            ...body.data.attributes,
+          });
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
   };
 
   const formatResource = () => {
@@ -389,12 +409,17 @@ export const ResourceCreate = (props: Props) => {
                 errorText={price.error}
                 style={styles.input}
                 // autoCapitalize="none"
-                left={(props: {
-                  size: number | undefined;
-                  color: Color | undefined;
-                }) => (
-                  <CurrencyDollarIcon size={props.size} color={props.color} />
-                )}
+                left={
+                  <PaperInput.Icon
+                    style={{ marginTop: 14 }}
+                    icon={() => (
+                      <CurrencyDollarIcon
+                        size={24}
+                        color={colors.trueGray[500]}
+                      />
+                    )}
+                  />
+                }
               />
               <TextInput
                 label="Catégorie de l'objet"

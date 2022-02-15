@@ -13,7 +13,8 @@ import { Resource } from "types/Resource";
 import { usePreferences } from "hooks/usePreferences";
 import { colors, theme } from "core/theme";
 
-import { HOST_URL, API_URL } from "@env";
+import { API_URL, HOST_URL } from "constants/env";
+
 import {
   ChatIcon,
   ExternalLinkIcon,
@@ -108,6 +109,8 @@ export const ResourceHome = (props: Props) => {
   const { colorScheme } = usePreferences();
   const { user } = useAuth();
   const toaster = useToast();
+
+  // console.log("resource", API_URL, HOST_URL);
 
   const [likes, setLikes] = useState(props.likes);
 

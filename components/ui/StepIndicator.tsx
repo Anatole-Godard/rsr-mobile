@@ -4,6 +4,7 @@ import "react-native-get-random-values";
 import { View, Dimensions, ViewStyle } from "react-native";
 import { ProgressBar, useTheme, Text } from "react-native-paper";
 
+import { v4 as uuidv4 } from "uuid";
 interface StepIndicatorProps {
   containerStyle?: ViewStyle;
   steps: {
@@ -13,9 +14,12 @@ interface StepIndicatorProps {
   };
   style?: ViewStyle;
   progress: any[];
+  key?: string;
 }
 
 export function StepIndicator(props: StepIndicatorProps) {
+  const { key = uuidv4() } = props;
+
   const theme = useTheme();
   return (
     <View style={{ ...props.containerStyle, width: "100%" }}>
@@ -67,10 +71,10 @@ export function StepIndicator(props: StepIndicatorProps) {
               style: ViewStyle;
               indeterminate?: boolean;
             },
-            key: number
+            k: number
           ) => {
             return (
-              <Fragment key={"progress" + key}>
+              <Fragment key={key  + k}>
                 <ProgressBar
                   progress={el.value}
                   style={{

@@ -12,13 +12,14 @@ import {
 } from "react-native";
 import { fetchRSR } from "utils/fetchRSR";
 
-import { API_URL } from "@env";
 import { Resource } from "types/Resource";
 import { Navigation } from "types/Navigation";
 import { ResourceHome } from "components/Resource";
 
 import LottieView from "lottie-react-native";
 import Paragraph from "components/ui/Paragraph";
+
+import { API_URL } from "constants/env";
 
 type Props = {
   navigation: Navigation;
@@ -37,7 +38,6 @@ export const HomeScreen = (props: Props) => {
 
   const fetchData = async () => {
     setLoading(true);
-    console.log(API_URL);
     const res = await fetchRSR(API_URL + "/resource", user);
     const body = await res.json();
     setResources(
