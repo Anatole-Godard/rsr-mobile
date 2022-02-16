@@ -1,61 +1,44 @@
+import { ChannelItem, ChannelItemProps } from "components/Channel/ChannelItem";
+import { API_URL } from "constants/env";
 import { theme } from "core/theme";
 import { useAuth } from "hooks/useAuth";
 import { usePreferences } from "hooks/usePreferences";
 import React, { useEffect, useState } from "react";
 import {
-  View,
-  StyleSheet,
+  Dimensions,
   FlatList,
   RefreshControl,
-  Dimensions,
+  StyleSheet,
+  View,
 } from "react-native";
-import { fetchRSR } from "utils/fetchRSR";
-
-import { Resource } from "types/Resource";
+import { Paragraph } from "react-native-paper";
+import { Channel } from "types/Channel";
 import { Navigation } from "types/Navigation";
-import { ResourceHome } from "components/Resources/ResourceHome";
-
+import { fetchRSR } from "utils/fetchRSR";
 import LottieView from "lottie-react-native";
-import Paragraph from "components/ui/Paragraph";
 
-import { API_URL } from "constants/env";
-import { ChannelHomeHeader } from "components/Channel/ChannelHomeHeader";
-
-type Props = {
+interface Props {
   navigation: Navigation;
-};
-
-interface ResourceHomeProps extends Resource {
-  onPress: (slug: string) => void;
 }
 
-export const HomeScreen = (props: Props) => {
+export const ChannelScreen = (props: Props) => {
   const { user } = useAuth();
   const { colorScheme } = usePreferences();
 
-  const [resources, setResources] = useState<Resource[]>([]);
   const [loading, setLoading] = useState(true);
+  const [channels, setChannels] = useState<Channel[]>([]);
 
   const fetchData = async () => {
     setLoading(true);
-    const res = await fetchRSR(API_URL + "/resource", user);
+    const res = await fetchRSR(API_URL + "/channel", user);
     const body = await res.json();
-    setResources(
-      body.data.attributes.sort(
-        (a: { createdAt: string }, b: { createdAt: string }) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      )
-    );
+    setChannels(body.data.attributes);
     setLoading(false);
   };
 
   useEffect(() => {
     if (user) fetchData();
   }, []);
-
-  function renderItem({ item }: { item: ResourceHomeProps }) {
-    return <ResourceHome {...item} />;
-  }
 
   const listEmptyComponent = () => (
     <View style={styles.animationContainer}>
@@ -65,7 +48,7 @@ export const HomeScreen = (props: Props) => {
           width: 128,
           height: 128,
         }}
-        source={require("../assets/lotties/empty.json")}
+        source={require("../../assets/lotties/empty.json")}
         
       />
       <Paragraph style={{ marginTop: 16 }}>
@@ -78,26 +61,25 @@ export const HomeScreen = (props: Props) => {
   );
 
   return (
+    // <></>
     <FlatList
       ListEmptyComponent={listEmptyComponent}
-      ListHeaderComponent={() => (
-        <ChannelHomeHeader navigation={props.navigation} />
-      )}
-      stickyHeaderIndices={[0]}
       contentContainerStyle={{
         backgroundColor: theme[colorScheme].colors.background,
       }}
       style={{ backgroundColor: theme[colorScheme].colors.background }}
-      data={resources.map((resource) => ({
-        ...resource,
+      data={channels.map((channel) => ({
+        ...channel,
         onPress: () =>
           props.navigation &&
-          props.navigation.push("Details", {
-            ...resource,
+          props.navigation.push("ChannelSlug", {
+            ...channel,
           }),
       }))}
-      renderItem={renderItem}
-      keyExtractor={(item: ResourceHomeProps) => item.slug.toString()}
+      renderItem={({ item }: { item: ChannelItemProps }) => (
+        <ChannelItem {...item} />
+      )}
+      keyExtractor={(item: ChannelItemProps) => item.slug.toString()}
       ItemSeparatorComponent={() => (
         <View style={{ height: StyleSheet.hairlineWidth }} />
       )}

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
+import { StyleSheet, View, TouchableOpacity } from "react-native";
 import {
   Surface,
   Title,
@@ -31,7 +31,7 @@ import { UserMinimum } from "types/User";
 import { useAuth } from "hooks/useAuth";
 import { useToast } from "react-native-paper-toast";
 import { fetchRSR } from "utils/fetchRSR";
-import Paragraph from "./ui/Paragraph";
+import Paragraph from "../ui/Paragraph";
 import { types } from "constants/resourceTypes";
 
 const ResourceDataView = ({
@@ -327,7 +327,7 @@ const styles = StyleSheet.create({
     marginTop: -5,
     borderRadius: 20,
     width: "100%",
-    height: 100,
+    height: 75,
   },
   bottomRow: {
     paddingVertical: 10,

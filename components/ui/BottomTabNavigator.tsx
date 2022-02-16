@@ -6,9 +6,9 @@ import { useSafeArea } from "react-native-safe-area-context";
 import { useIsFocused } from "@react-navigation/native";
 
 import overlay from "libs/overlay";
-import { ResourcesScreen } from "pages/resource/all";
+import { ResourcesScreen } from "pages/resource/All";
 import { HomeScreen } from "pages/Home";
-import { ChannelList } from "components/Channel/List";
+import { ChannelScreen } from "pages/channel/All";
 import { theme } from "core/theme";
 import { usePreferences } from "hooks/usePreferences";
 import { Navigation } from "types/Navigation";
@@ -73,7 +73,7 @@ export const BottomTabNavigator = (props: Props) => {
 
         <Tab.Screen
           name="Salons"
-          component={ChannelList}
+          component={ChannelScreen}
           options={{
             tabBarIcon: (props) => <ChatAlt2Icon color={props.color} />,
             tabBarColor,
