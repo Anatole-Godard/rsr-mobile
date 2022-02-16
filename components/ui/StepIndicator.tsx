@@ -56,7 +56,7 @@ export function StepIndicator(props: StepIndicatorProps) {
         </View>
       )}
 
-      <View
+      {/* <View
         style={{
           flexDirection: "row",
           width: "100%",
@@ -91,7 +91,7 @@ export function StepIndicator(props: StepIndicatorProps) {
             );
           }
         )}
-      </View>
+      </View> */}
     </View>
   );
 }

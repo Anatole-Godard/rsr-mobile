@@ -2,7 +2,7 @@ import React from "react";
 
 import { TouchableOpacity } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { Appbar, Avatar } from "react-native-paper";
+import { Appbar } from "react-native-paper";
 
 import { ResourceSlug } from "pages/resource/Slug";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
@@ -10,26 +10,23 @@ import { getFocusedRouteNameFromRoute } from "@react-navigation/core";
 
 import { BottomTabNavigator } from "components/ui/BottomTabNavigator";
 import { ChannelSlug } from "pages/channel/Slug";
-import { useAuth } from "hooks/useAuth";
 
-import { HOST_URL } from "@env";
 import { theme } from "core/theme";
 import { usePreferences } from "hooks/usePreferences";
 import { ResourceCreate } from "pages/resource/Create";
 import { MenuIcon } from "react-native-heroicons/outline";
+import { ChannelCreate } from "pages/channel/Create";
 
 const Stack = createStackNavigator();
 
 export const StackNavigator = () => {
-  const { user } = useAuth();
-
   const { colorScheme } = usePreferences();
 
   return (
     <Stack.Navigator
       initialRouteName="Tabs"
       screenOptions={{
-        header: ({ options, navigation, previous }: any) => {
+        header: ({ options, navigation, back }: any) => {
           const title =
             options.headerTitle !== undefined
               ? options.headerTitle
@@ -42,19 +39,25 @@ export const StackNavigator = () => {
               ? options.subtitle
               : navigation?.route?.name) || undefined;
 
+       
+
           return (
             <Appbar.Header
               theme={{ colors: { primary: theme[colorScheme].colors.surface } }}
               style={{
-                backgroundColor: theme[colorScheme].colors.surface,
+                backgroundColor:
+                  colorScheme === "light"
+                    ? theme.light.colors.surface
+                    : theme.dark.colors.background,
                 elevation: 0,
                 justifyContent: "flex-start",
               }}
             >
-              {previous ? (
+              {back ? (
                 <Appbar.BackAction
                   onPress={navigation.goBack}
-                  color={theme[colorScheme].colors.primary}
+                  color={theme[colorScheme].colors.text}
+                  size={20}
                 />
               ) : (
                 <TouchableOpacity
@@ -112,13 +115,19 @@ export const StackNavigator = () => {
         options={{ headerTitle: "Créer une ressource" }}
       />
       <Stack.Screen
+        name="ChannelCreate"
+        component={ChannelCreate}
+        options={{ headerTitle: "Créer un salon" }}
+      />
+
+      <Stack.Screen
         name="ChannelSlug"
         component={ChannelSlug}
         options={({ route }) => {
           return {
             headerTitle:
-              ((route?.params as unknown as { title?: string })
-                ?.title as unknown as string) || "Salons",
+              ((route?.params as unknown as { name?: string })
+                ?.name as unknown as string) || "Salons",
           };
         }}
       />

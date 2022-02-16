@@ -4,7 +4,7 @@ import { Channel } from "types/Channel";
 import { Swipeable } from "react-native-gesture-handler";
 import { Surface, Text, TouchableRipple, useTheme } from "react-native-paper";
 import { usePreferences } from "hooks/usePreferences";
-import { colors } from "core/theme";
+import { colors, theme } from "core/theme";
 import { HOST_URL } from "constants/env";
 import { formatDistance } from "date-fns";
 import { Activity } from "types/Activity";
@@ -98,7 +98,15 @@ export const ChannelItem = (props: ChannelItemProps) => {
           <View style={styles.rightColumn}>
             <View style={styles.header}>
               <Text style={styles.title}>{props.name}</Text>
-              <Text style={styles.time}>
+              <Text
+                style={{
+                  ...styles.time,
+                  color:
+                    history.length > 0
+                      ? theme[colorScheme].colors.text
+                      : theme[colorScheme].colors.secondary,
+                }}
+              >
                 {history.length > 0
                   ? formatDistance(
                       new Date(history[history.length - 1].createdAt),
@@ -111,7 +119,9 @@ export const ChannelItem = (props: ChannelItemProps) => {
 
             <Text numberOfLines={2} ellipsizeMode={"tail"} style={styles.text}>
               {history.length > 0
-                ? history[history.length - 1].data.text
+                ? `${history[history.length - 1].user.fullName}:  ${
+                    history[history.length - 1].data.text
+                  }`
                 : "Écrivez un message pour démarrer une conversation"}
             </Text>
           </View>

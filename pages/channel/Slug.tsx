@@ -33,8 +33,6 @@ export const ChannelSlug = (props: Props) => {
     error: "",
   });
 
-  console.log(props);
-
   const { user } = useAuth();
   const theme = useTheme();
 
@@ -89,9 +87,14 @@ export const ChannelSlug = (props: Props) => {
     <KeyboardAvoidingView
       behavior="padding"
       keyboardVerticalOffset={56}
-      style={styles.container}
+      style={{ ...styles.container, backgroundColor: theme.colors.background }}
     >
-      <ScrollView>
+      <FlatList
+        data={chat}
+        renderItem={({ item }) => <ChannelMessage {...item} />}
+        keyExtractor={(item: Message) => item._id || item.createdAt.toString()}
+      />
+      {/* <ScrollView>
         <Text>
           {JSON.stringify(
             chat.map((message) => message.data),
@@ -99,10 +102,10 @@ export const ChannelSlug = (props: Props) => {
             2
           )}
         </Text>
-      </ScrollView>
+      </ScrollView> */}
       <View style={{ width: "100%", paddingBottom: 48 }}>
         <TextInput
-          label="Écrire un commentaire"
+          label="Écrire un message"
           returnKeyType="next"
           value={message.value}
           onChangeText={(text) => setMessage({ value: text, error: "" })}

@@ -17,6 +17,7 @@ import {
   HomeIcon,
   ShoppingBagIcon,
 } from "react-native-heroicons/outline";
+import { useDrawerStatus } from "@react-navigation/drawer";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -29,10 +30,14 @@ export const BottomTabNavigator = (props: Props) => {
   const isFocused = useIsFocused();
 
   const { colorScheme } = usePreferences();
+  const isDrawerOpen = useDrawerStatus() === "open";
 
   const tabBarColor = theme.dark
     ? (overlay(6, theme[colorScheme].colors.surface) as string)
     : theme[colorScheme].colors.surface;
+
+  let history = props.navigation.getState().routes[0].state.history;
+  let state = history[history.length - 1].key.split("-")[0];
 
   return (
     <React.Fragment>
@@ -80,26 +85,32 @@ export const BottomTabNavigator = (props: Props) => {
           }}
         />
       </Tab.Navigator>
-      <Portal>
-        <FAB
-          visible={isFocused}
-          icon="plus"
-          style={{
-            position: "absolute",
-            bottom: safeArea.bottom + 65,
-            right: 16,
-            borderRadius: 16,
-            elevation: 1,
-          }}
-          color="white"
-          theme={{
-            colors: {
-              accent: theme[colorScheme].colors.primary,
-            },
-          }}
-          onPress={() => props.navigation.navigate("ResourceCreate")}
-        />
-      </Portal>
+      {(state === "Salons" || state === "Accueil") && !isDrawerOpen && (
+        <Portal>
+          <FAB
+            visible={isFocused}
+            icon="plus"
+            style={{
+              position: "absolute",
+              bottom: safeArea.bottom + 65,
+              right: 16,
+              borderRadius: 16,
+              elevation: 1,
+            }}
+            color="white"
+            theme={{
+              colors: {
+                accent: theme[colorScheme].colors.primary,
+              },
+            }}
+            onPress={() => {
+              props.navigation.navigate(
+                state === "Salons" ? "ChannelCreate" : "ResourceCreate"
+              );
+            }}
+          />
+        </Portal>
+      )}
     </React.Fragment>
   );
 };

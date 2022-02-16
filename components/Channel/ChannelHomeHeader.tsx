@@ -74,7 +74,7 @@ export const ChannelHomeHeader = (props: Props) => {
 const ChannelHome = (props: ChannelHomeProps) => {
   const { colorScheme } = usePreferences();
   return (
-    <View style={{ flex: 1, marginRight: 16 }}>
+    <View style={{ flex: 1, marginRight: 24 }}>
       <TouchableOpacity
         onPress={props.onPress}
         style={{
