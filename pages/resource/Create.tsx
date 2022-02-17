@@ -19,7 +19,6 @@ import {
   PhotographIcon,
   TagIcon,
   TrashIcon,
-  XIcon,
 } from "react-native-heroicons/outline";
 import { IconButton, RadioButton, Text } from "react-native-paper";
 import { Navigation } from "types/Navigation";
