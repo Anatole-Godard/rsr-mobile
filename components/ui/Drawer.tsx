@@ -86,7 +86,7 @@ export function DrawerContent({ navigation, ...props }: any) {
                 <MoonIcon color={theme[colorScheme].colors.primary} />
               )
             }
-            label="Dark Mode"
+            label="Mode sombre"
             onPress={toggleColorScheme}
             active={colorScheme === "dark"}
             right={() => (

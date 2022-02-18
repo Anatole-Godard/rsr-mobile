@@ -1,107 +1,151 @@
-import React, {useEffect, useState} from "react";
-import {View, Text, StyleSheet, FlatList, TextInput, Button} from "react-native";
-import {ChannelMessage} from "components/Channel/Message";
-import {Message} from "@definitions/Message";
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  KeyboardAvoidingView,
+  ScrollView,
+} from "react-native";
+import { ChannelMessage } from "components/Channel/Message";
+import { Message } from "types/Message";
 import io from "socket.io-client";
+import { Channel } from "types/Channel";
+import { Navigation } from "types/Navigation";
+import { useAuth } from "hooks/useAuth";
+import { fetchRSR } from "utils/fetchRSR";
+import { API_URL, HOST_URL } from "constants/env";
 
-export const ChannelSlug = () => {
-    const [chat, setChat] = useState<Message[]>([]);
-    const [message, setMessage] = useState<string>("");
+import { TextInput as PaperInput, useTheme } from "react-native-paper";
+import { CheckIcon } from "react-native-heroicons/outline";
+import TextInput from "components/ui/TextInput";
 
-    const user = {
-        data: {
-            _id: "61dd54b50e9bdfb1d20492b5",
-            fullName: "Oph test",
-            birthDate: "2022-01-11T00:00:00.000Z",
-            email: "oph@test.fr",
-            password: "azerty123",
-            role: "user",
-            photoURL: "https://i0.wp.com/sbcf.fr/wp-content/uploads/2018/03/sbcf-default-avatar.png?ssl=1",
-            createdAt: "2022-01-11T09:58:13.119Z",
-            __v: 0
-        }
-    }
+import LottieView from "lottie-react-native";
+import Paragraph from "components/ui/Paragraph";
 
-    useEffect((): any => {
-        const socket = io("http://172.20.10.8:3000", {
-            path: "/api/channel/[slug]/socket",
-        });
+interface Props {
+  navigation: Navigation;
+  route: {
+    params: Channel;
+  };
+}
 
-        fetch("http://172.20.10.8:3000/api/channel/"+ "general" +"/all").then((res) => {
-            return res.json()
-        }).then((body) => setChat(body))
+export const ChannelSlug = (props: Props) => {
+  const [chat, setChat] = useState<Message[]>(props.route.params.messages);
+  const [message, setMessage] = useState<{ value: string; error: string }>({
+    value: "",
+    error: "",
+  });
 
-        socket.on("connect", () => {
-            console.log("SOCKET CONNECTED!", socket.id);
-        });
+  const { user } = useAuth();
+  const theme = useTheme();
 
-        // update chat on new message dispatched
-        socket.on("message", (message: Message) => {
-            // chat.push(message);
-            setChat(oldChat =>[...oldChat, message]);
-        });
+  useEffect((): any => {
+    const socket = io(HOST_URL, {
+      path: "/api/channel/[slug]/socket",
+    });
 
-        if (socket) return () => socket.disconnect();
+    socket.on("connect", () => {
+      console.log("SOCKET CONNECTED!", socket.id);
+    });
 
-    }, []);
+    // update chat on new message dispatched
+    socket.on("message", (message: Message) => {
+      setChat((oldChat) => [...oldChat, message]);
+    });
 
-    const sendMsg = async () => {
-        const msg: Message = {
-            user: user.data,
-            text: message,
-            attachment: null,
-            channel: "general",
-        };
+    if (socket) return () => socket.disconnect();
+  }, []);
 
-        const resp = await fetch("http://172.20.10.8:3000/api/channel/"+ "general" +"/all", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
+  const sendMsg = async () => {
+    if (user) {
+      const resp = await fetchRSR(
+        `${API_URL}/channel/${props.route.params.slug}/messages`,
+        user?.session,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            user: {
+              fullName: user.data.fullName,
+              photoURL: user.data.photoURL,
+              uid: user.data.uid,
             },
-            body: JSON.stringify(msg),
-        });
-        if (resp.ok) setMessage("");
+            data: { type: "message", text: message.value },
+          }),
+        }
+      );
+      if (resp.ok) setMessage({ value: "", error: "" });
     }
+  };
 
-    return (
-        //TODO: Hide btn + on this view ?
-        <View style={styles.container}>
-            <View style={styles.chatZone}>
-                <FlatList data={chat} renderItem={({item}) => <ChannelMessage key={item.id} message={item}/>}/>
-            </View>
-            <View style={styles.inputZone}>
-                <View style={styles.mainContainer}>
-                    <TextInput style={styles.input} value={message} onChangeText={msg => setMessage(msg)}/>
-                    <Button onPress={sendMsg} title="Send"/>
-                </View>
-            </View>
-        </View>
-    );
+  return (
+    <KeyboardAvoidingView
+      behavior="padding"
+      keyboardVerticalOffset={56}
+      style={{ ...styles.container, backgroundColor: theme.colors.background }}
+    >
+      <FlatList
+        data={chat}
+        renderItem={({ item }) => <ChannelMessage {...item} />}
+        keyExtractor={(item: Message) => item._id || item.createdAt.toString()}
+        ListEmptyComponent={() => (
+          <View style={styles.animationContainer}>
+            <LottieView
+              autoPlay={true}
+              style={{
+                width: 128,
+                height: 128,
+              }}
+              source={require("../../assets/lotties/chat.json")}
+            />
+            <Paragraph style={{ marginTop: 16 }}>
+              Oh! Il n'y a pas encore de messages...
+            </Paragraph>
+            <Paragraph style={{ marginTop: -12, fontSize: 12 }}>
+              Engagez la discussion !
+            </Paragraph>
+          </View>
+        )}
+      />
+      {/* <ScrollView>
+        <Text>
+          {JSON.stringify(
+            chat.map((message) => message.data),
+            null,
+            2
+          )}
+        </Text>
+      </ScrollView> */}
+      <View style={{ width: "100%", paddingBottom: 48 }}>
+        <TextInput
+          label="Écrire un message"
+          returnKeyType="next"
+          value={message.value}
+          onChangeText={(text) => setMessage({ value: text, error: "" })}
+          error={!!message.error}
+          errorText={message.error}
+          right={
+            <PaperInput.Icon
+              style={{ marginTop: 14 }}
+              onPress={sendMsg}
+              icon={() => <CheckIcon size={24} color={theme.colors.primary} />}
+            />
+          }
+        />
+      </View>
+    </KeyboardAvoidingView>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: "column"
-    },
-    chatZone: {
-        flex: 1,
-    },
-    inputZone: {
-        flexDirection: "row",
-        margin: 10,
-        justifyContent: "flex-end",
-    },
-    mainContainer: {
-        backgroundColor: "white",
-        flex: 1,
-        padding: 10,
-        flexDirection: "row",
-        borderRadius: 50,
-        marginRight: 10,
-    },
-    input: {
-        flex: 1,
-        marginHorizontal: 10,
-    }
+  container: {
+    flex: 1,
+    padding: 8,
+  },
+  animationContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100%",
+    marginTop: 128,
+  },
 });

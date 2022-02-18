@@ -4,7 +4,6 @@ import { usePreferences } from "hooks/usePreferences";
 import React, { useEffect, useState } from "react";
 import {
   View,
-  Text,
   StyleSheet,
   FlatList,
   RefreshControl,
@@ -14,12 +13,13 @@ import { fetchRSR } from "utils/fetchRSR";
 
 import { Resource } from "types/Resource";
 import { Navigation } from "types/Navigation";
-import { ResourceHome } from "components/Resource";
+import { ResourceHome } from "components/Resources/ResourceHome";
 
 import LottieView from "lottie-react-native";
 import Paragraph from "components/ui/Paragraph";
 
 import { API_URL } from "constants/env";
+import { ChannelHomeHeader } from "components/Channel/ChannelHomeHeader";
 
 type Props = {
   navigation: Navigation;
@@ -66,8 +66,7 @@ export const HomeScreen = (props: Props) => {
           height: 128,
         }}
         source={require("../assets/lotties/empty.json")}
-        // OR find more Lottie files @ https://lottiefiles.com/featured
-        // Just click the one you like, place that file in the 'assets' folder to the left, and replace the above 'require' statement
+        
       />
       <Paragraph style={{ marginTop: 16 }}>
         Oh! Il n'y a pas encore de ressources disponibles...
@@ -81,6 +80,10 @@ export const HomeScreen = (props: Props) => {
   return (
     <FlatList
       ListEmptyComponent={listEmptyComponent}
+      ListHeaderComponent={() => (
+        <ChannelHomeHeader navigation={props.navigation} />
+      )}
+      stickyHeaderIndices={[0]}
       contentContainerStyle={{
         backgroundColor: theme[colorScheme].colors.background,
       }}
