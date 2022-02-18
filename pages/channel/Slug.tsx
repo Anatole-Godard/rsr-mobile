@@ -15,9 +15,12 @@ import { useAuth } from "hooks/useAuth";
 import { fetchRSR } from "utils/fetchRSR";
 import { API_URL, HOST_URL } from "constants/env";
 
-import { Text, TextInput as PaperInput, useTheme } from "react-native-paper";
+import { TextInput as PaperInput, useTheme } from "react-native-paper";
 import { CheckIcon } from "react-native-heroicons/outline";
 import TextInput from "components/ui/TextInput";
+
+import LottieView from "lottie-react-native";
+import Paragraph from "components/ui/Paragraph";
 
 interface Props {
   navigation: Navigation;
@@ -93,6 +96,24 @@ export const ChannelSlug = (props: Props) => {
         data={chat}
         renderItem={({ item }) => <ChannelMessage {...item} />}
         keyExtractor={(item: Message) => item._id || item.createdAt.toString()}
+        ListEmptyComponent={() => (
+          <View style={styles.animationContainer}>
+            <LottieView
+              autoPlay={true}
+              style={{
+                width: 128,
+                height: 128,
+              }}
+              source={require("../../assets/lotties/chat.json")}
+            />
+            <Paragraph style={{ marginTop: 16 }}>
+              Oh! Il n'y a pas encore de messages...
+            </Paragraph>
+            <Paragraph style={{ marginTop: -12, fontSize: 12 }}>
+              Engagez la discussion !
+            </Paragraph>
+          </View>
+        )}
       />
       {/* <ScrollView>
         <Text>
@@ -128,5 +149,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 8,
+  },
+  animationContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100%",
+    marginTop: 128,
   },
 });
