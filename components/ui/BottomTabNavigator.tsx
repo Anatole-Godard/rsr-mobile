@@ -44,7 +44,7 @@ export const BottomTabNavigator = (props: Props) => {
       <Tab.Navigator
         barStyle={{
           backgroundColor: tabBarColor,
-          elevation: 0,
+          elevation: 5,
         }}
         initialRouteName="Accueil"
         backBehavior="initialRoute"
