@@ -57,15 +57,6 @@ export const ChannelSlug = (props: Props) => {
   }, []);
 
   const sendMsg = async () => {
-    console.log({
-      user: {
-        fullName: user.data.fullName,
-        photoURL: user.data.photoURL,
-        uid: user.data.uid,
-      },
-      data: { type: "message", text: message.value },
-    });
-
     if (user) {
       const resp = await fetchRSR(
         `${API_URL}/channel/${props.route.params.slug}/messages`,

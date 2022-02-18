@@ -162,7 +162,13 @@ export const ChannelCreate = (props: Props) => {
       try {
         const res = await fetchRSR(API_URL + "/channel/create", user.session, {
           method: "POST",
-          body: JSON.stringify({}),
+          body: JSON.stringify({
+            name: name.value,
+            description: description.value,
+            visibility: privateChannel ? "private" : "public",
+            // photoURL: pictureUrl,
+            members,
+          }),
         });
         const body = await res.json();
         if (res.ok && body.data.attributes) {
