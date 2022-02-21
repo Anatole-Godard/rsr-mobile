@@ -17,6 +17,7 @@ import AppLoading from "expo-app-loading";
 import { PreferencesProvider } from "hooks/usePreferences";
 import { theme } from "core/theme";
 import { ToastProvider } from "react-native-paper-toast";
+import { NotificationProvider } from "hooks/useNotifications";
 
 /// Main
 export default function App() {
@@ -48,9 +49,11 @@ export default function App() {
             setColorScheme={setColorScheme}
           >
             <AuthProvider>
-              <ToastProvider>
-                <RootNavigator />
-              </ToastProvider>
+              <NotificationProvider>
+                <ToastProvider>
+                  <RootNavigator />
+                </ToastProvider>
+              </NotificationProvider>
             </AuthProvider>
           </PreferencesProvider>
         </PaperProvider>

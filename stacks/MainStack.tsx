@@ -39,8 +39,6 @@ export const StackNavigator = () => {
               ? options.subtitle
               : navigation?.route?.name) || undefined;
 
-       
-
           return (
             <Appbar.Header
               theme={{ colors: { primary: theme[colorScheme].colors.surface } }}
@@ -90,6 +88,7 @@ export const StackNavigator = () => {
                       .surface,
                 }}
               />
+              {options.action}
             </Appbar.Header>
           );
         },

@@ -5499,6 +5499,11 @@ react-native-modern-header@^1.0.2:
   resolved "https://registry.yarnpkg.com/react-native-modern-header/-/react-native-modern-header-1.0.2.tgz#84650d036b4b1d959ce699a73b6215882e5859d0"
   integrity sha512-oSQ3VRGV3/52StefbVy2+hMT2z52hHA8WLc7YDFfju6NW/5piK933+YBgJdUX9NwRQHGicQHIYF+FH3ac4A37Q==
 
+react-native-pager-view@^5.4.11:
+  version "5.4.11"
+  resolved "https://registry.yarnpkg.com/react-native-pager-view/-/react-native-pager-view-5.4.11.tgz#677540293c7b4e0e022efb45727ef9b4efa35409"
+  integrity sha512-4QlBL5W8yVjeYwrw89oCdABI7sDxIGapFQvIbukfB5mAj1Zn1IQPkBqROLblNFtQ8PbAeexXRgDT1ENWygiJ7A==
+
 react-native-paper-toast@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/react-native-paper-toast/-/react-native-paper-toast-1.2.0.tgz#5093a258dee12e1fee9c62ac2a62d2b611992279"
@@ -5588,6 +5593,11 @@ react-native-svg@^12.1.1:
   dependencies:
     css-select "^2.1.0"
     css-tree "^1.0.0-alpha.39"
+
+react-native-tab-view@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/react-native-tab-view/-/react-native-tab-view-3.1.1.tgz#1f8d7a835ab4f5b1b1407ec8dddc1053b53fa3c6"
+  integrity sha512-M5pRN6utQfytKWoKlKVzg5NbkYu308qNoW1khGTtEOTs1k14p2dHJ/BWOJoJYHKbPVUyZldbG9MFT7gUl4YHnw==
 
 react-native-tags-input@^1.0.10:
   version "1.0.10"
