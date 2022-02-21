@@ -9,9 +9,13 @@ import { Notification } from "types/Notification";
 
 import LottieView from "lottie-react-native";
 import Paragraph from "components/ui/Paragraph";
+import { useAuth } from "hooks/useAuth";
+import { fetchRSR } from "utils/fetchRSR";
+import { API_URL } from "constants/env";
 
 export const MessagesTab = () => {
-  const { notifications } = useNotifications();
+  const { user } = useAuth();
+  const { notifications, removeNotification } = useNotifications();
   const [notificationsMessage, setNM] = useState<Notification[]>([]);
   const { navigate } = useNavigation();
 
@@ -29,6 +33,12 @@ export const MessagesTab = () => {
       setNM([]);
     };
   }, []);
+
+  const fetchChannel = async (slug: string) => {
+    const res = await fetchRSR(`${API_URL}/channel/${slug}`, user?.session);
+    const body = await res.json();
+    return body;
+  };
 
   const listEmptyComponent = () => (
     <View
@@ -63,7 +73,10 @@ export const MessagesTab = () => {
         <MessageNotification
           {...item}
           onPress={() => {
-            navigate("ChannelSlug", { ...item });
+            fetchChannel(item.document.slug).then((res) => {
+              removeNotification(item._id);
+              navigate("ChannelSlug", { ...res.data.attributes });
+            });
           }}
         />
       )}

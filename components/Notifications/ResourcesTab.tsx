@@ -9,9 +9,13 @@ import { Notification } from "types/Notification";
 
 import LottieView from "lottie-react-native";
 import Paragraph from "components/ui/Paragraph";
+import { API_URL } from "constants/env";
+import { fetchRSR } from "utils/fetchRSR";
+import { useAuth } from "hooks/useAuth";
 
 export const ResourcesTab = () => {
-  const { notifications } = useNotifications();
+  const { user } = useAuth();
+  const { notifications, removeNotification } = useNotifications();
   const [notificationsResources, setNR] = useState<Notification[]>([]);
 
   const { navigate } = useNavigation();
@@ -51,6 +55,12 @@ export const ResourcesTab = () => {
     </View>
   );
 
+  const fetchResource = async (slug: string) => {
+    const res = await fetchRSR(`${API_URL}/resource/${slug}`, user?.session);
+    const body = await res.json();
+    return body;
+  };
+
   return (
     <FlatList
       data={notificationsResources}
@@ -58,7 +68,10 @@ export const ResourcesTab = () => {
         <ResourceNotification
           {...item}
           onPress={() => {
-            navigate("Details", { ...item });
+            fetchResource(item.document.slug).then((res) => {
+              removeNotification(item._id);
+              navigate("Details", { ...res.data.attributes });
+            });
           }}
         />
       )}
