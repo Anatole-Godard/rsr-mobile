@@ -51,13 +51,17 @@ export function DrawerContent({ navigation, ...props }: any) {
               <UserCircleIcon color={theme[colorScheme].colors.primary} />
             )}
             label="Profil"
-            onPress={() => navigation.navigate("Profil")}
+            onPress={() =>
+              navigation.navigate("Profile", {
+                uid: user.data.uid,
+                fullName: user.data.fullName,
+                photoURL: user.data.photoURL,
+              })
+            }
             labelStyle={textStyle}
           />
           <DrawerItem
-            icon={() => (
-              <HomeIcon color={theme[colorScheme].colors.primary} />
-            )}
+            icon={() => <HomeIcon color={theme[colorScheme].colors.primary} />}
             label="Accueil"
             onPress={() => navigation.navigate("Accueil")}
             labelStyle={textStyle}
@@ -71,7 +75,9 @@ export function DrawerContent({ navigation, ...props }: any) {
             labelStyle={textStyle}
           />
           <DrawerItem
-            icon={() => <ChatAlt2Icon color={theme[colorScheme].colors.primary} />}
+            icon={() => (
+              <ChatAlt2Icon color={theme[colorScheme].colors.primary} />
+            )}
             label="Salons"
             onPress={() => navigation.navigate("Salons")}
             labelStyle={textStyle}

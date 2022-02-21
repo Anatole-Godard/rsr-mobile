@@ -33,6 +33,7 @@ import { useToast } from "react-native-paper-toast";
 import { fetchRSR } from "utils/fetchRSR";
 import Paragraph from "../ui/Paragraph";
 import { types } from "constants/resourceTypes";
+import { useNavigation } from "@react-navigation/native";
 
 const ResourceDataView = ({
   type,
@@ -106,6 +107,7 @@ interface Props extends Resource {
 }
 
 export const ResourceHome = (props: Props) => {
+  const {navigate} = useNavigation();
   const { colorScheme } = usePreferences();
   const { user } = useAuth();
   const toaster = useToast();
@@ -216,11 +218,13 @@ export const ResourceHome = (props: Props) => {
       <TouchableRipple onPress={() => props.onPress(props.slug)}>
         <Surface style={styles.container}>
           <View style={styles.leftColumn}>
-            <Avatar.Image
-              style={{ marginTop: 10 }}
-              source={{ uri: HOST_URL + props.owner.photoURL }}
-              size={48}
-            />
+            <TouchableRipple onPress={() => navigate("Profile", props.owner)}>
+              <Avatar.Image
+                // style={{  }}
+                source={{ uri: HOST_URL + props.owner.photoURL }}
+                size={48}
+              />
+            </TouchableRipple>
           </View>
           <View style={styles.rightColumn}>
             <View style={styles.topRow}>
@@ -300,7 +304,7 @@ export const ResourceHome = (props: Props) => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    paddingTop: 5,
+    paddingTop: 15,
     paddingRight: 15,
     elevation: 1,
   },

@@ -16,6 +16,7 @@ import { usePreferences } from "hooks/usePreferences";
 import { ResourceCreate } from "pages/resource/Create";
 import { MenuIcon } from "react-native-heroicons/outline";
 import { ChannelCreate } from "pages/channel/Create";
+import { ProfileScreen } from "pages/Profile";
 
 const Stack = createStackNavigator();
 
@@ -38,8 +39,6 @@ export const StackNavigator = () => {
             (options.subtitle !== undefined
               ? options.subtitle
               : navigation?.route?.name) || undefined;
-
-       
 
           return (
             <Appbar.Header
@@ -128,6 +127,17 @@ export const StackNavigator = () => {
             headerTitle:
               ((route?.params as unknown as { name?: string })
                 ?.name as unknown as string) || "Salons",
+          };
+        }}
+      />
+      <Stack.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={({ route }) => {
+          return {
+            headerTitle:
+              ((route?.params as unknown as { fullName?: string })
+                ?.fullName as unknown as string) || "Profil",
           };
         }}
       />
