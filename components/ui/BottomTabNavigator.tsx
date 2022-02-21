@@ -84,6 +84,7 @@ export const BottomTabNavigator = (props: Props) => {
               ),
             tabBarColor,
           }}
+
         />
         <Tab.Screen
           name="Catalogue"

@@ -14,13 +14,42 @@ import { ChannelSlug } from "pages/channel/Slug";
 import { theme } from "core/theme";
 import { usePreferences } from "hooks/usePreferences";
 import { ResourceCreate } from "pages/resource/Create";
-import { MenuIcon } from "react-native-heroicons/outline";
+import { MenuIcon, TrashIcon } from "react-native-heroicons/outline";
 import { ChannelCreate } from "pages/channel/Create";
+import { useNotifications } from "hooks/useNotifications";
 
 const Stack = createStackNavigator();
 
 export const StackNavigator = () => {
   const { colorScheme } = usePreferences();
+  const { removeAllNotification, notifications } = useNotifications();
+  const headerSubtitles = [
+    {
+      header: "Accueil",
+      subtitle: "Toutes les ressources",
+    },
+    {
+      header: "Catalogue",
+      subtitle: "Rechercher une ressource",
+    },
+    {
+      header: "Salons",
+      subtitle: "Chatter avec les autres",
+    },
+    {
+      header: "Notifications",
+      subtitle: "Que s'est-il passé ?",
+      right: () =>
+        notifications.length > 0 ? (
+          <Appbar.Action
+            onPress={() => removeAllNotification()}
+            icon={(props) => (
+              <TrashIcon size={props.size} color={props.color} />
+            )}
+          />
+        ) : null,
+    },
+  ];
 
   return (
     <Stack.Navigator
@@ -35,9 +64,12 @@ export const StackNavigator = () => {
               : navigation?.route?.name || "";
 
           const subtitle =
-            (options.subtitle !== undefined
-              ? options.subtitle
-              : navigation?.route?.name) || undefined;
+            headerSubtitles.find((screen) => screen.header === title)
+              ?.subtitle || "";
+
+          const right =
+            headerSubtitles.find((screen) => screen.header === title)?.right ||
+            undefined;
 
           return (
             <Appbar.Header
@@ -88,7 +120,7 @@ export const StackNavigator = () => {
                       .surface,
                 }}
               />
-              {options.action}
+              {right ? right() : null}
             </Appbar.Header>
           );
         },

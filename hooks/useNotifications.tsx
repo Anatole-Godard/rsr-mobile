@@ -20,7 +20,7 @@ function NotificationProvider({
 
   const removeNotification = (id: string) =>
     fetchRSR(
-      `/api/user/${user.data.uid.toString()}/notifications?id=${id}`,
+      `${API_URL}/user/${user.data.uid.toString()}/notifications?id=${id}`,
       user.session,
       {
         method: "DELETE",
@@ -35,7 +35,12 @@ function NotificationProvider({
         }
         return res.ok;
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.error(err.message, id));
+
+  const removeAllNotification = () =>
+    Promise.all(
+      notifications.map((notification) => removeNotification(notification._id))
+    );
 
   useEffect(() => {
     if (user) {
@@ -62,7 +67,12 @@ function NotificationProvider({
 
   return (
     <NotificationContext.Provider
-      value={{ notifications, setNotifications, removeNotification }}
+      value={{
+        notifications,
+        setNotifications,
+        removeNotification,
+        removeAllNotification,
+      }}
     >
       {children}
     </NotificationContext.Provider>
@@ -73,6 +83,7 @@ interface NotificationContextType {
   notifications: Notification[];
   setNotifications: (notifications: Notification[]) => void;
   removeNotification: (id: string) => void;
+  removeAllNotification: () => void;
 }
 
 const useNotifications = () =>
