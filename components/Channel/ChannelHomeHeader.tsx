@@ -166,6 +166,7 @@ const ChannelHome = (props: ChannelHomeProps) => {
           container: {
             borderTopLeftRadius: 16,
             borderTopRightRadius: 16,
+            backgroundColor: theme[colorScheme].colors.background,
           },
         }}
       >

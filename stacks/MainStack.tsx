@@ -19,6 +19,7 @@ import { ChannelCreate } from "pages/channel/Create";
 import { ProfileScreen } from "pages/Profile";
 import { useNotifications } from "hooks/useNotifications";
 import { ResourceEditScreen } from "pages/resource/Edit";
+import { ChannelEditScreen } from "pages/channel/Edit";
 
 const Stack = createStackNavigator();
 
@@ -164,6 +165,19 @@ export const StackNavigator = () => {
         name="ChannelCreate"
         component={ChannelCreate}
         options={{ headerTitle: "Créer un salon" }}
+      />
+      <Stack.Screen
+        name="ChannelEdit"
+        component={ChannelEditScreen}
+        options={({ route }) => {
+          return {
+            presentation: "modal", // TODO DEV: has serious issues with modal
+            headerTitle:
+              "#" +
+              ((route?.params as unknown as { slug: string })?.slug ||
+                "salon-incroyable"),
+          };
+        }}
       />
 
       <Stack.Screen
