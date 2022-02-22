@@ -14,6 +14,7 @@ import {
   IconButton,
   Text,
   Button,
+  TouchableRipple,
 } from "react-native-paper";
 import color from "color";
 import { Resource } from "types/Resource";
@@ -123,11 +124,23 @@ export const DetailedResource = (props: Props) => {
         }}
       >
         <View style={{ width: "15%" }}>
-          <Avatar.Image
-            style={styles.avatar}
-            source={{ uri: HOST_URL + item.owner.photoURL }}
-            size={32}
-          />
+          {props.page ? (
+            <TouchableRipple
+              onPress={() => props.navigation.push("Profile", item.owner)}
+            >
+              <Avatar.Image
+                style={styles.avatar}
+                source={{ uri: HOST_URL + item.owner.photoURL }}
+                size={32}
+              />
+            </TouchableRipple>
+          ) : (
+            <Avatar.Image
+              style={styles.avatar}
+              source={{ uri: HOST_URL + item.owner.photoURL }}
+              size={32}
+            />
+          )}
         </View>
         <View style={{ width: "85%" }}>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -200,17 +213,29 @@ export const DetailedResource = (props: Props) => {
   return (
     <View style={styles.container}>
       <View style={styles.topRow}>
-        <Avatar.Image
-          style={styles.avatar}
-          source={{ uri: HOST_URL + props.owner.photoURL }}
-          size={60}
-        />
-        <View>
+        {props.page ? (
+          <TouchableRipple
+            onPress={() => props.navigation.push("Profile", props.owner)}
+          >
+            <Avatar.Image
+              style={styles.avatar}
+              source={{ uri: HOST_URL + props.owner.photoURL }}
+              size={60}
+            />
+          </TouchableRipple>
+        ) : (
+          <Avatar.Image
+            style={styles.avatar}
+            source={{ uri: HOST_URL + props.owner.photoURL }}
+            size={60}
+          />
+        )}
+        <View style={{ marginLeft: 12, flex:1}}>
           <Title
             style={{
               fontFamily: "Marianne-ExtraBold",
               lineHeight: 24,
-              width: "60%",
+              width: "100%",
             }}
           >
             {props.data.attributes.properties.name}
@@ -388,7 +413,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   avatar: {
-    marginRight: 20,
+    // marginRight: 20,
   },
   topRow: {
     flexDirection: "row",

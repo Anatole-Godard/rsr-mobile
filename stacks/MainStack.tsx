@@ -16,6 +16,7 @@ import { usePreferences } from "hooks/usePreferences";
 import { ResourceCreate } from "pages/resource/Create";
 import { MenuIcon, TrashIcon } from "react-native-heroicons/outline";
 import { ChannelCreate } from "pages/channel/Create";
+import { ProfileScreen } from "pages/Profile";
 import { useNotifications } from "hooks/useNotifications";
 
 const Stack = createStackNavigator();
@@ -70,7 +71,7 @@ export const StackNavigator = () => {
           const right =
             headerSubtitles.find((screen) => screen.header === title)?.right ||
             undefined;
-
+          
           return (
             <Appbar.Header
               theme={{ colors: { primary: theme[colorScheme].colors.surface } }}
@@ -156,9 +157,22 @@ export const StackNavigator = () => {
         component={ChannelSlug}
         options={({ route }) => {
           return {
+            presentation: "modal",
             headerTitle:
               ((route?.params as unknown as { name?: string })
                 ?.name as unknown as string) || "Salons",
+          };
+        }}
+      />
+      <Stack.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={({ route }) => {
+          return {
+            presentation: "modal",
+            headerTitle:
+              ((route?.params as unknown as { fullName?: string })
+                ?.fullName as unknown as string) || "Profil",
           };
         }}
       />
