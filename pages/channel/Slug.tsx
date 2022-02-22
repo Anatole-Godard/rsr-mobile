@@ -21,6 +21,7 @@ import TextInput from "components/ui/TextInput";
 
 import LottieView from "lottie-react-native";
 import Paragraph from "components/ui/Paragraph";
+import { messageValidator } from "core/validators";
 
 interface Props {
   navigation: Navigation;
@@ -57,7 +58,9 @@ export const ChannelSlug = (props: Props) => {
   }, []);
 
   const sendMsg = async () => {
-    if (user) {
+    let error = messageValidator(message.value);
+    setMessage({ ...message, error });
+    if (user && error === "") {
       const resp = await fetchRSR(
         `${API_URL}/channel/${props.route.params.slug}/messages`,
         user?.session,

@@ -23,3 +23,8 @@ export const membersValidator = (members: UserMinimum[]) => {
   if (members.length === 0) return "Vous devez ajouter au moins un membre.";
   return "";
 };
+
+export const messageValidator = (message: string) => {
+  if (!message || message.trim().length <= 0) return "Le message ne peut pas être vide.";
+  return "";
+};
