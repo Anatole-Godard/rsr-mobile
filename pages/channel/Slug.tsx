@@ -80,7 +80,7 @@ export const ChannelSlug = (props: Props) => {
   return (
     <KeyboardAvoidingView
       behavior="padding"
-      keyboardVerticalOffset={56}
+      keyboardVerticalOffset={72}
       style={{ ...styles.container, backgroundColor: theme.colors.background }}
     >
       <FlatList

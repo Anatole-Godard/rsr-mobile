@@ -7,7 +7,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { API_URL } from "constants/env";
 
-
 import { Vibration } from "react-native";
 
 /**
@@ -65,7 +64,7 @@ export function AuthProvider({
     fullName: string,
     birthDate: string
   ) => {
-    const response = await fetch("/api/auth/register", {
+    const response = await fetch(API_URL + "/auth/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -124,6 +124,7 @@ export const StackNavigator = () => {
         component={ChannelSlug}
         options={({ route }) => {
           return {
+            presentation: "modal",
             headerTitle:
               ((route?.params as unknown as { name?: string })
                 ?.name as unknown as string) || "Salons",
@@ -135,6 +136,7 @@ export const StackNavigator = () => {
         component={ProfileScreen}
         options={({ route }) => {
           return {
+            presentation: "modal",
             headerTitle:
               ((route?.params as unknown as { fullName?: string })
                 ?.fullName as unknown as string) || "Profil",
