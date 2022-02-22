@@ -70,7 +70,9 @@ export const BottomTabNavigator = (props: Props) => {
         sceneAnimationEnabled={false}
         style={{
           elevation: 0,
+          
         }}
+        labeled={false}
       >
         <Tab.Screen
           name="Accueil"
@@ -84,7 +86,6 @@ export const BottomTabNavigator = (props: Props) => {
               ),
             tabBarColor,
           }}
-
         />
         <Tab.Screen
           name="Catalogue"
