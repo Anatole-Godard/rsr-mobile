@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  StyleSheet,
-  View,
-  FlatList,
-  Dimensions,
-  KeyboardAvoidingView,
-} from "react-native";
+import { StyleSheet, View, FlatList, Dimensions } from "react-native";
 import {
   Title,
   Caption,
@@ -34,7 +28,7 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
   HeartIcon as HeartIconOutline,
-  PaperAirplaneIcon,
+  PencilIcon,
 } from "react-native-heroicons/outline";
 import { Comment } from "types/Resource/Comment";
 import ViewMoreText from "react-native-view-more-text";
@@ -230,7 +224,7 @@ export const DetailedResource = (props: Props) => {
             size={60}
           />
         )}
-        <View style={{ marginLeft: 12, flex:1}}>
+        <View style={{ marginLeft: 12, flex: 1 }}>
           <Title
             style={{
               fontFamily: "Marianne-ExtraBold",
@@ -242,6 +236,27 @@ export const DetailedResource = (props: Props) => {
           </Title>
           <Caption style={styles.handle}>{props.owner.fullName}</Caption>
         </View>
+        {props.page && user.data.uid === props.owner.uid && (
+          <IconButton
+            onPress={() =>
+              props.navigation.push("ResourceEdit", {
+                slug: props.slug,
+                owner: props.owner,
+                data: props.data,
+                createdAt: props.createdAt,
+                description: props.description,
+                likes: props.likes,
+                comments: props.comments,
+                validated: props.validated,
+                tags: props.tags,
+              })
+            }
+            size={24}
+            icon={(props) => (
+              <PencilIcon size={props.size} color={props.color} />
+            )}
+          ></IconButton>
+        )}
       </View>
       <Paragraph
         style={{

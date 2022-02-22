@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -15,8 +15,8 @@ import { useAuth } from "hooks/useAuth";
 import { fetchRSR } from "utils/fetchRSR";
 import { API_URL, HOST_URL } from "constants/env";
 
-import { TextInput as PaperInput, useTheme } from "react-native-paper";
-import { CheckIcon } from "react-native-heroicons/outline";
+import { Appbar, TextInput as PaperInput, useTheme } from "react-native-paper";
+import { CheckIcon, PencilIcon } from "react-native-heroicons/outline";
 import TextInput from "components/ui/TextInput";
 
 import LottieView from "lottie-react-native";
@@ -31,13 +31,29 @@ interface Props {
 }
 
 export const ChannelSlug = (props: Props) => {
+  const { user } = useAuth();
+  useLayoutEffect(() => {
+    if (user && user.data.uid !== props.route.params.owner.uid)
+      props.navigation.setOptions({
+        headerRight: () => (
+          <Appbar.Action
+            onPress={() =>
+              props.navigation.push("ChannelEdit", { ...props.route.params })
+            }
+            icon={(props) => (
+              <PencilIcon size={props.size} color={props.color} />
+            )}
+          />
+        ),
+      });
+  }, [props.navigation]);
+
   const [chat, setChat] = useState<Message[]>(props.route.params.messages);
   const [message, setMessage] = useState<{ value: string; error: string }>({
     value: "",
     error: "",
   });
 
-  const { user } = useAuth();
   const theme = useTheme();
 
   useEffect((): any => {

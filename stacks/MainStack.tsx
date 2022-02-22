@@ -18,13 +18,15 @@ import { MenuIcon, TrashIcon } from "react-native-heroicons/outline";
 import { ChannelCreate } from "pages/channel/Create";
 import { ProfileScreen } from "pages/Profile";
 import { useNotifications } from "hooks/useNotifications";
+import { ResourceEditScreen } from "pages/resource/Edit";
+import { ChannelEditScreen } from "pages/channel/Edit";
 
 const Stack = createStackNavigator();
 
 export const StackNavigator = () => {
   const { colorScheme } = usePreferences();
   const { removeAllNotification, notifications } = useNotifications();
-  const headerSubtitles = [
+  const headers = [
     {
       header: "Accueil",
       subtitle: "Toutes les ressources",
@@ -65,13 +67,13 @@ export const StackNavigator = () => {
               : navigation?.route?.name || "";
 
           const subtitle =
-            headerSubtitles.find((screen) => screen.header === title)
-              ?.subtitle || "";
+            headers.find((screen) => screen.header === title)?.subtitle || "";
 
           const right =
-            headerSubtitles.find((screen) => screen.header === title)?.right ||
+            options.headerRight ||
+            headers.find((screen) => screen.header === title)?.right ||
             undefined;
-          
+
           return (
             <Appbar.Header
               theme={{ colors: { primary: theme[colorScheme].colors.surface } }}
@@ -147,9 +149,35 @@ export const StackNavigator = () => {
         options={{ headerTitle: "Créer une ressource" }}
       />
       <Stack.Screen
+        name="ResourceEdit"
+        component={ResourceEditScreen}
+        options={({ route }) => {
+          return {
+            presentation: "modal", // TODO DEV: has serious issues with modal
+            headerTitle:
+              "#" +
+              ((route?.params as unknown as { slug: string })?.slug ||
+                "ressource-incroyable"),
+          };
+        }}
+      />
+      <Stack.Screen
         name="ChannelCreate"
         component={ChannelCreate}
         options={{ headerTitle: "Créer un salon" }}
+      />
+      <Stack.Screen
+        name="ChannelEdit"
+        component={ChannelEditScreen}
+        options={({ route }) => {
+          return {
+            presentation: "modal", // TODO DEV: has serious issues with modal
+            headerTitle:
+              "#" +
+              ((route?.params as unknown as { slug: string })?.slug ||
+                "salon-incroyable"),
+          };
+        }}
       />
 
       <Stack.Screen

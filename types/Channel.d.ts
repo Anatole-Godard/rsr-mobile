@@ -13,4 +13,5 @@ export type Channel = {
   createdAt: Date | string;
   image?: any;
   description?: string;
+  visibility: "public" | "private";
 };

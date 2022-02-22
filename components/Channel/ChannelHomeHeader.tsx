@@ -17,6 +17,11 @@ import { Channel } from "types/Channel";
 import { Navigation } from "types/Navigation";
 import { fetchRSR } from "utils/fetchRSR";
 
+import RBSheet from "react-native-raw-bottom-sheet";
+import Paragraph from "components/ui/Paragraph";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
+
 interface Props {
   navigation: Navigation;
 }
@@ -73,57 +78,202 @@ export const ChannelHomeHeader = (props: Props) => {
 // instagram story like component
 const ChannelHome = (props: ChannelHomeProps) => {
   const { colorScheme } = usePreferences();
-  return (
-    <View style={{ flex: 1, marginRight: 24 }}>
-      <TouchableOpacity
-        onPress={props.onPress}
-        style={{
-          backgroundColor: theme[colorScheme].colors.surface,
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        {props.image ? (
-          <View
-            style={{
-              ...styles.imageContainer,
-              backgroundColor:
-                colorScheme === "light" ? colors.blue[200] : colors.blue[800],
-            }}
-          >
-            <Image
-              source={{ uri: HOST_URL + props.image.url }}
-              style={styles.image}
-            />
-          </View>
-        ) : (
-          <View
-            style={{
-              ...styles.imageContainer,
-              backgroundColor:
-                colorScheme === "light" ? colors.blue[200] : colors.blue[800],
-            }}
-          >
-            <UsersIcon size={16} color={colors.blue[500]} />
-          </View>
-        )}
+  const refRBSheet = React.useRef();
 
-        <Text
-          numberOfLines={1}
-          ellipsizeMode="tail"
+  return (
+    <>
+      <View style={{ flex: 1, marginRight: 24 }}>
+        <TouchableOpacity
+          onPress={props.onPress}
+          onLongPress={() => refRBSheet.current.open()}
           style={{
-            fontSize: 13,
-            fontFamily: "Marianne-Bold",
-            width: 40,
-            height: 24,
-            textAlign: "center",
+            backgroundColor: theme[colorScheme].colors.surface,
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
-          {props.name}
-        </Text>
-      </TouchableOpacity>
-    </View>
+          <View
+            style={{
+              backgroundColor:
+                colorScheme === "light" ? colors.blue[400] : colors.blue[600],
+              height: 56,
+              width: 56,
+              borderRadius: 28,
+              padding: 2,
+            }}
+          >
+            <View
+              style={{
+                backgroundColor: theme[colorScheme].colors.surface,
+                padding: 2,
+                height: 52,
+                width: 52,
+                borderRadius: 26,
+              }}
+            >
+              {props.image ? (
+                <View
+                  style={{
+                    ...styles.imageContainer,
+                    backgroundColor:
+                      colorScheme === "light"
+                        ? colors.blue[200]
+                        : colors.blue[800],
+                  }}
+                >
+                  <Image
+                    source={{ uri: HOST_URL + props.image.url }}
+                    style={styles.image}
+                  />
+                </View>
+              ) : (
+                <View
+                  style={{
+                    ...styles.imageContainer,
+                    backgroundColor:
+                      colorScheme === "light"
+                        ? colors.blue[200]
+                        : colors.blue[800],
+                  }}
+                >
+                  <UsersIcon size={16} color={colors.blue[500]} />
+                </View>
+              )}
+            </View>
+          </View>
+
+          <Text
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            style={{
+              fontSize: 13,
+              fontFamily: "Marianne-Bold",
+              width: 40,
+              height: 24,
+              textAlign: "center",
+            }}
+          >
+            {props.name}
+          </Text>
+        </TouchableOpacity>
+      </View>
+      <RBSheet
+        ref={refRBSheet}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        customStyles={{
+          container: {
+            borderTopLeftRadius: 16,
+            borderTopRightRadius: 16,
+            backgroundColor: theme[colorScheme].colors.background,
+          },
+        }}
+      >
+        <View style={styles.sheetContainer}>
+          <View style={styles.topRow}>
+            <TouchableOpacity
+              onPress={() => {
+                refRBSheet.current.close();
+                props.onPress();
+              }}
+              style={{
+                backgroundColor: theme[colorScheme].colors.surface,
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <View
+                style={{
+                  backgroundColor:
+                    colorScheme === "light"
+                      ? colors.blue[400]
+                      : colors.blue[600],
+                  height: 56,
+                  width: 56,
+                  borderRadius: 28,
+                  padding: 2,
+                }}
+              >
+                <View
+                  style={{
+                    backgroundColor: theme[colorScheme].colors.surface,
+                    padding: 2,
+                    height: 52,
+                    width: 52,
+                    borderRadius: 26,
+                  }}
+                >
+                  {props.image ? (
+                    <View
+                      style={{
+                        ...styles.imageContainer,
+                        backgroundColor:
+                          colorScheme === "light"
+                            ? colors.blue[200]
+                            : colors.blue[800],
+                      }}
+                    >
+                      <Image
+                        source={{ uri: HOST_URL + props.image.url }}
+                        style={styles.image}
+                      />
+                    </View>
+                  ) : (
+                    <View
+                      style={{
+                        ...styles.imageContainer,
+                        backgroundColor:
+                          colorScheme === "light"
+                            ? colors.blue[200]
+                            : colors.blue[800],
+                      }}
+                    >
+                      <UsersIcon size={16} color={colors.blue[500]} />
+                    </View>
+                  )}
+                </View>
+              </View>
+            </TouchableOpacity>
+            <View style={{ marginLeft: 8 }}>
+              <Text style={{ fontFamily: "Marianne-Bold", fontSize: 18 }}>
+                {props.name}
+              </Text>
+              <Text style={{ fontFamily: "Spectral", fontSize: 13 }}>
+                #{props.slug} -{" "}
+                {props.members.length.toString() +
+                  (props.members.length > 1 ? " membres" : " membre")}
+              </Text>
+            </View>
+          </View>
+          <View
+            style={{
+              marginTop: 16,
+              paddingLeft: 16,
+              paddingBottom: 8,
+              marginBottom: 8,
+              borderBottomWidth: StyleSheet.hairlineWidth,
+              borderColor: theme[colorScheme].colors.secondary,
+            }}
+          >
+            <Paragraph>“ {props.description} ”</Paragraph>
+          </View>
+          <Text style={{ fontFamily: "Spectral" }}>
+            Dernier message:{" "}
+            {props.messages.length > 0
+              ? format(
+                  new Date(props.messages[props.messages.length - 1].createdAt),
+                  "HH:mm, dd MMM yyyy",
+                  { locale: fr }
+                ) +
+                " de " +
+                props.messages[props.messages.length - 1].user.fullName
+              : "aucun message."}
+          </Text>
+        </View>
+      </RBSheet>
+    </>
   );
 };
 
@@ -139,5 +289,14 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
+  },
+  sheetContainer: {
+    flex: 1,
+    flexDirection: "column",
+    paddingHorizontal: 16,
+  },
+  topRow: {
+    flexDirection: "row",
+    alignItems: "center",
   },
 });
