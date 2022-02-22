@@ -1,7 +1,8 @@
 export type Navigation = {
-  navigate: (scene: string,) => void;
+  navigate: (scene: string) => void;
   push: (scene: string, params: any) => void;
   getState?: () => NavigationState;
+  setOptions?: (options: NavigationScreenConfig) => void;
 };
 
 type NavigationState = {
@@ -11,3 +12,5 @@ type NavigationState = {
 type NavigationRoute = {
   state: { history: { key: string }[] };
 };
+
+type NavigationScreenConfig = any;

@@ -52,6 +52,9 @@ export const ResourcesTab = () => {
       <Paragraph style={{ marginTop: 16 }}>
         Pas de commentaires ni de like pour le moment.
       </Paragraph>
+      <Paragraph style={{ marginTop: -12, fontSize: 12 }}>
+        Mais cela ne saurait tarder !
+      </Paragraph>
     </View>
   );
 
