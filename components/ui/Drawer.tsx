@@ -4,6 +4,7 @@ import { DrawerItem, DrawerContentScrollView } from "@react-navigation/drawer";
 import { Avatar, Title, Drawer, Switch } from "react-native-paper";
 import {
   ChatAlt2Icon,
+  CogIcon,
   HomeIcon,
   MoonIcon,
   ShoppingBagIcon,
@@ -84,6 +85,14 @@ export function DrawerContent({ navigation, ...props }: any) {
           />
         </Drawer.Section>
         <Drawer.Section title="Préferences">
+          <DrawerItem
+            icon={() => (
+              <CogIcon color={theme[colorScheme].colors.primary} />
+            )}
+            label="Paramètres"
+            onPress={() => navigation.navigate("Settings")}
+            labelStyle={textStyle}
+          />
           <Drawer.Item
             icon={() =>
               colorScheme === "dark" ? (
