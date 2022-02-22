@@ -157,7 +157,7 @@ export const StackNavigator = () => {
         component={ChannelSlug}
         options={({ route }) => {
           return {
-            presentation: "modal",
+            // presentation: "modal", // TODO DEV: has serious issues with modal
             headerTitle:
               ((route?.params as unknown as { name?: string })
                 ?.name as unknown as string) || "Salons",

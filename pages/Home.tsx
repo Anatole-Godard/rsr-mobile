@@ -103,6 +103,7 @@ export const HomeScreen = (props: Props) => {
       refreshing={loading}
       refreshControl={
         <RefreshControl
+        
           refreshing={loading}
           onRefresh={() => fetchData()}
           title="Tirer pour rafraîchir"

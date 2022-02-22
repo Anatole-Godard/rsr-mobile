@@ -5,10 +5,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "eject": "expo eject",
-    "api": "cd ../rsr-web/;npm run dev",
-    "api:start": "concurrently \"npm run start\" \"npm run api\"",
-    "api:ios": "concurrently \"npm run ios\" \"npm run api\""
+    "eject": "expo eject"
   },
   "dependencies": {
     "@freakycoder/react-native-bounceable": "^0.2.5",

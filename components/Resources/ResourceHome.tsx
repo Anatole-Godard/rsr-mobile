@@ -73,7 +73,7 @@ const ResourceDataView = ({
     >
       {type === "location" && (
         <LocationMarkerIcon
-          size={32}
+          size={24}
           color={
             colorScheme === "light" ? colors.indigo[700] : colors.indigo[300]
           }
@@ -81,7 +81,7 @@ const ResourceDataView = ({
       )}
       {type === "physical_item" && (
         <HandIcon
-          size={32}
+          size={24}
           color={
             colorScheme === "light" ? colors.emerald[700] : colors.emerald[300]
           }
@@ -89,7 +89,7 @@ const ResourceDataView = ({
       )}
       {type === "external_link" && (
         <ExternalLinkIcon
-          size={32}
+          size={24}
           color={
             colorScheme === "light" ? colors.amber[700] : colors.amber[300]
           }
@@ -329,9 +329,9 @@ const styles = StyleSheet.create({
   image: {
     borderWidth: StyleSheet.hairlineWidth,
     marginTop: -5,
-    borderRadius: 20,
+    borderRadius: 16,
     width: "100%",
-    height: 75,
+    height: 64,
   },
   bottomRow: {
     paddingVertical: 10,

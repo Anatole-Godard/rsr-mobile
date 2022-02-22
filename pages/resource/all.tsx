@@ -3,26 +3,23 @@ import {
   FlatList,
   KeyboardAvoidingView,
   RefreshControl,
+  ScrollView,
   StyleSheet,
+  TouchableOpacity,
   View,
 } from "react-native";
-// import { fetchRSR } from "utils/fetchRSR";
-// import { ResourceCard } from "components/Resources/Resource";
-// import Collapsible from "react-native-collapsible";
-// import { ChevronRightIcon } from "react-native-heroicons/outline";
-// import { Filters } from "components/Search/Filters";
-// import { Categories } from "components/Resources/Categories";
 import { useAuth } from "hooks/useAuth";
 import { API_URL } from "constants/env";
 import { Resource } from "types/Resource";
 import { usePreferences } from "hooks/usePreferences";
 import { useSearch } from "hooks/useSearch";
-import { Chip, Searchbar } from "react-native-paper";
+import { Chip, Modal, Portal, Searchbar } from "react-native-paper";
 import { theme } from "core/theme";
 import Paragraph from "components/ui/Paragraph";
 import LottieView from "lottie-react-native";
 import { Navigation } from "types/Navigation";
 import { ResourceHome } from "components/Resources/ResourceHome";
+import { Separator } from "components/ui/Separator";
 
 interface Props {
   navigation: Navigation;
@@ -36,9 +33,7 @@ export const ResourcesScreen = (props: Props) => {
   const [resources, setResources] = useState<Resource[]>([]);
   const { search, onChange, filtered } = useSearch("slug", resources);
   const [filtersSelected, setFiltersSelected] = useState<string[]>([]);
-
-  //   const [isSearchbarDisplayed, setIsSearchbarDisplayed] = useState(true);
-  //   const [areFiltersDisplayed, setAreFiltersDisplayed] = useState(false);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
 
   const filters = [
     "Animaux",
@@ -103,38 +98,18 @@ export const ResourcesScreen = (props: Props) => {
           borderRadius: 0,
         }}
       />
-      <FlatList
-        data={filters}
-        renderItem={({ item }: { item: string }) => (
-          <Chip
-            icon="information"
-            children={item}
-            onPress={() => {
-              if (filtersSelected.includes(item)) {
-                setFiltersSelected(
-                  filtersSelected.filter((filter) => filter !== item)
-                );
-              } else {
-                setFiltersSelected([...filtersSelected, item]);
-              }
-            }}
-          />
-        )}
-        keyExtractor={(item) => item}
-        horizontal
-        style={{
-            width: "100%",
-            flex:1,
-          marginBottom: 16,
-        }}
-      />
+
+      
 
       <FlatList
         ListEmptyComponent={listEmptyComponent}
         contentContainerStyle={{
           backgroundColor: theme[colorScheme].colors.background,
         }}
-        style={{ backgroundColor: theme[colorScheme].colors.background }}
+        style={{
+          backgroundColor: theme[colorScheme].colors.background,
+          flex: 1,
+        }}
         data={filtered.map((resource) => ({
           ...resource,
           onPress: () =>
@@ -145,138 +120,47 @@ export const ResourcesScreen = (props: Props) => {
         }))}
         renderItem={({ item }) => <ResourceHome {...item} />}
         keyExtractor={(item: Resource) => item.slug.toString()}
-        ItemSeparatorComponent={() => (
-          <View style={{ height: StyleSheet.hairlineWidth }} />
-        )}
-        onRefresh={() => fetchData()}
-        refreshing={loading}
-        refreshControl={
-          <RefreshControl
-            refreshing={loading}
-            onRefresh={() => fetchData()}
-            title="Tirer pour rafraîchir"
-            tintColor={
-              theme[colorScheme === "dark" ? "light" : "dark"].colors.surface
-            }
-            titleColor={
-              theme[colorScheme === "dark" ? "light" : "dark"].colors.surface
-            }
-          />
-        }
+        ItemSeparatorComponent={Separator}
+        // onRefresh={() => fetchData()}
+        // refreshing={loading}
+        // refreshControl={
+        //   <RefreshControl
+        //     refreshing={loading}
+        //     onRefresh={() => fetchData()}
+        //     title="Tirer pour rafraîchir"
+        //     tintColor={
+        //       theme[colorScheme === "dark" ? "light" : "dark"].colors.surface
+        //     }
+        //     titleColor={
+        //       theme[colorScheme === "dark" ? "light" : "dark"].colors.surface
+        //     }
+        //   />
+        // }
       />
     </KeyboardAvoidingView>
   );
 };
 
-//   const returnCategory = (title: string) => {
-//     return (
-//       <View style={styles.container}>
-//         <View style={{ width: "20%" }}>
-//           <View style={styles.categoryContainer}>
-//             <View style={styles.card}>
-//               <Text style={styles.title}>Categories</Text>
-//               {categories.map((e, i) => {
-//                 return <Categories key={i} name={e} />;
-//               })}
-//             </View>
-//           </View>
-//         </View>
-//         <ScrollView style={{ width: "80%" }}>
-//           <View
-//             style={
-//               isSearchbarDisplayed
-//                 ? { display: undefined }
-//                 : { display: "none" }
-//             }
-//           >
-//             <Searchbar />
-//             <View>
-//               <View style={styles.displayFilters}>
-//                 <ChevronRightIcon
-//                   size={15}
-//                   style={areFiltersDisplayed ? styles.icon : styles.iconRotated}
-//                   onPress={() => setAreFiltersDisplayed(!areFiltersDisplayed)}
-//                 />
-//                 <Text
-//                   onPress={() => setAreFiltersDisplayed(!areFiltersDisplayed)}
-//                 >
-//                   Filters
-//                 </Text>
-//               </View>
-//               <Collapsible
-//                 style={styles.filters}
-//                 collapsed={areFiltersDisplayed}
-//               >
-//                 {filters.map((e, i) => {
-//                   return <Filters key={i} name={e} />;
-//                 })}
-//               </Collapsible>
-//             </View>
-//           </View>
-//           {/*<View style={styles.category}>*/}
-//           {/*    <ChevronRightIcon size={25} style={isCollapsed ? styles.icon : styles.iconRotated}*/}
-//           {/*                      onPress={() => setIsCollapsed(!isCollapsed)}/>*/}
-//           {/*    <Text style={styles.title} onPress={() => setIsCollapsed(!isCollapsed)}>{title}</Text>*/}
-//           {/*</View>*/}
-//           <View>
-//             {resources.map((resource) => {
-//               return <ResourceCard resource={resource} key={resource.id} />;
-//             })}
-//           </View>
-//         </ScrollView>
-//       </View>
-//     );
-//   };
-//   return <View style={{ flex: 1 }}>{returnCategory("Top Resources")}</View>;
-
-// const styles = StyleSheet.create({
-//   title: {
-//     fontSize: 20,
-//     fontWeight: "bold",
-//     marginBottom: 10,
-//   },
-//   icon: {
-//     color: "#000",
-//     marginRight: 10,
-//   },
-//   iconRotated: {
-//     color: "#000",
-//     marginRight: 10,
-//     transform: [{ rotate: "90deg" }],
-//   },
-//   category: {
-//     flex: 1,
-//     flexDirection: "row",
-//     marginLeft: 30,
-//     marginTop: 20,
-//   },
-//   filters: {
-//     flex: 1,
-//     flexDirection: "row",
-//     flexWrap: "wrap",
-//     alignSelf: "center",
-//     width: "90%",
-//   },
-//   displayFilters: {
-//     flex: 1,
-//     flexDirection: "row",
-//     alignSelf: "flex-start",
-//     justifyContent: "center",
-//     marginLeft: 50,
-//     paddingBottom: 10,
-//   },
-//   container: {
-//     flex: 1,
-//     flexDirection: "row",
-//   },
-//   categoryContainer: {
-//     flex: 1,
-//     flexDirection: "column",
-//   },
-//   card: {
-//     backgroundColor: "#fff",
-//     padding: 15,
-//     margin: 10,
-//     borderRadius: 10,
-//   },
-// });
+const styles = StyleSheet.create({
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+});

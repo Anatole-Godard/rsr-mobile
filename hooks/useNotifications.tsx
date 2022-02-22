@@ -2,7 +2,7 @@ import { Notification } from "types/Notification";
 import { fetchRSR } from "utils/fetchRSR";
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useAuth } from "./useAuth";
-import { API_URL } from "constants/env";
+import { API_URL, NOTIFICATIONS_DEBOUNCE_TIME } from "constants/env";
 const NotificationContext = createContext({});
 
 /**
@@ -51,7 +51,6 @@ function NotificationProvider({
         )
           .then((res) => res.json())
           .then((body) => {
-            // console.log(body.data.attributes.length, Date.now());
             if (body.error) {
               console.log(body.error);
             } else {
@@ -59,7 +58,7 @@ function NotificationProvider({
             }
           })
           .catch((err) => console.error(err));
-      }, 5000);
+      }, NOTIFICATIONS_DEBOUNCE_TIME);
 
       return () => clearInterval(poll);
     }

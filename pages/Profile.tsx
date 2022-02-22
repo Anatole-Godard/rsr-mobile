@@ -46,7 +46,7 @@ export const ProfileScreen = (props: Props) => {
         )
       );
   }, [user]);
-  // const theme = useTheme();
+  const theme = useTheme();
   return (
     <View style={{ height: Dimensions.get("screen").height / 3, flex: 1 }}>
       <ImageBackground
@@ -122,6 +122,7 @@ export const ProfileScreen = (props: Props) => {
       <View
         style={{
           ...styles.statWrapper,
+          backgroundColor: theme.colors.background,
           borderColor:
             colorScheme === "dark"
               ? colors.trueGray[700]
@@ -186,8 +187,7 @@ const styles = StyleSheet.create({
   statWrapper: {
     flexDirection: "row",
     justifyContent: "space-around",
-    marginTop: 8,
-    marginBottom: 8,
+    paddingTop: 8,
     paddingBottom: 8,
     borderBottomWidth: StyleSheet.hairlineWidth,
   },

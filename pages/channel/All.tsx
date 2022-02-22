@@ -75,7 +75,6 @@ export const ChannelScreen = (props: Props) => {
           elevation: 0,
           backgroundColor: theme[colorScheme].colors.surface,
           borderRadius: 0,
-          
         }}
       />
       <FlatList
