@@ -52,10 +52,10 @@ export const MessagesTab = () => {
       <LottieView
         autoPlay={true}
         style={{
-          width: 128,
-          height: 128,
+          width: 256,
+          height: 256,
         }}
-        source={require("../../assets/lotties/empty.json")}
+        source={require("../../assets/lotties/notifications.json")}
       />
       <Paragraph style={{ marginTop: 16 }}>
         Pas de messages pour le moment.
