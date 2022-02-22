@@ -51,7 +51,7 @@ export const ProfileScreen = (props: Props) => {
     <View style={{ height: Dimensions.get("screen").height / 3, flex: 1 }}>
       <ImageBackground
         source={{ uri: HOST_URL + photoURL }}
-        style={{  width: "100%", }}
+        style={{ width: "100%" }}
         blurRadius={64}
       >
         <View
@@ -121,57 +121,30 @@ export const ProfileScreen = (props: Props) => {
       </ImageBackground>
       <View
         style={{
-          flexDirection: "row",
-          justifyContent: "space-around",
-          marginTop: 8,
-          marginBottom: 8,
-          paddingBottom: 8,
-          borderBottomWidth: StyleSheet.hairlineWidth,
+          ...styles.statWrapper,
           borderColor:
             colorScheme === "dark"
               ? colors.trueGray[700]
               : colors.trueGray[300],
         }}
       >
-        <View
-          style={{
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Text style={{ fontFamily: "Marianne-Bold", fontSize: 16 }}>
+        <View style={styles.statContainer}>
+          <Text style={styles.statNumber}>
             {user.data.followers?.length || "0"}
           </Text>
-          <Text style={{ fontFamily: "Spectral", fontSize: 12 }}>Abonnés</Text>
+          <Text style={styles.statLabel}>Abonnés</Text>
         </View>
-        <View
-          style={{
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Text style={{ fontFamily: "Marianne-Bold", fontSize: 16 }}>
+        <View style={styles.statContainer}>
+          <Text style={styles.statNumber}>
             {user.data.following?.length || "0"}
           </Text>
-          <Text style={{ fontFamily: "Spectral", fontSize: 12 }}>
-            Abonnements
-          </Text>
+          <Text style={styles.statLabel}>Abonnements</Text>
         </View>
-        <View
-          style={{
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Text style={{ fontFamily: "Marianne-Bold", fontSize: 16 }}>
+        <View style={styles.statContainer}>
+          <Text style={styles.statNumber}>
             {user.data.resources?.length || "0"}
           </Text>
-          <Text style={{ fontFamily: "Spectral", fontSize: 12 }}>
-            Ressources
-          </Text>
+          <Text style={styles.statLabel}>Ressources</Text>
         </View>
       </View>
       <FlatList
@@ -202,5 +175,20 @@ const styles = StyleSheet.create({
     borderColor: core.light.colors.surface,
     borderWidth: 1,
     alignSelf: "flex-start",
+  },
+  statNumber: { fontFamily: "Marianne-Bold", fontSize: 16 },
+  statLabel: { fontFamily: "Spectral", fontSize: 12 },
+  statContainer: {
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  statWrapper: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginTop: 8,
+    marginBottom: 8,
+    paddingBottom: 8,
+    borderBottomWidth: StyleSheet.hairlineWidth,
   },
 });
