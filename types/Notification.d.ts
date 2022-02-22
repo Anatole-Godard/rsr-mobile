@@ -4,7 +4,15 @@ import { UserMinimum } from "./User";
 
 export type Notification = {
   user: UserMinimum;
+  emitter: UserMinimum;
   document: Resource | Channel;
-  type: "comment" | "mention" | "like" | "message" | "resource_create" | "invite";
+  type:
+    | "comment"
+    | "mention"
+    | "like"
+    | "message"
+    | "resource_create"
+    | "invite";
   createdAt: Date | string;
+  _id: string;
 };

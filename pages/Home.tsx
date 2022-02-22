@@ -20,6 +20,7 @@ import Paragraph from "components/ui/Paragraph";
 
 import { API_URL } from "constants/env";
 import { ChannelHomeHeader } from "components/Channel/ChannelHomeHeader";
+import { Separator } from "components/ui/Separator";
 
 type Props = {
   navigation: Navigation;
@@ -66,7 +67,6 @@ export const HomeScreen = (props: Props) => {
           height: 128,
         }}
         source={require("../assets/lotties/empty.json")}
-        
       />
       <Paragraph style={{ marginTop: 16 }}>
         Oh! Il n'y a pas encore de ressources disponibles...
@@ -98,9 +98,7 @@ export const HomeScreen = (props: Props) => {
       }))}
       renderItem={renderItem}
       keyExtractor={(item: ResourceHomeProps) => item.slug.toString()}
-      ItemSeparatorComponent={() => (
-        <View style={{ height: StyleSheet.hairlineWidth }} />
-      )}
+      ItemSeparatorComponent={Separator}
       onRefresh={() => fetchData()}
       refreshing={loading}
       refreshControl={

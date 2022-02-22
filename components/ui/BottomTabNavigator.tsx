@@ -1,7 +1,7 @@
 import React from "react";
 import color from "color";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
-import { Portal, FAB } from "react-native-paper";
+import { Portal, FAB, Badge } from "react-native-paper";
 import { useSafeArea } from "react-native-safe-area-context";
 import { useIsFocused } from "@react-navigation/native";
 
@@ -13,11 +13,21 @@ import { theme } from "core/theme";
 import { usePreferences } from "hooks/usePreferences";
 import { Navigation } from "types/Navigation";
 import {
+  BellIcon,
   ChatAlt2Icon,
   HomeIcon,
   ShoppingBagIcon,
 } from "react-native-heroicons/outline";
+import {
+  BellIcon as BellIconSolid,
+  ChatAlt2Icon as ChatAlt2IconSolid,
+  HomeIcon as HomeIconSolid,
+  ShoppingBagIcon as ShoppingBagIconSolid,
+} from "react-native-heroicons/solid";
 import { useDrawerStatus } from "@react-navigation/drawer";
+import { NotificationsScreen } from "pages/Notifications";
+import { View } from "react-native";
+import { useNotifications } from "hooks/useNotifications";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -26,6 +36,7 @@ type Props = {
 };
 
 export const BottomTabNavigator = (props: Props) => {
+  const { notifications } = useNotifications();
   const safeArea = useSafeArea();
   const isFocused = useIsFocused();
 
@@ -37,14 +48,16 @@ export const BottomTabNavigator = (props: Props) => {
     : theme[colorScheme].colors.surface;
 
   let history = props.navigation.getState()?.routes?.[0]?.state?.history;
-  let state = history?.[history.length - 1]?.key?.split("-")?.[0]?.toString() || "Accueil";
+  let state =
+    history?.[history.length - 1]?.key?.split("-")?.[0]?.toString() ||
+    "Accueil";
 
   return (
     <React.Fragment>
       <Tab.Navigator
         barStyle={{
           backgroundColor: tabBarColor,
-          elevation: 0,
+          elevation: 5,
         }}
         initialRouteName="Accueil"
         backBehavior="initialRoute"
@@ -63,15 +76,26 @@ export const BottomTabNavigator = (props: Props) => {
           name="Accueil"
           component={HomeScreen}
           options={{
-            tabBarIcon: (props) => <HomeIcon color={props.color} />,
+            tabBarIcon: (props) =>
+              props.focused ? (
+                <HomeIconSolid color={props.color} />
+              ) : (
+                <HomeIcon color={props.color} />
+              ),
             tabBarColor,
           }}
+
         />
         <Tab.Screen
           name="Catalogue"
           component={ResourcesScreen}
           options={{
-            tabBarIcon: (props) => <ShoppingBagIcon color={props.color} />,
+            tabBarIcon: (props) =>
+              props.focused ? (
+                <ShoppingBagIconSolid color={props.color} />
+              ) : (
+                <ShoppingBagIcon color={props.color} />
+              ),
             tabBarColor,
           }}
         />
@@ -80,7 +104,40 @@ export const BottomTabNavigator = (props: Props) => {
           name="Salons"
           component={ChannelScreen}
           options={{
-            tabBarIcon: (props) => <ChatAlt2Icon color={props.color} />,
+            tabBarIcon: (props) =>
+              props.focused ? (
+                <ChatAlt2IconSolid color={props.color} />
+              ) : (
+                <ChatAlt2Icon color={props.color} />
+              ),
+            tabBarColor,
+          }}
+        />
+        <Tab.Screen
+          name="Notifications"
+          component={NotificationsScreen}
+          options={{
+            tabBarIcon: (props) => (
+              <View>
+                <Badge
+                  visible={notifications && notifications.length > 0}
+                  size={8}
+                  style={{
+                    position: "absolute",
+                    bottom: 16,
+                    left: 16,
+                    zIndex: 1,
+                  }}
+                >
+                  {/* {notifications.length} */}
+                </Badge>
+                {props.focused ? (
+                  <BellIconSolid color={props.color} />
+                ) : (
+                  <BellIcon color={props.color} />
+                )}
+              </View>
+            ),
             tabBarColor,
           }}
         />
