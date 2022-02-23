@@ -52,7 +52,11 @@ export const ExternalLink = (props: ExternalLinkProps) => {
           <LinkIcon size={24} color={theme[colorScheme].colors.primary} />
         </View>
         <View style={styles.rightColumn}>
-          <Text ellipsizeMode="tail" style={styles.text}>
+          <Text
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            style={{ ...styles.text, color: theme[colorScheme].colors.primary }}
+          >
             {props.properties.externalLink}
           </Text>
         </View>
@@ -82,6 +86,5 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: "Marianne-ExtraBold",
     fontSize: 16,
-    color: theme.light.colors.primary,
   },
 });

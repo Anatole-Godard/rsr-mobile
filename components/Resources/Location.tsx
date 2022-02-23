@@ -6,6 +6,7 @@ import { GeoJSON_Point } from "types/Resource/GeoJSON";
 
 import MapView, { Marker } from "react-native-maps";
 import { Text } from "react-native-paper";
+import { BlurView } from "expo-blur";
 
 interface LocationProps extends GeoJSON_Point {
   properties: {
@@ -26,6 +27,7 @@ export const Location = (props: LocationProps) => {
     >
       <View style={styles.leftColumn}>
         <MapView
+          userInterfaceStyle={colorScheme}
           style={styles.map}
           initialRegion={{
             latitude: props.geometry.coordinates[0],
@@ -42,10 +44,10 @@ export const Location = (props: LocationProps) => {
           />
         </MapView>
       </View>
-      <View style={styles.rightColumn}>
+      <BlurView intensity={90} tint={colorScheme} style={styles.rightColumn}>
         <Text style={styles.label}>Adresse</Text>
         <Text style={styles.text}>{props.properties.location}</Text>
-      </View>
+      </BlurView>
     </View>
   );
 };
@@ -53,21 +55,27 @@ export const Location = (props: LocationProps) => {
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    flexDirection: "row",
+    flexDirection: "column",
     height: "100%",
     alignItems: "center",
-    paddingVertical: 8,
-    paddingHorizontal: 8,
+    // paddingVertical: 8,
+    // paddingHorizontal: 8,
     borderRadius: 8,
-    justifyContent: "space-between",
+    // justifyContent: "space-between",
   },
   leftColumn: {
-    width: "47.5%",
+    width: "100%",
     height: "100%",
   },
   rightColumn: {
-    width: "47.5%",
-    height: "100%",
+    // width: "47.5%",
+    // height: "100%",
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    padding: 8,
+    borderBottomRightRadius: 4,
+    borderTopLeftRadius: 16,
   },
   label: {
     fontSize: 16,

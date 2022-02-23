@@ -15,7 +15,7 @@ function NotificationProvider({
 }: {
   children: React.ReactNode;
 }): JSX.Element {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   const removeNotification = (id: string) =>
@@ -51,13 +51,12 @@ function NotificationProvider({
         )
           .then((res) => res.json())
           .then((body) => {
-            if (body.error) {
-              console.log(body.error);
-            } else {
-              setNotifications(body.data.attributes);
-            }
+            setNotifications(body.data.attributes);
           })
-          .catch((err) => console.error(err));
+          .catch((err) => {
+            if (err.name === "TokenExpiredError") signOut();
+            console.error(err.name);
+          });
       }, NOTIFICATIONS_DEBOUNCE_TIME);
 
       return () => clearInterval(poll);

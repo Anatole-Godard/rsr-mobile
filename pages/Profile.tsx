@@ -36,15 +36,17 @@ export const ProfileScreen = (props: Props) => {
   const { fullName, photoURL, uid } = props.route.params;
 
   const [resources, setResources] = useState<Resource[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     fetchRSR(API_URL + "/resource", user?.session)
       .then((res) => res.json())
-      .then((body) =>
+      .then((body) => {
+        setLoading(false);
         setResources(
           body.data.attributes.filter((r: Resource) => r.owner.uid === uid)
-        )
-      );
+        );
+      });
   }, [user]);
   const theme = useTheme();
   return (
@@ -143,7 +145,7 @@ export const ProfileScreen = (props: Props) => {
         </View>
         <View style={styles.statContainer}>
           <Text style={styles.statNumber}>
-            {user.data.resources?.length || "0"}
+            {resources.length || "0"}
           </Text>
           <Text style={styles.statLabel}>Ressources</Text>
         </View>
@@ -151,7 +153,9 @@ export const ProfileScreen = (props: Props) => {
       <FlatList
         style={{
           flex: 1,
+          backgroundColor: theme.colors.background,
         }}
+        refreshing={loading}
         data={resources}
         renderItem={({ item }) => (
           <ResourceHome

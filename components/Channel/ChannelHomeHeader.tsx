@@ -85,7 +85,10 @@ const ChannelHome = (props: ChannelHomeProps) => {
       <View style={{ flex: 1, marginRight: 24 }}>
         <TouchableOpacity
           onPress={props.onPress}
-          onLongPress={() => refRBSheet.current.open()}
+          onLongPress={() => {
+            let current = refRBSheet?.current || { open: () => {} };
+            current.open();
+          }}
           style={{
             backgroundColor: theme[colorScheme].colors.surface,
             flexDirection: "column",
@@ -174,11 +177,12 @@ const ChannelHome = (props: ChannelHomeProps) => {
           <View style={styles.topRow}>
             <TouchableOpacity
               onPress={() => {
-                refRBSheet.current.close();
+                let current = refRBSheet?.current || { close: () => {} };
+                current.close();
                 props.onPress();
               }}
               style={{
-                backgroundColor: theme[colorScheme].colors.surface,
+                backgroundColor: theme[colorScheme].colors.background,
                 flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
@@ -198,7 +202,7 @@ const ChannelHome = (props: ChannelHomeProps) => {
               >
                 <View
                   style={{
-                    backgroundColor: theme[colorScheme].colors.surface,
+                    backgroundColor: theme[colorScheme].colors.background,
                     padding: 2,
                     height: 52,
                     width: 52,

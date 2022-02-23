@@ -6,7 +6,7 @@ import { Appbar } from "react-native-paper";
 
 import { ResourceSlug } from "pages/resource/Slug";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { getFocusedRouteNameFromRoute } from "@react-navigation/core";
+import { getFocusedRouteNameFromRoute, useNavigation } from "@react-navigation/core";
 
 import { BottomTabNavigator } from "components/ui/BottomTabNavigator";
 import { ChannelSlug } from "pages/channel/Slug";
@@ -14,22 +14,30 @@ import { ChannelSlug } from "pages/channel/Slug";
 import { theme } from "core/theme";
 import { usePreferences } from "hooks/usePreferences";
 import { ResourceCreate } from "pages/resource/Create";
-import { MenuIcon, TrashIcon } from "react-native-heroicons/outline";
+import { CogIcon, MenuIcon, TrashIcon } from "react-native-heroicons/outline";
 import { ChannelCreate } from "pages/channel/Create";
 import { ProfileScreen } from "pages/Profile";
 import { useNotifications } from "hooks/useNotifications";
 import { ResourceEditScreen } from "pages/resource/Edit";
 import { ChannelEditScreen } from "pages/channel/Edit";
+import { SettingsScreen } from "pages/Settings";
 
 const Stack = createStackNavigator();
 
 export const StackNavigator = () => {
+  const { navigate } = useNavigation();
   const { colorScheme } = usePreferences();
   const { removeAllNotification, notifications } = useNotifications();
   const headers = [
     {
       header: "Accueil",
       subtitle: "Toutes les ressources",
+      right: () => (
+        <Appbar.Action
+          onPress={() => navigate("Settings")}
+          icon={(props) => <CogIcon size={props.size} color={props.color} />}
+        />
+      ),
     },
     {
       header: "Catalogue",
@@ -58,6 +66,7 @@ export const StackNavigator = () => {
     <Stack.Navigator
       initialRouteName="Tabs"
       screenOptions={{
+        
         header: ({ options, navigation, back }: any) => {
           const title =
             options.headerTitle !== undefined
@@ -202,6 +211,14 @@ export const StackNavigator = () => {
               ((route?.params as unknown as { fullName?: string })
                 ?.fullName as unknown as string) || "Profil",
           };
+        }}
+      />
+      <Stack.Screen
+        name="Settings"
+        component={SettingsScreen}
+        options={{
+          headerTitle: "Paramètres",
+          presentation: "modal",
         }}
       />
     </Stack.Navigator>
