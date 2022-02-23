@@ -3346,13 +3346,6 @@ expo-notifications@~0.12.3:
     fs-extra "^9.0.1"
     uuid "^3.4.0"
 
-expo-permissions@~12.1.1:
-  version "12.1.1"
-  resolved "https://registry.yarnpkg.com/expo-permissions/-/expo-permissions-12.1.1.tgz#93fd8569d4106ff9dd66d67619cb69a0aa895482"
-  integrity sha512-fHBB4A/aWMcvdmDY79gpgQt0ufKG8F1gwTgO3+RjjudVe5kovNy5TeXdHrCa0MksFVKjktqLjJrgiBITJXjg+g==
-  dependencies:
-    expo-modules-core "~0.2.0"
-
 expo-splash-screen@~0.11.2:
   version "0.11.4"
   resolved "https://registry.yarnpkg.com/expo-splash-screen/-/expo-splash-screen-0.11.4.tgz#fe474748c132ed2e45f477b882e2cf8735d9db98"
