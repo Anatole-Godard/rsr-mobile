@@ -43,18 +43,22 @@ export function AuthProvider({
   };
 
   const signOut = async () => {
-    const response = await fetchRSR(API_URL + "/auth/revoke", user.session, {
-      method: "POST",
-    });
-    const body = await response.json();
-    if (body.error) {
-      await AsyncStorage.removeItem("@user");
-      setUser(null);
-    }
+    try {
+      const response = await fetchRSR(API_URL + "/auth/revoke", user.session, {
+        method: "POST",
+      });
+      const body = await response.json();
 
-    if (response.ok) {
-      await AsyncStorage.removeItem("@user");
-      setUser(null);
+      if (response.ok) {
+        await AsyncStorage.removeItem("@user");
+        setUser(null);
+      }
+    } catch (error) {
+      let err: { name: string } = error as any;
+      if (err.name === "TokenExpiredError") {
+        await AsyncStorage.removeItem("@user");
+        setUser(null);
+      }
     }
   };
 
