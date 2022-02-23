@@ -145,7 +145,7 @@ export const ProfileScreen = (props: Props) => {
         </View>
         <View style={styles.statContainer}>
           <Text style={styles.statNumber}>
-            {user.data.resources?.length || "0"}
+            {resources.length || "0"}
           </Text>
           <Text style={styles.statLabel}>Ressources</Text>
         </View>
