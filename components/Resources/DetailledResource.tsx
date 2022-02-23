@@ -406,7 +406,7 @@ const ResourceView = (props: Resource) => {
         ...style,
         height:
           type === "location"
-            ? Dimensions.get("screen").width / 2.25
+            ? Dimensions.get("screen").height / 3
             : Dimensions.get("screen").height / 6,
         borderRadius: 8,
         borderWidth: StyleSheet.hairlineWidth,
