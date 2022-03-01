@@ -399,6 +399,11 @@ const ResourceView = (props: Resource) => {
       backgroundColor:
         colorScheme === "light" ? colors.amber[100] : colors.amber[800],
       borderColor: colors.amber[500],
+    };if (type === "event")
+    style = {
+      backgroundColor:
+        colorScheme === "light" ? colors.red[100] : colors.red[800],
+      borderColor: colors.red[500],
     };
 
   return (

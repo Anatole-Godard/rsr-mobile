@@ -19,6 +19,10 @@ import { theme } from "core/theme";
 import { ToastProvider } from "react-native-paper-toast";
 import { NotificationProvider } from "hooks/useNotifications";
 
+import { registerTranslation } from "react-native-paper-dates";
+import { fr } from "constants/react-native-paper-dates.translate";
+registerTranslation("fr", fr);
+
 /// Main
 export default function App() {
   const _colorScheme = useColorScheme();

@@ -1,17 +1,27 @@
 import Button from "components/ui/Button";
 import { StepIndicator } from "components/ui/StepIndicator";
 import TextInput from "components/ui/TextInput";
-import { types } from "constants/resourceTypes";
+import { types, visibilities } from "constants/resourceTypes";
 import { colors, theme } from "core/theme";
 import { nameValidator } from "core/validators";
 import { usePreferences } from "hooks/usePreferences";
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Image, Dimensions } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Image,
+  Dimensions,
+  TouchableOpacity,
+  FlatList,
+  SafeAreaView,
+} from "react-native";
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
   BookOpenIcon,
+  CalendarIcon,
   CheckIcon,
+  ClockIcon,
   CurrencyDollarIcon,
   ExternalLinkIcon,
   HandIcon,
@@ -33,7 +43,15 @@ import { useAuth } from "hooks/useAuth";
 
 import { TextInput as PaperInput } from "react-native-paper";
 import { fetchRSR } from "utils/fetchRSR";
-import { API_URL } from "constants/env";
+import { API_URL, HOST_URL } from "constants/env";
+import { ScrollView } from "react-native-gesture-handler";
+import { UserMinimum } from "types/User";
+import { useSearch } from "hooks/useSearch";
+import { CheckCircleIcon } from "react-native-heroicons/solid";
+import { Input } from "types/Input";
+import { DatePickerModal } from "react-native-paper-dates";
+import { format } from "date-fns";
+import fr from "date-fns/locale/fr";
 
 interface Props {
   navigation: Navigation;
@@ -98,6 +116,12 @@ export const ResourceCreate = (props: Props) => {
   const [name, setName] = useState({ value: "", error: "" });
   const [description, setDescription] = useState({ value: "", error: "" });
   const [type, setType] = useState(types[0].value);
+  const [visibility, setVisibility] = useState(visibilities[0].value);
+
+  // const [membersOptions, setMembersOptions] = useState<UserMinimum[]>([]);
+  // const [members, setMembers] = useState<UserMinimum[]>([]);
+
+  // const { search, onChange, filtered } = useSearch("fullName", membersOptions);
 
   const [price, setPrice] = useState({ value: "0.00", error: "" });
   const [category, setCategory] = useState({ value: "", error: "" });
@@ -131,6 +155,29 @@ export const ResourceCreate = (props: Props) => {
   const [location, setLocation] = useState<string | null>(null);
 
   const [externalLink, setExternalLink] = useState({ value: "", error: "" });
+
+  const [startDate, setStartDate] = useState<Input>({ value: "", error: "" });
+  const [endDate, setEndDate] = useState<Input>({ value: "", error: "" });
+  const [datePickerOpen, setDatePickerOpen] = useState(false);
+
+  const onDismiss = React.useCallback(() => {
+    setDatePickerOpen(false);
+  }, [setDatePickerOpen]);
+
+  const onConfirm = React.useCallback(
+    ({
+      startDate,
+      endDate,
+    }: {
+      startDate: Date | undefined;
+      endDate: Date | undefined;
+    }) => {
+      setDatePickerOpen(false);
+      setStartDate({ value: startDate?.toISOString() || "", error: "" });
+      setEndDate({ value: endDate?.toISOString() || "", error: "" });
+    },
+    [setDatePickerOpen, setStartDate, setEndDate]
+  );
 
   const _onNextStep = async () => {
     if (step === 0) {
@@ -203,12 +250,24 @@ export const ResourceCreate = (props: Props) => {
           image: null,
         },
       };
+    } else if (type === "event") {
+      data.attributes = {
+        properties: {
+          name,
+          description,
+          startDate,
+          endDate,
+          participants: [],
+        },
+      };
     }
 
     return {
       description: description.value,
       // tags: tags.map((tag) => tag.value),
       data,
+      visibility,
+      // members,
     };
   };
 
@@ -246,7 +305,7 @@ export const ResourceCreate = (props: Props) => {
       />
 
       {step === 0 && (
-        <View
+        <ScrollView
           style={{
             ...styles.container,
             backgroundColor: theme[colorScheme].colors.background,
@@ -295,22 +354,12 @@ export const ResourceCreate = (props: Props) => {
               borderColor: theme[colorScheme].colors.secondary,
             }}
           >
-            {type === "location" && (
-              <LocationMarkerIcon
-                size={24}
-                color={theme[colorScheme].colors.secondary}
-              />
-            )}
-            {type === "physical_item" && (
-              <HandIcon size={24} color={theme[colorScheme].colors.secondary} />
-            )}
-            {type === "external_link" && (
-              <ExternalLinkIcon
-                size={24}
-                color={theme[colorScheme].colors.secondary}
-              />
-            )}
-
+            {types
+              .find((t) => t.value === type)
+              ?.icon.outline({
+                size: 24,
+                color: theme[colorScheme].colors.secondary,
+              })}
             <Text style={styles.label}>Type de ressource</Text>
           </View>
           <RadioButton.Group
@@ -326,8 +375,9 @@ export const ResourceCreate = (props: Props) => {
                   labelStyle={styles.radioLabel}
                   color={theme[colorScheme].colors.primary}
                   style={{
-                    ...styles.resourceType,
-                    backgroundColor: theme[colorScheme].colors.background,
+                    padding: 6,
+                    borderRadius: 8,
+                    backgroundColor: theme[colorScheme].colors.surface,
                     borderColor:
                       type === t.value
                         ? theme[colorScheme].colors.primary
@@ -338,7 +388,144 @@ export const ResourceCreate = (props: Props) => {
               </>
             ))}
           </RadioButton.Group>
-        </View>
+
+          <View
+            style={{
+              ...styles.separator,
+              borderColor: theme[colorScheme].colors.secondary,
+            }}
+          >
+            {visibilities
+              .find((t) => t.value === visibility)
+              ?.icon.outline({
+                size: 24,
+                color: theme[colorScheme].colors.secondary,
+              })}
+            <Text style={styles.label}>Visibilité de la ressource</Text>
+          </View>
+          <Text
+            style={{
+              fontFamily: "Spectral",
+              textAlign: "justify",
+              marginBottom: 8,
+            }}
+          >
+            La création de ressource non répertoriée n'est pas disponible sur
+            mobile, merci d'utiliser l'application web.
+          </Text>
+          <RadioButton.Group
+            onValueChange={(value) => setVisibility(value)}
+            value={visibility}
+          >
+            {visibilities.map((v) =>
+              v.value !== "unlisted" ? (
+                <>
+                  <RadioButton.Item
+                    key={v.value}
+                    label={v.label}
+                    value={v.value}
+                    labelStyle={styles.radioLabel}
+                    color={theme[colorScheme].colors.primary}
+                    disabled={v.value === "unlisted"}
+                    style={{
+                      padding: 6,
+                      borderRadius: 8,
+                      backgroundColor: theme[colorScheme].colors.surface,
+                      borderColor:
+                        visibility === v.value
+                          ? theme[colorScheme].colors.primary
+                          : theme[colorScheme].colors.placeholder,
+                    }}
+                  />
+                  <View style={{ marginBottom: 8 }}></View>
+                </>
+              ) : null
+            )}
+          </RadioButton.Group>
+          {/* {visibility === "unlisted" && (
+            <SafeAreaView style={{ flex: 1 }}>
+              <FlatList
+                data={filtered}
+                ItemSeparatorComponent={() => (
+                  <View
+                    style={{
+                      borderBottomWidth: StyleSheet.hairlineWidth,
+                      borderColor:
+                        colorScheme === "dark"
+                          ? colors.trueGray[800]
+                          : colors.trueGray[300],
+                      marginBottom: 4,
+                      paddingBottom: 4,
+                    }}
+                  />
+                )}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={{
+                      padding: 8,
+                      borderRadius: 8,
+                      backgroundColor: theme[colorScheme].colors.surface,
+                    }}
+                    onPress={() => {
+                      members.find((m) => m.uid === item.uid)
+                        ? setMembers(
+                            members.filter(
+                              (u: UserMinimum) => u.uid !== item.uid
+                            )
+                          )
+                        : setMembers([...members, item]);
+                    }}
+                  >
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        elevation: 0,
+                      }}
+                    >
+                      <View
+                        style={{ flexDirection: "row", alignItems: "center" }}
+                      >
+                        <Image
+                          source={{ uri: HOST_URL + item.photoURL }}
+                          style={{
+                            height: 32,
+                            width: 32,
+                            borderRadius: 16,
+                            marginRight: 8,
+                          }}
+                        />
+                        <Text style={{ fontFamily: "Spectral", fontSize: 16 }}>
+                          {item.fullName}
+                        </Text>
+                      </View>
+                      {members.find((m) => m.uid === item.uid) && (
+                        <CheckCircleIcon
+                          size={24}
+                          color={theme[colorScheme].colors.secondary}
+                        />
+                      )}
+                    </View>
+                  </TouchableOpacity>
+                )}
+                keyExtractor={(item) => item.uid}
+                // ListFooterComponent={() => (
+                //   <Text
+                //     style={{
+                //       fontFamily: "Spectral",
+                //       fontSize: 16,
+                //       color: theme[colorScheme].colors.error,
+                //       marginVertical: 8,
+                //     }}
+                //   >
+                //     {membersError}
+                //   </Text>
+                // )}
+              />
+            </SafeAreaView>
+          )} */}
+        </ScrollView>
       )}
 
       {step === 1 && (
@@ -503,6 +690,184 @@ export const ResourceCreate = (props: Props) => {
                 errorText={externalLink.error}
                 style={styles.input}
               />
+            </View>
+          )}
+          {type === "event" && (
+            <View>
+              <Button
+                mode="outlined"
+                onPress={pickImage}
+                icon={(props) => (
+                  <PhotographIcon size={props.size} color={props.color} />
+                )}
+              >
+                Prendre une photo
+              </Button>
+              {image && (
+                <View
+                  style={{
+                    width: "100%",
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Image
+                    source={{ uri: image }}
+                    style={{ width: "80%", height: 96, borderRadius: 4 }}
+                  />
+                  <IconButton
+                    onPress={() => setImage(null)}
+                    size={36}
+                    icon={(props) => (
+                      <TrashIcon size={props.size} color={props.color} />
+                    )}
+                  />
+                </View>
+              )}
+              <Button
+                onPress={() => setDatePickerOpen(true)}
+                mode="outlined"
+                icon={(props) => (
+                  <CalendarIcon size={props.size} color={props.color} />
+                )}
+              >
+                Sélectionner une date
+              </Button>
+              <DatePickerModal
+                locale="fr"
+                mode="range"
+                visible={datePickerOpen}
+                onDismiss={onDismiss}
+                startDate={
+                  startDate.value ? new Date(startDate.value) : undefined
+                }
+                endDate={endDate.value ? new Date(endDate.value) : undefined}
+                onConfirm={onConfirm}
+                // validRange={{
+                //   startDate: new Date(2021, 1, 2),  // optional
+                //   endDate: new Date(), // optional
+                //   disabledDates: [new Date()] // optional
+                // }}
+                // onChange={} // same props as onConfirm but triggered without confirmed by user
+                saveLabel="Confimer" // optional
+                // uppercase={false} // optional, default is true
+                label="Sélectionner une date" // optional
+                // startLabel="From" // optional
+                // endLabel="To" // optional
+                // animationType="slide" // optional, default is slide on ios/android and none on web
+              />
+              <Text
+                style={{
+                  fontFamily: "Spectral",
+                  textAlign: "justify",
+                  marginBottom: 8,
+                }}
+              >
+                La sélection de l'heure n'est pas encore disponible sur mobile,
+                si vous souhaitez préciser l'horaire, merci d'éditer la
+                ressource sur l'application web.
+              </Text>
+
+              {startDate.value !== "" && (
+                <View
+                  style={{
+                    flexDirection: "column",
+                    backgroundColor: theme[colorScheme].colors.surface,
+                    padding: 8,
+                    borderRadius: 8,
+                  }}
+                >
+                  <View style={{ flexDirection: "row" }}>
+                    <View
+                      style={{
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        width: 48,
+                      }}
+                    >
+                      <ClockIcon
+                        size={24}
+                        color={theme[colorScheme].colors.primary}
+                      />
+                      {endDate.value !== "" && (
+                        <Text
+                          style={{
+                            fontFamily: "Spectral",
+                            fontSize: 12,
+                          }}
+                        >
+                          FROM
+                        </Text>
+                      )}
+                    </View>
+                    <View style={{ flexDirection: "column", marginLeft: 12 }}>
+                      <Text style={{ fontFamily: "Spectral", fontSize: 16 }}>
+                        {format(new Date(startDate.value), "PPPP", {
+                          locale: fr,
+                        })}
+                      </Text>
+                      <Text style={{ fontFamily: "Spectral", fontSize: 12 }}>
+                        {format(new Date(startDate.value), "p", { locale: fr })}
+                      </Text>
+                    </View>
+                  </View>
+                  {endDate.value !== "" && (
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        marginTop: 8,
+                      }}
+                    >
+                      <View
+                        style={{
+                          flexDirection: "column",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          width: 48,
+                        }}
+                      >
+                        <ClockIcon
+                          size={24}
+                          color={theme[colorScheme].colors.primary}
+                        />
+                        <Text
+                          style={{
+                            fontFamily: "Spectral",
+                            fontSize: 12,
+                            marginTop: 4,
+                          }}
+                        >
+                          TO
+                        </Text>
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: "column",
+                          marginLeft: 12,
+                          paddingTop: 8,
+                          borderTopWidth: StyleSheet.hairlineWidth,
+                          flex: 1,
+                          marginRight:8
+                        }}
+                      >
+                        <Text style={{ fontFamily: "Spectral", fontSize: 16 }}>
+                          {format(new Date(endDate.value), "PPPP", {
+                            locale: fr,
+                          })}
+                        </Text>
+                        <Text style={{ fontFamily: "Spectral", fontSize: 12 }}>
+                          {format(new Date(endDate.value), "p", {
+                            locale: fr,
+                          })}
+                        </Text>
+                      </View>
+                    </View>
+                  )}
+                </View>
+              )}
+              {/* <Text>{JSON.stringify({ startDate, endDate })}</Text> */}
             </View>
           )}
         </View>

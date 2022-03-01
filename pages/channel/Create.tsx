@@ -27,7 +27,7 @@ import {
   UsersIcon,
 } from "react-native-heroicons/outline";
 import { CheckCircleIcon } from "react-native-heroicons/solid";
-import { Checkbox, IconButton, Searchbar, Text } from "react-native-paper";
+import { IconButton, Searchbar, Text } from "react-native-paper";
 import { Input } from "types/Input";
 import { Navigation } from "types/Navigation";
 import { UserMinimum } from "types/User";
