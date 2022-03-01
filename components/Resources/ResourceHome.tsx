@@ -285,18 +285,22 @@ export const ResourceHome = (props: Props) => {
                     { locale: fr }
                   )}
                 </Caption>
-                <Caption style={[styles.handle, styles.dot]}>
-                  {"\u2B24"}
-                </Caption>
-                <Caption
-                  style={{
-                    color: props.validated
-                      ? colors.green[700]
-                      : colors.trueGray[500],
-                  }}
-                >
-                  {props.validated ? "validée" : "en attente"}
-                </Caption>
+                {user.data.uid === props.owner.uid && (
+                  <>
+                    <Caption style={[styles.handle, styles.dot]}>
+                      {"\u2B24"}
+                    </Caption>
+                    <Caption
+                      style={{
+                        color: props.validated
+                          ? colors.green[700]
+                          : colors.trueGray[500],
+                      }}
+                    >
+                      {props.validated ? "validée" : "en attente"}
+                    </Caption>
+                  </>
+                )}
               </View>
 
               <View style={{ flexDirection: "row", alignItems: "center" }}>

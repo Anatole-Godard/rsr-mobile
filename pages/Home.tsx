@@ -39,13 +39,15 @@ export const HomeScreen = (props: Props) => {
 
   const fetchData = async () => {
     setLoading(true);
-    const res = await fetchRSR(API_URL + "/resource", user);
+    const res = await fetchRSR(API_URL + "/resource", user?.session);
     const body = await res.json();
     setResources(
-      body.data.attributes.sort(
-        (a: { createdAt: string }, b: { createdAt: string }) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      )
+      body.data.attributes
+        .filter((r: Resource) => r.validated)
+        .sort(
+          (a: { createdAt: string }, b: { createdAt: string }) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )
     );
     setLoading(false);
   };
@@ -103,7 +105,6 @@ export const HomeScreen = (props: Props) => {
       refreshing={loading}
       refreshControl={
         <RefreshControl
-        
           refreshing={loading}
           onRefresh={() => fetchData()}
           title="Tirer pour rafraîchir"
