@@ -1,5 +1,7 @@
+import { useAuth } from "hooks/useAuth";
+import { usePreferences } from "hooks/usePreferences";
 import React from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import {
   BellIcon,
   LockClosedIcon,
@@ -7,10 +9,13 @@ import {
   SupportIcon,
   UserIcon,
 } from "react-native-heroicons/outline";
-import { List, Text, TouchableRipple, useTheme } from "react-native-paper";
+import { Text, TouchableRipple, useTheme } from "react-native-paper";
 
 export const SettingsScreen = () => {
   const theme = useTheme();
+  const { sendNotificationImmediately } = usePreferences();
+  const { user } = useAuth();
+
   return (
     <View
       style={{
@@ -41,6 +46,14 @@ export const SettingsScreen = () => {
         icon={<BellIcon size={32} color={theme.colors.text} />}
         label="Notifications"
         description="Sélectionnez les types de notifications que vous recevez sur vos activités, centres d'intérêts et recommandations."
+        onPress={() => {
+          // Alert.alert("Notifications");
+          sendNotificationImmediately({
+            body:
+              user.data.fullName +
+              ", vous avez activé une fonctionnalité secrète ✨",
+          });
+        }}
       />
       <ListItem
         icon={<SupportIcon size={32} color={theme.colors.text} />}
@@ -57,11 +70,13 @@ const ListItem = ({
   label,
   description,
   last = false,
+  onPress,
 }: {
   icon: any;
   label: string;
   description: string;
   last?: boolean;
+  onPress?: () => void;
 }) => {
   const theme = useTheme();
   return (
@@ -73,7 +88,7 @@ const ListItem = ({
         borderBottomWidth: !last ? StyleSheet.hairlineWidth : 0,
         borderBottomColor: theme.colors.text,
       }}
-      onPress={() => console.log("navigate")}
+      onPress={onPress ? () => onPress() : () => console.log("navigate")}
     >
       <View
         style={{
