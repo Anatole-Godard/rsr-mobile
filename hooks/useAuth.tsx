@@ -49,16 +49,16 @@ export function AuthProvider({
       });
       const body = await response.json();
 
-      if (response.ok) {
+      // if (response.ok) {
         await AsyncStorage.removeItem("@user");
         setUser(null);
-      }
+      // }
     } catch (error) {
       let err: { name: string } = error as any;
-      if (err.name === "TokenExpiredError") {
+      // if (err.name === "TokenExpiredError") {
         await AsyncStorage.removeItem("@user");
         setUser(null);
-      }
+      // }
     }
   };
 
