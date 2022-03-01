@@ -8,10 +8,18 @@ export type Channel = {
   name: string;
   slug: string;
   messages: Message[];
-  activities: Activity[]; //TODO: define
-  members: User[];
+  activities: Activity[];
+  members: UserMinimum[];
   createdAt: Date | string;
   image?: any;
   description?: string;
-  visibility: "public" | "private";
+};
+
+export type ChannelMinimum = {
+  owner: UserMinimum;
+  name: string;
+  slug: string;
+  createdAt: Date | string;
+  image?: any;
+  description?: string;
 };

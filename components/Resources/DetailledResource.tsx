@@ -42,6 +42,7 @@ import { usePreferences } from "hooks/usePreferences";
 import { ExternalLink } from "./ExternalLink";
 import { PhysicalItem } from "./PhysicalItem";
 import { Location } from "./Location";
+import { Event } from "./Event";
 
 interface Props extends Resource {
   navigation: Navigation;
@@ -412,12 +413,13 @@ const ResourceView = (props: Resource) => {
         borderWidth: StyleSheet.hairlineWidth,
         justifyContent: "center",
         alignItems: "center",
-        padding: 8,
+        padding: 2,
       }}
     >
       {type === "external_link" && <ExternalLink {...attributes} />}
       {type === "physical_item" && <PhysicalItem {...attributes} />}
       {type === "location" && <Location {...attributes} />}
+      {type === "event" && <Event {...attributes} />}
     </View>
   );
 };
