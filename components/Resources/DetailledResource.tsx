@@ -9,6 +9,8 @@ import {
   Text,
   Button,
   TouchableRipple,
+  Portal,
+  Dialog,
 } from "react-native-paper";
 import color from "color";
 import { Resource } from "types/Resource";
@@ -29,6 +31,7 @@ import {
   ChevronUpIcon,
   HeartIcon as HeartIconOutline,
   PencilIcon,
+  TrashIcon,
 } from "react-native-heroicons/outline";
 import { Comment } from "types/Resource/Comment";
 import ViewMoreText from "react-native-view-more-text";
@@ -58,6 +61,8 @@ export const DetailedResource = (props: Props) => {
   const [comment, setComment] = useState({ value: "", error: "" });
   const [commentsLoading, setCommentsLoading] = useState(false);
 
+  const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
+
   const like = async () => {
     if (user) {
       const res = await fetchRSR(
@@ -66,6 +71,20 @@ export const DetailedResource = (props: Props) => {
       );
       const body = await res.json();
       if (res.ok && body.data) setLikes(body.data.attributes.likes);
+    }
+  };
+
+  const deleteResource = async () => {
+    if (user) {
+      const res = await fetchRSR(
+        `${API_URL}/resource/${props.slug}/delete`,
+        user.session,
+        {
+          method: "DELETE",
+        }
+      );
+      setDeleteModalVisible(false);
+      if (res.ok) props.navigation.goBack();
     }
   };
 
@@ -238,25 +257,35 @@ export const DetailedResource = (props: Props) => {
           <Caption style={styles.handle}>{props.owner.fullName}</Caption>
         </View>
         {props.page && user.data.uid === props.owner.uid && (
-          <IconButton
-            onPress={() =>
-              props.navigation.push("ResourceEdit", {
-                slug: props.slug,
-                owner: props.owner,
-                data: props.data,
-                createdAt: props.createdAt,
-                description: props.description,
-                likes: props.likes,
-                comments: props.comments,
-                validated: props.validated,
-                tags: props.tags,
-              })
-            }
-            size={24}
-            icon={(props) => (
-              <PencilIcon size={props.size} color={props.color} />
-            )}
-          ></IconButton>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <IconButton
+              onPress={() =>
+                props.navigation.push("ResourceEdit", {
+                  slug: props.slug,
+                  owner: props.owner,
+                  data: props.data,
+                  createdAt: props.createdAt,
+                  description: props.description,
+                  likes: props.likes,
+                  comments: props.comments,
+                  validated: props.validated,
+                  tags: props.tags,
+                })
+              }
+              size={24}
+              icon={(props) => (
+                <PencilIcon size={props.size} color={props.color} />
+              )}
+              style={{ marginRight: 6 }}
+            ></IconButton>
+            <IconButton
+              onPress={() => setDeleteModalVisible(true)}
+              size={24}
+              icon={(props) => (
+                <TrashIcon size={props.size} color={props.color} />
+              )}
+            ></IconButton>
+          </View>
         )}
       </View>
       <Paragraph
@@ -368,6 +397,26 @@ export const DetailedResource = (props: Props) => {
               />
             </View>
           </View>
+          <Portal>
+            <Dialog
+              visible={deleteModalVisible}
+              onDismiss={() => setDeleteModalVisible(false)}
+            >
+              <Dialog.Title>Supprimer la ressource</Dialog.Title>
+              <Dialog.Content>
+                <Paragraph style={{ lineHeight: 20 }}>
+                  Cette action est irréversible. Êtes-vous sûr de vouloir
+                  supprimer cette ressource ?
+                </Paragraph>
+              </Dialog.Content>
+              <Dialog.Actions>
+                <Button onPress={() => setDeleteModalVisible(false)}>
+                  Annuler
+                </Button>
+                <Button onPress={deleteResource}>Supprimer</Button>
+              </Dialog.Actions>
+            </Dialog>
+          </Portal>
         </>
       )}
     </View>
@@ -399,7 +448,8 @@ const ResourceView = (props: Resource) => {
       backgroundColor:
         colorScheme === "light" ? colors.amber[100] : colors.amber[800],
       borderColor: colors.amber[500],
-    };if (type === "event")
+    };
+  if (type === "event")
     style = {
       backgroundColor:
         colorScheme === "light" ? colors.red[100] : colors.red[800],
