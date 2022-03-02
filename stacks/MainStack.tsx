@@ -6,7 +6,10 @@ import { Appbar } from "react-native-paper";
 
 import { ResourceSlug } from "pages/resource/Slug";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { getFocusedRouteNameFromRoute, useNavigation } from "@react-navigation/core";
+import {
+  getFocusedRouteNameFromRoute,
+  useNavigation,
+} from "@react-navigation/core";
 
 import { BottomTabNavigator } from "components/ui/BottomTabNavigator";
 import { ChannelSlug } from "pages/channel/Slug";
@@ -21,6 +24,7 @@ import { useNotifications } from "hooks/useNotifications";
 import { ResourceEditScreen } from "pages/resource/Edit";
 import { ChannelEditScreen } from "pages/channel/Edit";
 import { SettingsScreen } from "pages/Settings";
+import { SettingsDisplayScreen } from "pages/Settings/Display";
 
 const Stack = createStackNavigator();
 
@@ -66,7 +70,6 @@ export const StackNavigator = () => {
     <Stack.Navigator
       initialRouteName="Tabs"
       screenOptions={{
-        
         header: ({ options, navigation, back }: any) => {
           const title =
             options.headerTitle !== undefined
@@ -218,6 +221,14 @@ export const StackNavigator = () => {
         component={SettingsScreen}
         options={{
           headerTitle: "Paramètres",
+          presentation: "modal",
+        }}
+      />
+      <Stack.Screen
+        name="SettingsDisplay"
+        component={SettingsDisplayScreen}
+        options={{
+          headerTitle: "Affichage",
           presentation: "modal",
         }}
       />

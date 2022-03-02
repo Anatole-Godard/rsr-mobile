@@ -32,7 +32,7 @@ interface ResourceHomeProps extends Resource {
 
 export const HomeScreen = (props: Props) => {
   const { user } = useAuth();
-  const { colorScheme } = usePreferences();
+  const { colorScheme, channelStoriesDisplay } = usePreferences();
 
   const [resources, setResources] = useState<Resource[]>([]);
   const [loading, setLoading] = useState(true);
@@ -82,10 +82,12 @@ export const HomeScreen = (props: Props) => {
   return (
     <FlatList
       ListEmptyComponent={listEmptyComponent}
-      ListHeaderComponent={() => (
-        <ChannelHomeHeader navigation={props.navigation} />
-      )}
-      stickyHeaderIndices={[0]}
+      ListHeaderComponent={
+        channelStoriesDisplay
+          ? () => <ChannelHomeHeader navigation={props.navigation} />
+          : undefined
+      }
+      stickyHeaderIndices={channelStoriesDisplay ? [0] : undefined}
       contentContainerStyle={{
         backgroundColor: theme[colorScheme].colors.background,
       }}

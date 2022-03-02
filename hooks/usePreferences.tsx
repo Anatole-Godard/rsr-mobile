@@ -1,19 +1,9 @@
-type PreferencesContextType = {
-  colorScheme: "light" | "dark";
-  toggleColorScheme: () => void;
-  sendNotificationImmediately: (params: {
-    body: string;
-    link?: string;
-  }) => void;
-  notificationPermission: boolean;
-};
-
 import React, { createContext, useContext, useEffect, useState } from "react";
 const PreferencesContext = createContext({});
 
 import * as Notifications from "expo-notifications";
-
 import { StatusBar } from "expo-status-bar";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 /**
 
@@ -36,6 +26,12 @@ export function PreferencesProvider({
 
   const [notificationPermission, setNotificationPermission] =
     useState<boolean>(false);
+
+  const [channelStoriesDisplay, setChannelStoriesDisplay] =
+    useState<boolean>(true);
+
+  const toggleChannelStoriesDisplay = () =>
+    setChannelStoriesDisplay((old) => !old);
 
   const askPermissions = async () => {
     const { status: existingStatus } =
@@ -75,7 +71,20 @@ export function PreferencesProvider({
 
   useEffect(() => {
     askPermissions().then(setNotificationPermission);
+
+    AsyncStorage.getItem("@channelStoriesDisplay").then((value) => {
+      if (value === "false") {
+        setChannelStoriesDisplay(false);
+      }
+    });
   }, []);
+
+  useEffect(() => {
+    AsyncStorage.setItem(
+      "@channelStoriesDisplay",
+      channelStoriesDisplay.toString()
+    );
+  }, [channelStoriesDisplay]);
 
   return (
     <PreferencesContext.Provider
@@ -84,6 +93,9 @@ export function PreferencesProvider({
         toggleColorScheme,
         sendNotificationImmediately,
         notificationPermission,
+
+        channelStoriesDisplay,
+        toggleChannelStoriesDisplay,
       }}
     >
       <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
@@ -93,6 +105,17 @@ export function PreferencesProvider({
   );
 }
 
+type PreferencesContextType = {
+  colorScheme: "light" | "dark";
+  toggleColorScheme: () => void;
+  sendNotificationImmediately: (params: {
+    body: string;
+    link?: string;
+  }) => void;
+  notificationPermission: boolean;
+  channelStoriesDisplay: boolean;
+  toggleChannelStoriesDisplay: () => void;
+};
 /**
  * Get preferences from context
  *

@@ -10,8 +10,13 @@ import {
   UserIcon,
 } from "react-native-heroicons/outline";
 import { Text, TouchableRipple, useTheme } from "react-native-paper";
+import { Navigation } from "types/Navigation";
 
-export const SettingsScreen = () => {
+interface Props {
+  navigation: Navigation;
+}
+
+export const SettingsScreen = (props: Props) => {
   const theme = useTheme();
   const { sendNotificationImmediately } = usePreferences();
   const { user } = useAuth();
@@ -58,6 +63,7 @@ export const SettingsScreen = () => {
       <ListItem
         icon={<SupportIcon size={32} color={theme.colors.text} />}
         label="Accessibilité, affichage et langues"
+        onPress={() => props.navigation.navigate("SettingsDisplay")}
         description="Gérez la manière dont le contenu RSR vous est affiché, la langue que vous utilisez et la façon dont vous voulez que les autres utilisateurs de RSR vous contactent."
         last
       />
