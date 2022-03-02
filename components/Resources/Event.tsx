@@ -38,7 +38,7 @@ export const Event = (props: Props) => {
                 width: 48,
               }}
             >
-              <ClockIcon size={24} color={theme[colorScheme].colors.primary} />
+              <ClockIcon size={24} color={theme[colorScheme].colors.secondary} />
               {endDate?.toString() !== "" && (
                 <Text
                   style={{
@@ -78,7 +78,7 @@ export const Event = (props: Props) => {
               >
                 <ClockIcon
                   size={24}
-                  color={theme[colorScheme].colors.primary}
+                  color={theme[colorScheme].colors.secondary}
                 />
                 <Text
                   style={{
