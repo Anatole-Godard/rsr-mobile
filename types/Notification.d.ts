@@ -1,18 +1,19 @@
-import { Channel } from "./Channel";
-import { Resource } from "./Resource";
+import { ChannelMinimum } from "./Channel";
+import { ResourceMinimum } from "./Resource";
 import { UserMinimum } from "./User";
 
 export type Notification = {
+  _id?: string;
   user: UserMinimum;
-  emitter: UserMinimum;
-  document: Resource | Channel;
+  emitter?: UserMinimum;
+  document?: ResourceMinimum | ChannelMinimum ;
   type:
     | "comment"
     | "mention"
     | "like"
     | "message"
     | "resource_create"
-    | "invite";
+    | "invite"
+    | "report";
   createdAt: Date | string;
-  _id: string;
 };

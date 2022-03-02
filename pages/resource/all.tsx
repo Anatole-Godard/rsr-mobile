@@ -20,6 +20,7 @@ import LottieView from "lottie-react-native";
 import { Navigation } from "types/Navigation";
 import { ResourceHome } from "components/Resources/ResourceHome";
 import { Separator } from "components/ui/Separator";
+import { fetchRSR } from "utils/fetchRSR";
 
 interface Props {
   navigation: Navigation;
@@ -32,22 +33,21 @@ export const ResourcesScreen = (props: Props) => {
 
   const [resources, setResources] = useState<Resource[]>([]);
   const { search, onChange, filtered } = useSearch("slug", resources);
-  const [filtersSelected, setFiltersSelected] = useState<string[]>([]);
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
 
-  const filters = [
-    "Animaux",
-    "Santé",
-    "Education",
-    "Environnement",
-    "Sécurité",
-    "Culture",
-    "Sport",
-    "Autre",
-  ];
+
+  // const filters = [
+  //   "Animaux",
+  //   "Santé",
+  //   "Education",
+  //   "Environnement",
+  //   "Sécurité",
+  //   "Culture",
+  //   "Sport",
+  //   "Autre",
+  // ];
 
   const fetchData = () =>
-    fetch(API_URL + "/resource")
+    fetchRSR(API_URL + "/resource", user?.session)
       .then((res) => res.json())
       .then((body) => setResources(body.data.attributes));
 

@@ -16,6 +16,7 @@ import { colors, theme } from "core/theme";
 import { API_URL, HOST_URL } from "constants/env";
 
 import {
+  CalendarIcon,
   ChatIcon,
   ExternalLinkIcon,
   HandIcon,
@@ -32,7 +33,7 @@ import { useAuth } from "hooks/useAuth";
 import { useToast } from "react-native-paper-toast";
 import { fetchRSR } from "utils/fetchRSR";
 import Paragraph from "../ui/Paragraph";
-import { types } from "constants/resourceTypes";
+import { types, visibilities } from "constants/resourceTypes";
 import { useNavigation } from "@react-navigation/native";
 
 const ResourceDataView = ({
@@ -60,6 +61,12 @@ const ResourceDataView = ({
       backgroundColor:
         colorScheme === "light" ? colors.amber[100] : colors.amber[800],
       borderColor: colors.amber[500],
+    };
+  if (type === "event")
+    style = {
+      backgroundColor:
+        colorScheme === "light" ? colors.red[100] : colors.red[800],
+      borderColor: colors.red[500],
     };
   return (
     <View
@@ -95,6 +102,12 @@ const ResourceDataView = ({
           }
         />
       )}
+      {type === "event" && (
+        <CalendarIcon
+          size={24}
+          color={colorScheme === "light" ? colors.red[700] : colors.red[300]}
+        />
+      )}
       <Text style={{ fontFamily: "Spectral" }}>
         {types.find((r) => r.value === type)?.label}
       </Text>
@@ -107,7 +120,7 @@ interface Props extends Resource {
 }
 
 export const ResourceHome = (props: Props) => {
-  const {navigate} = useNavigation();
+  const { navigate } = useNavigation();
   const { colorScheme } = usePreferences();
   const { user } = useAuth();
   const toaster = useToast();
@@ -225,6 +238,27 @@ export const ResourceHome = (props: Props) => {
                 size={48}
               />
             </TouchableRipple>
+            <View
+              style={{
+                flexDirection: "column",
+                width: 32,
+                height: 32,
+                borderRadius: 8,
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor:
+                  colorScheme === "light"
+                    ? colors.trueGray[100]
+                    : colors.trueGray[900],
+              }}
+            >
+              {visibilities
+                .find((r) => r.value === props.visibility)
+                ?.icon.outline({
+                  size: 18,
+                  color: theme[colorScheme].colors.secondary,
+                })}
+            </View>
           </View>
           <View style={styles.rightColumn}>
             <View style={styles.topRow}>
@@ -251,18 +285,22 @@ export const ResourceHome = (props: Props) => {
                     { locale: fr }
                   )}
                 </Caption>
-                <Caption style={[styles.handle, styles.dot]}>
-                  {"\u2B24"}
-                </Caption>
-                <Caption
-                  style={{
-                    color: props.validated
-                      ? colors.green[700]
-                      : colors.trueGray[500],
-                  }}
-                >
-                  {props.validated ? "validée" : "en attente"}
-                </Caption>
+                {user.data.uid === props.owner.uid && (
+                  <>
+                    <Caption style={[styles.handle, styles.dot]}>
+                      {"\u2B24"}
+                    </Caption>
+                    <Caption
+                      style={{
+                        color: props.validated
+                          ? colors.green[700]
+                          : colors.trueGray[500],
+                      }}
+                    >
+                      {props.validated ? "validée" : "en attente"}
+                    </Caption>
+                  </>
+                )}
               </View>
 
               <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -309,9 +347,11 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   leftColumn: {
+    flexDirection: "column",
     width: 72,
     alignItems: "center",
-    // justifyContent: "center",
+    justifyContent: "space-between",
+    paddingBottom: 16,
   },
   rightColumn: {
     flex: 1,

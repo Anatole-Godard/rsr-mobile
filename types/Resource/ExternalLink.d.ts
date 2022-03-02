@@ -3,6 +3,10 @@ export type ExternalLink = {
     url: string;
     name: string;
     description: string;
-    image: string;
+    image: any;
   };
+};
+
+export type ExternalLinkWithoutRedundancy = {
+  url: string;
 };
