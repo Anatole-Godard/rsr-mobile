@@ -253,10 +253,10 @@ export const ResourceCreate = (props: Props) => {
     } else if (type === "event") {
       data.attributes = {
         properties: {
-          name,
-          description,
-          startDate,
-          endDate,
+          name: name.value,
+          description: description.value,
+          startDate: startDate.value,
+          endDate: endDate.value,
           participants: [],
         },
       };
@@ -442,89 +442,7 @@ export const ResourceCreate = (props: Props) => {
               ) : null
             )}
           </RadioButton.Group>
-          {/* {visibility === "unlisted" && (
-            <SafeAreaView style={{ flex: 1 }}>
-              <FlatList
-                data={filtered}
-                ItemSeparatorComponent={() => (
-                  <View
-                    style={{
-                      borderBottomWidth: StyleSheet.hairlineWidth,
-                      borderColor:
-                        colorScheme === "dark"
-                          ? colors.trueGray[800]
-                          : colors.trueGray[300],
-                      marginBottom: 4,
-                      paddingBottom: 4,
-                    }}
-                  />
-                )}
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    style={{
-                      padding: 8,
-                      borderRadius: 8,
-                      backgroundColor: theme[colorScheme].colors.surface,
-                    }}
-                    onPress={() => {
-                      members.find((m) => m.uid === item.uid)
-                        ? setMembers(
-                            members.filter(
-                              (u: UserMinimum) => u.uid !== item.uid
-                            )
-                          )
-                        : setMembers([...members, item]);
-                    }}
-                  >
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        elevation: 0,
-                      }}
-                    >
-                      <View
-                        style={{ flexDirection: "row", alignItems: "center" }}
-                      >
-                        <Image
-                          source={{ uri: HOST_URL + item.photoURL }}
-                          style={{
-                            height: 32,
-                            width: 32,
-                            borderRadius: 16,
-                            marginRight: 8,
-                          }}
-                        />
-                        <Text style={{ fontFamily: "Spectral", fontSize: 16 }}>
-                          {item.fullName}
-                        </Text>
-                      </View>
-                      {members.find((m) => m.uid === item.uid) && (
-                        <CheckCircleIcon
-                          size={24}
-                          color={theme[colorScheme].colors.secondary}
-                        />
-                      )}
-                    </View>
-                  </TouchableOpacity>
-                )}
-                keyExtractor={(item) => item.uid}
-                // ListFooterComponent={() => (
-                //   <Text
-                //     style={{
-                //       fontFamily: "Spectral",
-                //       fontSize: 16,
-                //       color: theme[colorScheme].colors.error,
-                //       marginVertical: 8,
-                //     }}
-                //   >
-                //     {membersError}
-                //   </Text>
-                // )}
-              />
-            </SafeAreaView>
-          )} */}
+          
         </ScrollView>
       )}
 
@@ -731,6 +649,7 @@ export const ResourceCreate = (props: Props) => {
                 icon={(props) => (
                   <CalendarIcon size={props.size} color={props.color} />
                 )}
+                style={{marginTop:12}}
               >
                 Sélectionner une date
               </Button>
@@ -762,6 +681,7 @@ export const ResourceCreate = (props: Props) => {
                   fontFamily: "Spectral",
                   textAlign: "justify",
                   marginBottom: 8,
+                  marginTop: 12
                 }}
               >
                 La sélection de l'heure n'est pas encore disponible sur mobile,

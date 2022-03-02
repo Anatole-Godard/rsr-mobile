@@ -6,7 +6,9 @@ import {
   ArrowLeftIcon,
   ArrowRightIcon,
   BookOpenIcon,
+  CalendarIcon,
   CheckIcon,
+  ClockIcon,
   CurrencyDollarIcon,
   ExternalLinkIcon,
   HandIcon,
@@ -26,7 +28,7 @@ import { Navigation } from "types/Navigation";
 import { Resource } from "types/Resource";
 
 import * as ImagePicker from "expo-image-picker";
-import { types } from "constants/resourceTypes";
+import { types, visibilities } from "constants/resourceTypes";
 import { nameValidator } from "core/validators";
 import { fetchRSR } from "utils/fetchRSR";
 import { API_URL } from "constants/env";
@@ -38,7 +40,11 @@ import TextInput from "components/ui/TextInput";
 import { TextInput as PaperInput } from "react-native-paper";
 
 import MapInput, { MapInputVariants } from "react-native-map-input";
-import { DetailedResource } from "components/Resources/DetailledResource";
+import { ScrollView } from "react-native-gesture-handler";
+import { Input } from "types/Input";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
+import { DatePickerModal } from "react-native-paper-dates";
 
 interface Props {
   navigation: Navigation;
@@ -104,6 +110,10 @@ export const ResourceEditScreen = (props: Props) => {
     props.route.params.data.type || types[0].value
   );
 
+  const [visibility, setVisibility] = useState(
+    props.route.params.visibility || visibilities[0].value
+  );
+
   const [price, setPrice] = useState({
     value: props.route.params.data.attributes.properties.price || "0.00",
     error: "",
@@ -143,6 +153,35 @@ export const ResourceEditScreen = (props: Props) => {
 
   const [externalLink, setExternalLink] = useState({ value: "", error: "" });
 
+  const [startDate, setStartDate] = useState<Input>({
+    value: props.route.params.data.attributes.properties.startDate || "",
+    error: "",
+  });
+  const [endDate, setEndDate] = useState<Input>({
+    value: props.route.params.data.attributes.properties.endDate || "",
+    error: "",
+  });
+  const [datePickerOpen, setDatePickerOpen] = useState(false);
+
+  const onDismiss = React.useCallback(() => {
+    setDatePickerOpen(false);
+  }, [setDatePickerOpen]);
+
+  const onConfirm = React.useCallback(
+    ({
+      startDate,
+      endDate,
+    }: {
+      startDate: Date | undefined;
+      endDate: Date | undefined;
+    }) => {
+      setDatePickerOpen(false);
+      setStartDate({ value: startDate?.toISOString() || "", error: "" });
+      setEndDate({ value: endDate?.toISOString() || "", error: "" });
+    },
+    [setDatePickerOpen, setStartDate, setEndDate]
+  );
+
   const _onNextStep = async () => {
     if (step === 0) {
       const nameError = nameValidator(name.value);
@@ -166,7 +205,7 @@ export const ResourceEditScreen = (props: Props) => {
           API_URL + "/resource/" + props.route.params.slug + "/edit",
           user.session,
           {
-            method: "POST",
+            method: "PUT",
             body: JSON.stringify(formatResource()),
           }
         );
@@ -218,12 +257,23 @@ export const ResourceEditScreen = (props: Props) => {
           image: null,
         },
       };
+    } else if (type === "event") {
+      data.attributes = {
+        properties: {
+          name: name.value,
+          description: description.value,
+          startDate: startDate.value,
+          endDate: endDate.value,
+          participants: [],
+        },
+      };
     }
 
     return {
       description: description.value,
       // tags: tags.map((tag) => tag.value),
       data,
+      visibility,
     };
   };
 
@@ -261,7 +311,7 @@ export const ResourceEditScreen = (props: Props) => {
       />
 
       {step === 0 && (
-        <View
+        <ScrollView
           style={{
             ...styles.container,
             backgroundColor: theme[colorScheme].colors.background,
@@ -310,21 +360,12 @@ export const ResourceEditScreen = (props: Props) => {
               borderColor: theme[colorScheme].colors.secondary,
             }}
           >
-            {type === "location" && (
-              <LocationMarkerIcon
-                size={24}
-                color={theme[colorScheme].colors.secondary}
-              />
-            )}
-            {type === "physical_item" && (
-              <HandIcon size={24} color={theme[colorScheme].colors.secondary} />
-            )}
-            {type === "external_link" && (
-              <ExternalLinkIcon
-                size={24}
-                color={theme[colorScheme].colors.secondary}
-              />
-            )}
+            {types
+              .find((t) => t.value === type)
+              ?.icon.outline({
+                size: 24,
+                color: theme[colorScheme].colors.secondary,
+              })}
 
             <Text style={styles.label}>Type de ressource</Text>
           </View>
@@ -341,8 +382,9 @@ export const ResourceEditScreen = (props: Props) => {
                   labelStyle={styles.radioLabel}
                   color={theme[colorScheme].colors.primary}
                   style={{
-                    ...styles.resourceType,
-                    backgroundColor: theme[colorScheme].colors.background,
+                    padding: 6,
+                    borderRadius: 8,
+                    backgroundColor: theme[colorScheme].colors.surface,
                     borderColor:
                       type === t.value
                         ? theme[colorScheme].colors.primary
@@ -353,7 +395,61 @@ export const ResourceEditScreen = (props: Props) => {
               </>
             ))}
           </RadioButton.Group>
-        </View>
+
+          <View
+            style={{
+              ...styles.separator,
+              borderColor: theme[colorScheme].colors.secondary,
+            }}
+          >
+            {visibilities
+              .find((t) => t.value === visibility)
+              ?.icon.outline({
+                size: 24,
+                color: theme[colorScheme].colors.secondary,
+              })}
+            <Text style={styles.label}>Visibilité de la ressource</Text>
+          </View>
+          <Text
+            style={{
+              fontFamily: "Spectral",
+              textAlign: "justify",
+              marginBottom: 8,
+            }}
+          >
+            La création de ressource non répertoriée n'est pas disponible sur
+            mobile, merci d'utiliser l'application web.
+          </Text>
+          <RadioButton.Group
+            onValueChange={(value) => setVisibility(value)}
+            value={visibility}
+          >
+            {visibilities.map((v) =>
+              v.value !== "unlisted" ? (
+                <>
+                  <RadioButton.Item
+                    key={v.value}
+                    label={v.label}
+                    value={v.value}
+                    labelStyle={styles.radioLabel}
+                    color={theme[colorScheme].colors.primary}
+                    disabled={v.value === "unlisted"}
+                    style={{
+                      padding: 6,
+                      borderRadius: 8,
+                      backgroundColor: theme[colorScheme].colors.surface,
+                      borderColor:
+                        visibility === v.value
+                          ? theme[colorScheme].colors.primary
+                          : theme[colorScheme].colors.placeholder,
+                    }}
+                  />
+                  <View style={{ marginBottom: 8 }}></View>
+                </>
+              ) : null
+            )}
+          </RadioButton.Group>
+        </ScrollView>
       )}
 
       {step === 1 && (
@@ -518,6 +614,187 @@ export const ResourceEditScreen = (props: Props) => {
                 errorText={externalLink.error}
                 style={styles.input}
               />
+            </View>
+          )}
+
+          {type === "event" && (
+            <View>
+              <Button
+                mode="outlined"
+                onPress={pickImage}
+                icon={(props) => (
+                  <PhotographIcon size={props.size} color={props.color} />
+                )}
+              >
+                Prendre une photo
+              </Button>
+              {image && (
+                <View
+                  style={{
+                    width: "100%",
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Image
+                    source={{ uri: image }}
+                    style={{ width: "80%", height: 96, borderRadius: 4 }}
+                  />
+                  <IconButton
+                    onPress={() => setImage(null)}
+                    size={36}
+                    icon={(props) => (
+                      <TrashIcon size={props.size} color={props.color} />
+                    )}
+                  />
+                </View>
+              )}
+              <Button
+                onPress={() => setDatePickerOpen(true)}
+                mode="outlined"
+                icon={(props) => (
+                  <CalendarIcon size={props.size} color={props.color} />
+                )}
+                style={{ marginTop: 12 }}
+              >
+                Sélectionner une date
+              </Button>
+              <DatePickerModal
+                locale="fr"
+                mode="range"
+                visible={datePickerOpen}
+                onDismiss={onDismiss}
+                startDate={
+                  startDate.value ? new Date(startDate.value) : undefined
+                }
+                endDate={endDate.value ? new Date(endDate.value) : undefined}
+                onConfirm={onConfirm}
+                // validRange={{
+                //   startDate: new Date(2021, 1, 2),  // optional
+                //   endDate: new Date(), // optional
+                //   disabledDates: [new Date()] // optional
+                // }}
+                // onChange={} // same props as onConfirm but triggered without confirmed by user
+                saveLabel="Confimer" // optional
+                // uppercase={false} // optional, default is true
+                label="Sélectionner une date" // optional
+                // startLabel="From" // optional
+                // endLabel="To" // optional
+                // animationType="slide" // optional, default is slide on ios/android and none on web
+              />
+              <Text
+                style={{
+                  fontFamily: "Spectral",
+                  textAlign: "justify",
+                  marginBottom: 8,
+                  marginTop: 12,
+                }}
+              >
+                La sélection de l'heure n'est pas encore disponible sur mobile,
+                si vous souhaitez préciser l'horaire, merci d'éditer la
+                ressource sur l'application web.
+              </Text>
+
+              {startDate.value !== "" && (
+                <View
+                  style={{
+                    flexDirection: "column",
+                    backgroundColor: theme[colorScheme].colors.surface,
+                    padding: 8,
+                    borderRadius: 8,
+                  }}
+                >
+                  <View style={{ flexDirection: "row" }}>
+                    <View
+                      style={{
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        width: 48,
+                      }}
+                    >
+                      <ClockIcon
+                        size={24}
+                        color={theme[colorScheme].colors.primary}
+                      />
+                      {endDate.value !== "" && (
+                        <Text
+                          style={{
+                            fontFamily: "Spectral",
+                            fontSize: 12,
+                          }}
+                        >
+                          FROM
+                        </Text>
+                      )}
+                    </View>
+                    <View style={{ flexDirection: "column", marginLeft: 12 }}>
+                      <Text style={{ fontFamily: "Spectral", fontSize: 16 }}>
+                        {format(new Date(startDate.value), "PPPP", {
+                          locale: fr,
+                        })}
+                      </Text>
+                      <Text style={{ fontFamily: "Spectral", fontSize: 12 }}>
+                        {format(new Date(startDate.value), "p", { locale: fr })}
+                      </Text>
+                    </View>
+                  </View>
+                  {endDate.value !== "" && (
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        marginTop: 8,
+                      }}
+                    >
+                      <View
+                        style={{
+                          flexDirection: "column",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          width: 48,
+                        }}
+                      >
+                        <ClockIcon
+                          size={24}
+                          color={theme[colorScheme].colors.primary}
+                        />
+                        <Text
+                          style={{
+                            fontFamily: "Spectral",
+                            fontSize: 12,
+                            marginTop: 4,
+                          }}
+                        >
+                          TO
+                        </Text>
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: "column",
+                          marginLeft: 12,
+                          paddingTop: 8,
+                          borderTopWidth: StyleSheet.hairlineWidth,
+                          flex: 1,
+                          marginRight: 8,
+                        }}
+                      >
+                        <Text style={{ fontFamily: "Spectral", fontSize: 16 }}>
+                          {format(new Date(endDate.value), "PPPP", {
+                            locale: fr,
+                          })}
+                        </Text>
+                        <Text style={{ fontFamily: "Spectral", fontSize: 12 }}>
+                          {format(new Date(endDate.value), "p", {
+                            locale: fr,
+                          })}
+                        </Text>
+                      </View>
+                    </View>
+                  )}
+                </View>
+              )}
+              {/* <Text>{JSON.stringify({ startDate, endDate })}</Text> */}
             </View>
           )}
         </View>
