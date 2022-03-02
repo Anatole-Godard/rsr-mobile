@@ -23,7 +23,7 @@ import { useAuth } from "hooks/useAuth";
 import {
   ExclamationIcon,
   PencilIcon,
-  PlusCircleIcon,
+  // PlusCircleIcon,
 } from "react-native-heroicons/outline";
 import { usePreferences } from "hooks/usePreferences";
 import { Resource } from "types/Resource";
@@ -36,6 +36,7 @@ export const ProfileScreen = (props: Props) => {
   const { fullName, photoURL, uid } = props.route.params;
 
   const [resources, setResources] = useState<Resource[]>([]);
+  const [likes, setLikes] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -47,7 +48,14 @@ export const ProfileScreen = (props: Props) => {
           body.data.attributes.filter((r: Resource) => r.owner.uid === uid)
         );
       });
+
+    fetchRSR(`${API_URL}/user/${user?.data.uid}/resources/likes`, user?.session)
+      .then((res) => res.json())
+      .then((body) => {
+        setLikes(body?.data?.attributes?.length);
+      });
   }, [user]);
+
   const theme = useTheme();
   return (
     <View style={{ height: Dimensions.get("screen").height / 3, flex: 1 }}>
@@ -110,14 +118,14 @@ export const ProfileScreen = (props: Props) => {
               width: "100%",
             }}
           >
-            {uid !== user.data.uid && (
+            {/* {uid !== user.data.uid && (
               <TouchableOpacity style={styles.button} disabled>
                 <PlusCircleIcon size={16} color={core.dark.colors.text} />
                 <Text style={{ color: core.dark.colors.text, marginLeft: 3 }}>
                   Suivre (prochainement)
                 </Text>
               </TouchableOpacity>
-            )}
+            )} */}
           </View>
         </View>
       </ImageBackground>
@@ -132,23 +140,19 @@ export const ProfileScreen = (props: Props) => {
         }}
       >
         <View style={styles.statContainer}>
-          <Text style={styles.statNumber}>
-            {user.data.followers?.length || "0"}
-          </Text>
-          <Text style={styles.statLabel}>Abonnés</Text>
+          <Text style={styles.statNumber}>{resources.length || "0"}</Text>
+          <Text style={styles.statLabel}>Ressources créées</Text>
         </View>
         <View style={styles.statContainer}>
+          <Text style={styles.statNumber}>{likes || "0"}</Text>
+          <Text style={styles.statLabel}>Ressources aimées</Text>
+        </View>
+        {/* <View style={styles.statContainer}>
           <Text style={styles.statNumber}>
             {user.data.following?.length || "0"}
           </Text>
           <Text style={styles.statLabel}>Abonnements</Text>
-        </View>
-        <View style={styles.statContainer}>
-          <Text style={styles.statNumber}>
-            {resources.length || "0"}
-          </Text>
-          <Text style={styles.statLabel}>Ressources</Text>
-        </View>
+        </View> */}
       </View>
       <FlatList
         style={{
