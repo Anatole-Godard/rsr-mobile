@@ -618,6 +618,8 @@ export const DetailedResource = (props: Props) => {
                 backgroundColor: colors.red[200],
                 elevation: 0,
                 width: "90%",
+                flexDirection: "row",
+                alignItems: "center",
               }}
               labelStyle={{
                 color: colors.red[700],
@@ -698,6 +700,8 @@ export const DetailedResource = (props: Props) => {
                 // marginTop: 12,
                 backgroundColor: colors.amber[200],
                 elevation: 0,
+                flexDirection: "row",
+                alignItems: "center",
                 width: "90%",
               }}
               labelStyle={{
