@@ -447,7 +447,7 @@ export const DetailedResource = (props: Props) => {
           </View>
         ) : null}
       </View>
-      <ScrollView style={{ maxHeight: Dimensions.get("screen").height / 5, marginVertical: 12 }}>
+      <ScrollView style={{ maxHeight: Dimensions.get("screen").height / 5, marginVertical: 12, flex:1 }}>
         <Paragraph
           style={{
             ...styles.content,

@@ -46,6 +46,10 @@ export const ChannelHomeHeader = (props: Props) => {
 
   useEffect(() => {
     if (user) fetchData();
+
+    return () => {
+      setChannels([]);
+    };
   }, []);
 
   return (
