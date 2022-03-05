@@ -2,10 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   FlatList,
   KeyboardAvoidingView,
-  RefreshControl,
-  ScrollView,
   StyleSheet,
-  TouchableOpacity,
   View,
 } from "react-native";
 import { useAuth } from "hooks/useAuth";
@@ -13,7 +10,7 @@ import { API_URL } from "constants/env";
 import { Resource } from "types/Resource";
 import { usePreferences } from "hooks/usePreferences";
 import { useSearch } from "hooks/useSearch";
-import { Chip, Modal, Portal, Searchbar } from "react-native-paper";
+import {  Searchbar } from "react-native-paper";
 import { theme } from "core/theme";
 import Paragraph from "components/ui/Paragraph";
 import LottieView from "lottie-react-native";

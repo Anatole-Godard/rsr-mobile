@@ -266,11 +266,19 @@ export const ResourceHome = (props: Props) => {
                 {props.data.attributes.properties.name}
               </Title>
             </View>
-            <Paragraph
-              style={{ color: contentColor, lineHeight: -5, fontSize: 15 }}
+            <Text
+              style={{
+                color: contentColor,
+                lineHeight: -5,
+                fontSize: 15,
+                fontFamily: "Spectral",
+                paddingBottom: 8,
+              }}
+              numberOfLines={4}
+              ellipsizeMode="tail"
             >
               {props.description}
-            </Paragraph>
+            </Text>
             <ResourceDataView type={props.data.type} />
             <View style={styles.bottomRow}>
               <View style={{ flexDirection: "row", alignItems: "center" }}>

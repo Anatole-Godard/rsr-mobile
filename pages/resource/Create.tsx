@@ -5,7 +5,7 @@ import { types, visibilities } from "constants/resourceTypes";
 import { colors, theme } from "core/theme";
 import { nameValidator } from "core/validators";
 import { usePreferences } from "hooks/usePreferences";
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -246,7 +246,7 @@ export const ResourceCreate = (props: Props) => {
         properties: {
           name: name.value,
           description: description.value,
-          externalLink: externalLink.value,
+          url: externalLink.value,
           image: null,
         },
       };
@@ -367,7 +367,7 @@ export const ResourceCreate = (props: Props) => {
             value={type}
           >
             {types.map((t) => (
-              <>
+              <Fragment key={t.value}>
                 <RadioButton.Item
                   key={t.value}
                   label={t.label}
@@ -385,7 +385,7 @@ export const ResourceCreate = (props: Props) => {
                   }}
                 />
                 <View style={{ marginBottom: 8 }}></View>
-              </>
+              </Fragment>
             ))}
           </RadioButton.Group>
 

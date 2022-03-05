@@ -54,6 +54,7 @@ import { PhysicalItem } from "./PhysicalItem";
 import { Location } from "./Location";
 import { Event } from "./Event";
 import RBSheet from "react-native-raw-bottom-sheet";
+import { ScrollView } from "react-native-gesture-handler";
 
 interface Props extends Resource {
   navigation: Navigation;
@@ -95,7 +96,8 @@ export const DetailedResource = (props: Props) => {
           method: "DELETE",
         }
       );
-      setDeleteModalVisible(false);
+      let current = refDeleteSheet?.current || { close: () => {} };
+      current.close();
       if (res.ok) props.navigation.goBack();
     }
   };
@@ -110,7 +112,8 @@ export const DetailedResource = (props: Props) => {
       //     method: "DELETE",
       //   }
       // );
-      setReportModalVisible(false);
+      let current = refReportSheet?.current || { close: () => {} };
+      current.close();
     }
   };
 
@@ -444,16 +447,18 @@ export const DetailedResource = (props: Props) => {
           </View>
         ) : null}
       </View>
-      <Paragraph
-        style={{
-          ...styles.content,
-          color: contentColor,
-          fontSize: 18,
-          lineHeight: 24,
-        }}
-      >
-        {props.description}
-      </Paragraph>
+      <ScrollView style={{ maxHeight: Dimensions.get("screen").height / 5, marginVertical: 12 }}>
+        <Paragraph
+          style={{
+            ...styles.content,
+            color: contentColor,
+            fontSize: 18,
+            lineHeight: 24,
+          }}
+        >
+          {props.description}
+        </Paragraph>
+      </ScrollView>
       <ResourceView {...props} />
 
       {props.page && (

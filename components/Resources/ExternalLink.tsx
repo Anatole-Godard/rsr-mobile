@@ -17,7 +17,7 @@ interface ExternalLinkProps {
   properties: {
     name: string;
     description?: string;
-    externalLink: string;
+    url: string;
   };
 }
 
@@ -25,18 +25,18 @@ export const ExternalLink = (props: ExternalLinkProps) => {
   const { colorScheme } = usePreferences();
   const handlePress = useCallback(async () => {
     // Checking if the link is supported for links with custom URL scheme.
-    const supported = await Linking.canOpenURL(props.properties.externalLink);
+    const supported = await Linking.canOpenURL(props.properties.url);
 
     if (supported) {
       // Opening the link with some app, if the URL scheme is "http" the web link should be opened
       // by some browser in the mobile
-      await Linking.openURL(props.properties.externalLink);
+      await Linking.openURL(props.properties.url);
     } else {
       Alert.alert(
-        `Don't know how to open this URL: ${props.properties.externalLink}`
+        `Don't know how to open this URL: ${props.properties.url}`
       );
     }
-  }, [props.properties.externalLink]);
+  }, [props.properties.url]);
 
   return (
     <TouchableRipple
@@ -57,7 +57,7 @@ export const ExternalLink = (props: ExternalLinkProps) => {
             ellipsizeMode="tail"
             style={{ ...styles.text, color: theme[colorScheme].colors.primary }}
           >
-            {props.properties.externalLink}
+            {props.properties.url}
           </Text>
         </View>
       </>
