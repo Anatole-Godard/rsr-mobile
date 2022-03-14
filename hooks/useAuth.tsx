@@ -50,14 +50,14 @@ export function AuthProvider({
       const body = await response.json();
 
       // if (response.ok) {
-        await AsyncStorage.removeItem("@user");
-        setUser(null);
+      await AsyncStorage.removeItem("@user");
+      setUser(null);
       // }
     } catch (error) {
       let err: { name: string } = error as any;
       // if (err.name === "TokenExpiredError") {
-        await AsyncStorage.removeItem("@user");
-        setUser(null);
+      await AsyncStorage.removeItem("@user");
+      setUser(null);
       // }
     }
   };
@@ -68,20 +68,24 @@ export function AuthProvider({
     fullName: string,
     birthDate: string
   ) => {
-    const response = await fetch(API_URL + "/auth/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        appsource: "mobile",
-      },
-      body: JSON.stringify({ email, password, fullName, birthDate }),
-    });
-    const body = await response.json();
-    if (response.ok && body.session && body.data) {
-      setUser(body);
+    try {
+      const response = await fetch(API_URL + "/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          appsource: "mobile",
+        },
+        body: JSON.stringify({ email, password, fullName, birthDate }),
+      });
+      const body = await response.json();
+      if (response.ok && body.session && body.data) {
+        setUser(body);
 
-      Vibration.vibrate([1000]);
-    } else setUser(null);
+        Vibration.vibrate([1000]);
+      } else setUser(null);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const changePicture = async (picture: string) => {

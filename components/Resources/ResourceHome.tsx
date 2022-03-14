@@ -277,7 +277,7 @@ export const ResourceHome = (props: Props) => {
               numberOfLines={4}
               ellipsizeMode="tail"
             >
-              {props.description}
+              {props.description?.trimEnd()}
             </Text>
             <ResourceDataView type={props.data.type} />
             <View style={styles.bottomRow}>

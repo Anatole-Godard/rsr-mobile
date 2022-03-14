@@ -33,7 +33,7 @@ export const ChannelScreen = (props: Props) => {
 
   const fetchData = async () => {
     setLoading(true);
-    const res = await fetchRSR(API_URL + "/channel", user);
+    const res = await fetchRSR(API_URL + "/channel", user?.session);
     const body = await res.json();
     setChannels(body.data.attributes);
     setLoading(false);

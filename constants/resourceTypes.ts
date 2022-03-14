@@ -26,7 +26,7 @@ export const types = [
     icon: { outline: HandIconOutline, solid: HandIconSolid },
   },
   {
-    label: "Emplacement GPS",
+    label: "Position",
     value: "location",
     hasImage: false,
     icon: {
