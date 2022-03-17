@@ -10,7 +10,11 @@ import { formatDistance } from "date-fns";
 import { Activity } from "types/Activity";
 import { Message } from "types/Message";
 import fr from "date-fns/locale/fr";
-import { TrashIcon, UsersIcon } from "react-native-heroicons/outline";
+import {
+  TrashIcon,
+  UserGroupIcon,
+  UsersIcon,
+} from "react-native-heroicons/outline";
 
 export interface ChannelItemProps extends Channel {
   onPress: () => void;
@@ -68,33 +72,66 @@ export const ChannelItem = (props: ChannelItemProps) => {
   }, [props.messages, props.activities]);
 
   return (
-    <Swipeable renderRightActions={() => <RightAction slug={props.slug} />}>
+    <Swipeable
+      renderRightActions={() =>
+        props.visibility === "private" ? (
+          <RightAction slug={props.slug} />
+        ) : (
+          <></>
+        )
+      }
+    >
       <TouchableRipple onPress={props.onPress}>
         <Surface style={styles.container}>
-          {props.image ? (
+          <View
+            style={{
+              backgroundColor:
+                colorScheme === "light" ? colors.blue[400] : colors.blue[600],
+              height: 72,
+              width: 72,
+              borderRadius: 36,
+              padding: 2,
+            }}
+          >
             <View
               style={{
-                ...styles.imageContainer,
-                backgroundColor:
-                  colorScheme === "light" ? colors.blue[200] : colors.blue[800],
+                backgroundColor: theme[colorScheme].colors.surface,
+                padding: 2,
+                height: 68,
+                width: 68,
+                borderRadius: 34,
               }}
             >
-              <Image
-                source={{ uri: HOST_URL + props.image.url }}
-                style={styles.image}
-              />
+              {props.image ? (
+                <View
+                  style={{
+                    ...styles.imageContainer,
+                    backgroundColor:
+                      colorScheme === "light"
+                        ? colors.blue[200]
+                        : colors.blue[800],
+                  }}
+                >
+                  <Image
+                    source={{ uri: HOST_URL + props.image.url }}
+                    style={styles.image}
+                  />
+                </View>
+              ) : (
+                <View
+                  style={{
+                    ...styles.imageContainer,
+                    backgroundColor:
+                      colorScheme === "light"
+                        ? colors.blue[200]
+                        : colors.blue[800],
+                  }}
+                >
+                  <UserGroupIcon size={20} color={colors.blue[500]} />
+                </View>
+              )}
             </View>
-          ) : (
-            <View
-              style={{
-                ...styles.imageContainer,
-                backgroundColor:
-                  colorScheme === "light" ? colors.blue[200] : colors.blue[800],
-              }}
-            >
-              <UsersIcon size={24} color={colors.blue[500]} />
-            </View>
-          )}
+          </View>
           <View style={styles.rightColumn}>
             <View style={styles.header}>
               <Text style={styles.title}>{props.name}</Text>
@@ -154,6 +191,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     height: 64,
+    marginLeft: 8
   },
   header: {
     flex: 1,

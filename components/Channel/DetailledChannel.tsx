@@ -70,6 +70,7 @@ export const DetailledChannel = (props: Props) => {
               source={{ uri: HOST_URL + member.photoURL }}
               style={{ marginLeft: -8 }}
               size={24}
+              key={member.uid}
             />
           ))}
           <Text style={{ fontFamily: "Spectral", fontSize: 14, marginLeft: 8 }}>

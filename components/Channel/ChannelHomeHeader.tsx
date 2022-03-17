@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { UsersIcon } from "react-native-heroicons/outline";
+import { UserGroupIcon, UsersIcon } from "react-native-heroicons/outline";
 import { Text } from "react-native-paper";
 import { Channel } from "types/Channel";
 import { Navigation } from "types/Navigation";
@@ -144,7 +144,7 @@ const ChannelHome = (props: ChannelHomeProps) => {
                         : colors.blue[800],
                   }}
                 >
-                  <UsersIcon size={16} color={colors.blue[500]} />
+                  <UserGroupIcon size={20} color={colors.blue[500]} />
                 </View>
               )}
             </View>

@@ -17,6 +17,8 @@ import {
   TouchableRipple,
   Portal,
   Dialog,
+  Menu,
+  Divider,
 } from "react-native-paper";
 import color from "color";
 import { Resource } from "types/Resource";
@@ -35,6 +37,7 @@ import {
   CheckIcon,
   ChevronDownIcon,
   ChevronUpIcon,
+  DotsVerticalIcon,
   ExclamationIcon,
   HeartIcon as HeartIconOutline,
   PencilIcon,
@@ -141,6 +144,12 @@ export const DetailedResource = (props: Props) => {
 
   const contentColor = color(theme.colors.text).alpha(0.8).rgb().string();
 
+  const [menuVisible, setMenuVisible] = useState(false);
+
+  const openMenu = () => setMenuVisible(true);
+
+  const closeMenu = () => setMenuVisible(false);
+
   return (
     <View style={styles.container}>
       <View style={styles.topRow}>
@@ -173,53 +182,56 @@ export const DetailedResource = (props: Props) => {
           </Title>
           <Caption style={styles.handle}>{props.owner.fullName}</Caption>
         </View>
-        {props.page && user.data.uid === props.owner.uid ? (
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <IconButton
-              onPress={() =>
-                props.navigation.push("ResourceEdit", {
-                  slug: props.slug,
-                  owner: props.owner,
-                  data: props.data,
-                  createdAt: props.createdAt,
-                  description: props.description,
-                  likes: props.likes,
-                  comments: props.comments,
-                  validated: props.validated,
-                  tags: props.tags,
-                })
-              }
-              size={24}
-              icon={(props) => (
-                <PencilIcon size={props.size} color={props.color} />
-              )}
-              style={{ marginRight: 6 }}
-            ></IconButton>
-            <IconButton
-              onPress={() => {
-                let current = refDeleteSheet?.current || { open: () => {} };
-                current.open();
-              }}
-              size={24}
-              icon={(props) => (
-                <TrashIcon size={props.size} color={props.color} />
-              )}
-            ></IconButton>
-          </View>
-        ) : props.page ? (
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <IconButton
+
+        {props.page && (
+          <Menu
+            visible={menuVisible}
+            onDismiss={closeMenu}
+            anchor={
+              <IconButton
+                onPress={openMenu}
+                size={24}
+                icon={(props) => (
+                  <DotsVerticalIcon size={props.size} color={props.color} />
+                )}
+                style={{ marginRight: 6 }}
+              ></IconButton>
+            }
+          >
+            <Menu.Item
               onPress={() => {
                 let current = refReportSheet?.current || { open: () => {} };
                 current.open();
+                closeMenu();
               }}
-              size={24}
-              icon={(props) => (
-                <ExclamationIcon size={props.size} color={props.color} />
-              )}
-            ></IconButton>
-          </View>
-        ) : null}
+              icon={(props) => <ExclamationIcon color={props.color} />}
+              title="Signaler"
+            />
+            {user.data.uid === props.owner.uid && (
+              <>
+                <Divider />
+                <Menu.Item
+                  onPress={() => {
+                    props.navigation.push("ResourceEdit", {
+                      slug: props.slug,
+                      owner: props.owner,
+                      data: props.data,
+                      createdAt: props.createdAt,
+                      description: props.description,
+                      likes: props.likes,
+                      comments: props.comments,
+                      validated: props.validated,
+                      tags: props.tags,
+                    });
+                    closeMenu();
+                  }}
+                  icon={(props) => <PencilIcon size={24} color={props.color} />}
+                  title="Éditer"
+                />
+              </>
+            )}
+          </Menu>
+        )}
       </View>
       <ScrollView style={{ marginVertical: 6, flex: 1 }}>
         <Paragraph
@@ -319,7 +331,7 @@ export const DetailedResource = (props: Props) => {
             </View>
 
             <RBSheet
-              height={500}
+              height={450}
               ref={refDeleteSheet}
               closeOnDragDown={true}
               closeOnPressMask={true}
@@ -357,16 +369,18 @@ export const DetailedResource = (props: Props) => {
                   </Caption>
                 </View>
               </View>
-              <Paragraph
+              <Text
                 style={{
+                  fontFamily: "Spectral",
                   ...styles.content,
                   color: contentColor,
                   fontSize: 18,
                   lineHeight: 24,
                 }}
+                numberOfLines={3}
               >
                 {props.description}
-              </Paragraph>
+              </Text>
               <View
                 style={{
                   height: StyleSheet.hairlineWidth,
@@ -375,26 +389,25 @@ export const DetailedResource = (props: Props) => {
                   width: "100%",
                 }}
               />
-              <Paragraph
-                style={{ lineHeight: 20, marginTop: 12, paddingHorizontal: 10 }}
-              >
+              <Paragraph style={{ lineHeight: 20, marginTop: 12 }}>
                 Cette action est irréversible. Êtes-vous sûr de vouloir
                 supprimer cette ressource ?
               </Paragraph>
 
               <Button
-                onPress={report}
+                onPress={deleteResource}
                 mode="contained"
                 style={{
                   // marginTop: 12,
                   backgroundColor: colors.red[200],
                   elevation: 0,
-                  width: "90%",
+                  width: "100%",
                   flexDirection: "row",
                   alignItems: "center",
                 }}
                 labelStyle={{
                   color: colors.red[700],
+                  textAlign: "center",
                 }}
                 icon={(props) => (
                   <TrashIcon color={props.color} size={props.size} />
@@ -442,16 +455,18 @@ export const DetailedResource = (props: Props) => {
                   </Caption>
                 </View>
               </View>
-              <Paragraph
+              <Text
                 style={{
+                  fontFamily: "Spectral",
                   ...styles.content,
                   color: contentColor,
                   fontSize: 18,
                   lineHeight: 24,
                 }}
+                numberOfLines={3}
               >
                 {props.description}
-              </Paragraph>
+              </Text>
               <View
                 style={{
                   height: StyleSheet.hairlineWidth,
@@ -460,9 +475,7 @@ export const DetailedResource = (props: Props) => {
                   width: "100%",
                 }}
               />
-              <Paragraph
-                style={{ lineHeight: 20, marginTop: 12, paddingHorizontal: 10 }}
-              >
+              <Paragraph style={{ lineHeight: 20, marginTop: 12 }}>
                 Cette action est irréversible. Êtes-vous sûr de vouloir signaler
                 cette ressource ?
               </Paragraph>
@@ -476,7 +489,7 @@ export const DetailedResource = (props: Props) => {
                   elevation: 0,
                   flexDirection: "row",
                   alignItems: "center",
-                  width: "90%",
+                  width: "100%",
                 }}
                 labelStyle={{
                   color: colors.amber[700],

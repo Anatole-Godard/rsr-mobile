@@ -13,6 +13,7 @@ export type Channel = {
   createdAt: Date | string;
   image?: any;
   description?: string;
+  visibility: "public" | "private";
 };
 
 export type ChannelMinimum = {
@@ -22,4 +23,5 @@ export type ChannelMinimum = {
   createdAt: Date | string;
   image?: any;
   description?: string;
+  visibility: "public" | "private";
 };
