@@ -62,13 +62,10 @@ export const DetailedResource = (props: Props) => {
 
   const [comments, setComments] = useState<Comment[]>(props.comments || []);
   const [comment, setComment] = useState({ value: "", error: "" });
-  const [commentsLoading, setCommentsLoading] = useState(false);
 
   const refDeleteSheet = React.useRef();
   const refReportSheet = React.useRef();
 
-  // const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
-  // const [reportModalVisible, setReportModalVisible] = useState<boolean>(false);
 
   const like = async () => {
     if (user) {

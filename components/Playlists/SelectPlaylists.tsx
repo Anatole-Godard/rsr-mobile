@@ -8,7 +8,8 @@ import { Navigation } from '../../types/Navigation';
 import { Text, TextInput, View } from 'react-native';
 import { API_URL } from 'constants/env';
 import useFetchRSR from '../../hooks/useFetchRSR';
-import { Checkbox, IconButton, TouchableRipple } from 'react-native-paper';
+import { Checkbox, IconButton, TouchableRipple, useTheme } from 'react-native-paper';
+import { colors, theme } from 'core/theme';
 
 interface Props {
   navigation: Navigation;
@@ -61,12 +62,20 @@ export const SelectPlaylists = (props: Props) => {
     if (res.ok) revalidate();
   };
 
+  const paperTheme = useTheme();
   return (
-    <>
+    <View style={{
+      flex: 1,
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      paddingBottom: 48,
+      padding: 20, backgroundColor: paperTheme.colors.surface
+    }}>
       {!error && !loading ? (
         <>
-          <View style={{ width: '100%', padding: 10 }}>
-            <Text style={{ fontSize: 16, textAlign: 'left', padding: 5 }}>
+          <View style={{ width: '100%' }}>
+            <Text
+              style={{ fontSize: 18, fontWeight: 'bold', textAlign: 'left', color: paperTheme.colors.primary }}>
               Enregister dans...
             </Text>
           </View>
@@ -78,6 +87,7 @@ export const SelectPlaylists = (props: Props) => {
           />
           {playlists?.keys.map((key: string, index: number) => (
             <PlaylistCheckbox
+              paperTheme={paperTheme}
               name={key}
               inPlaylist={
                 (playlists?.[key] as ResourceMinimum[]).find(
@@ -98,7 +108,8 @@ export const SelectPlaylists = (props: Props) => {
           height: '100%',
           textAlign: 'center',
           paddingTop: 30,
-          fontSize: 18
+          fontSize: 18,
+          color: paperTheme.colors.text
         }}>
           {loading ? 'Chargement...' : 'Une erreur est survenue'}
         </Text>
@@ -107,22 +118,23 @@ export const SelectPlaylists = (props: Props) => {
         <View
           style={{
             borderBottomColor: '#8D8D8DFF',
-            borderBottomWidth: 1,
-            marginBottom: 10
+            borderBottomWidth: 1
           }}
         />
       )}
-      <PlaylistCreator revalidate={revalidate} />
-    </>
+      <PlaylistCreator revalidate={revalidate} paperTheme={paperTheme} />
+    </View>
   );
 };
 
 const PlaylistCheckbox = ({
+                            paperTheme,
                             name,
                             inPlaylist = false,
                             onCheck,
                             onDelete
                           }: {
+  paperTheme: ReactNativePaper.Theme;
   name: string;
   inPlaylist: boolean;
   onCheck: (e: boolean) => void;
@@ -140,13 +152,16 @@ const PlaylistCheckbox = ({
       <TouchableRipple onPress={() => onCheck(!inPlaylist)} style={{ flex: 2, alignSelf: 'stretch' }}>
         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <Checkbox
-            color={inPlaylist ? '#1ea04b' : '#757575'}
+            color={inPlaylist ? !paperTheme.dark
+              ? '#1ea04b'
+              : paperTheme.colors.primary : '#757575'}
             status={inPlaylist ? 'checked' : 'unchecked'}
           />
-          <Text>{name}</Text>
+          <Text style={{ color: paperTheme.colors.text }}>{name}</Text>
         </View>
       </TouchableRipple>
-      <IconButton icon={XIcon} style={{ padding: 5, backgroundColor: '#f4f4f4', borderRadius: 5 }}
+      <IconButton icon={XIcon} style={{ backgroundColor: '#fce0e0', borderRadius: 5 }}
+                  color={paperTheme.colors.error}
                   onPress={() => onDelete(name)}>
       </IconButton>
     </View>
@@ -154,8 +169,10 @@ const PlaylistCheckbox = ({
 };
 
 const PlaylistCreator = ({
+                           paperTheme,
                            revalidate
                          }: {
+  paperTheme: ReactNativePaper.Theme;
   revalidate: () => void;
 }) => {
   const [open, setOpen] = useState<boolean>(false);
@@ -195,9 +212,13 @@ const PlaylistCreator = ({
               display: 'flex',
               flexDirection: 'row',
               alignItems: 'center',
-              backgroundColor: '#f4f4f4',
+              backgroundColor:
+                !paperTheme.dark
+                  ? colors.trueGray[200]
+                  : colors.trueGray[800],
               borderRadius: 5,
-              padding: 10
+              padding: 10,
+              height: 44
             }}>
               <TouchableRipple
                 onPress={() => setOpen(false)}
@@ -210,12 +231,22 @@ const PlaylistCreator = ({
                   zIndex: 1
                 }}
               >
-                <XIcon color='#c64747' />
+                <XIcon color={paperTheme.colors.error} />
               </TouchableRipple>
               <TextInput
                 onChangeText={(text) => setKey(text)}
                 value={key}
-                style={{ width: '100%', paddingHorizontal: 25, marginHorizontal: 10 }}
+                style={{
+                  width: '100%',
+                  paddingHorizontal: 25,
+                  marginHorizontal: 10,
+                  backgroundColor:
+                    !paperTheme.dark
+                      ? colors.trueGray[200]
+                      : colors.trueGray[800],
+                  color: paperTheme.colors.text
+                }}
+                placeholderTextColor={theme[paperTheme.dark ? 'dark' : 'light'].colors.secondary}
                 placeholder='À regarder plus tard...'
               />
               <TouchableRipple
@@ -229,7 +260,10 @@ const PlaylistCreator = ({
                   zIndex: 1
                 }}
               >
-                <CheckCircleIcon color='#1ea04b' />
+                <CheckCircleIcon color={
+                  !paperTheme.dark
+                    ? '#1ea04b'
+                    : paperTheme.colors.primary} />
               </TouchableRipple>
             </View>
           </>
