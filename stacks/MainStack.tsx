@@ -22,7 +22,7 @@ import { ResourceEditScreen } from 'pages/resource/Edit';
 import { ChannelEditScreen } from 'pages/channel/Edit';
 import { SettingsScreen } from 'pages/Settings';
 import { SettingsDisplayScreen } from 'pages/Settings/Display';
-import { SelectPlaylists } from '../components/Playlists/SelectPlaylists';
+import { SelectPlaylists } from 'components/Playlists/SelectPlaylists';
 
 const Stack = createStackNavigator();
 

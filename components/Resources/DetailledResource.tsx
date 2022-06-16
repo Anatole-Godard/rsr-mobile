@@ -19,7 +19,6 @@ import { Resource } from 'types/Resource';
 import { API_URL, HOST_URL } from 'constants/env';
 import { Navigation } from 'types/Navigation';
 import Paragraph from 'components/ui/Paragraph';
-import { PlaylistCheckbox, PlaylistCreator } from 'components/Playlists/SelectPlaylists';
 import { useAuth } from 'hooks/useAuth';
 import { fetchRSR } from 'utils/fetchRSR';
 
