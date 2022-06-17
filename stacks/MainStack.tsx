@@ -42,6 +42,10 @@ export const StackNavigator = () => {
       ),
     },
     {
+      header: "Playlists",
+      subtitle: "Rechercher une playlist",
+    },
+    {
       header: "Catalogue",
       subtitle: "Rechercher une ressource",
     },

@@ -114,7 +114,7 @@ export const SelectPlaylists = (props: Props) => {
           {loading ? 'Chargement...' : 'Une erreur est survenue'}
         </Text>
       )}
-      {playlists && playlists?.keys.length > 0 && (
+      {(playlists || {keys:[]}).keys.length > 0 && (
         <View
           style={{
             borderBottomColor: '#8D8D8DFF',

@@ -4,14 +4,14 @@ import { DrawerItem, DrawerContentScrollView } from "@react-navigation/drawer";
 import { Avatar, Title, Drawer, Switch } from "react-native-paper";
 import {
   ChatAlt2Icon,
-  CogIcon,
+  CogIcon, CollectionIcon,
   HomeIcon,
   MoonIcon,
   ShoppingBagIcon,
   SunIcon,
   UserCircleIcon,
-  UserRemoveIcon,
-} from "react-native-heroicons/outline";
+  UserRemoveIcon
+} from 'react-native-heroicons/outline';
 import { useAuth } from "hooks/useAuth";
 
 import { HOST_URL } from "@env";
@@ -48,6 +48,12 @@ export function DrawerContent({ navigation, ...props }: any) {
         </View>
         <Drawer.Section style={styles.drawerSection}>
           <DrawerItem
+            icon={() => <HomeIcon color={theme[colorScheme].colors.primary} />}
+            label="Accueil"
+            onPress={() => navigation.navigate("Accueil")}
+            labelStyle={textStyle}
+          />
+          <DrawerItem
             icon={() => (
               <UserCircleIcon color={theme[colorScheme].colors.primary} />
             )}
@@ -62,9 +68,9 @@ export function DrawerContent({ navigation, ...props }: any) {
             labelStyle={textStyle}
           />
           <DrawerItem
-            icon={() => <HomeIcon color={theme[colorScheme].colors.primary} />}
-            label="Accueil"
-            onPress={() => navigation.navigate("Accueil")}
+            icon={() => <CollectionIcon color={theme[colorScheme].colors.primary} />}
+            label="Playlists"
+            onPress={() => navigation.navigate("Playlists")}
             labelStyle={textStyle}
           />
           <DrawerItem
