@@ -6,7 +6,7 @@ import { useSafeArea } from "react-native-safe-area-context";
 import { useIsFocused } from "@react-navigation/native";
 
 import overlay from "libs/overlay";
-import { ResourcesScreen } from "pages/resource/All";
+import { ResourcesScreen } from "pages/resource/all";
 import { HomeScreen } from "pages/Home";
 import { ChannelScreen } from "pages/channel/All";
 import { theme } from "core/theme";
@@ -14,10 +14,10 @@ import { usePreferences } from "hooks/usePreferences";
 import { Navigation } from "types/Navigation";
 import {
   BellIcon,
-  ChatAlt2Icon,
+  ChatAlt2Icon, CollectionIcon,
   HomeIcon,
-  ShoppingBagIcon,
-} from "react-native-heroicons/outline";
+  ShoppingBagIcon
+} from 'react-native-heroicons/outline';
 import {
   BellIcon as BellIconSolid,
   ChatAlt2Icon as ChatAlt2IconSolid,
@@ -28,6 +28,7 @@ import { useDrawerStatus } from "@react-navigation/drawer";
 import { NotificationsScreen } from "pages/Notifications";
 import { View } from "react-native";
 import { useNotifications } from "hooks/useNotifications";
+import { PlaylistsScreen } from '../../pages/playlist/all';
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -83,6 +84,19 @@ export const BottomTabNavigator = (props: Props) => {
                 <HomeIconSolid color={props.color} />
               ) : (
                 <HomeIcon color={props.color} />
+              ),
+            tabBarColor,
+          }}
+        />
+        <Tab.Screen
+          name="Playlists"
+          component={PlaylistsScreen}
+          options={{
+            tabBarIcon: (props) =>
+              props.focused ? (
+                <CollectionIcon color={props.color} />
+              ) : (
+                <CollectionIcon color={props.color} />
               ),
             tabBarColor,
           }}

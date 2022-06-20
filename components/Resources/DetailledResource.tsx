@@ -1,65 +1,54 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
+import { Dimensions, StyleSheet, View } from 'react-native';
 import {
-  StyleSheet,
-  View,
-  FlatList,
-  Dimensions,
-  TouchableOpacity,
-} from "react-native";
-import {
-  Title,
-  Caption,
   Avatar,
-  useTheme,
-  IconButton,
-  Text,
   Button,
-  TouchableRipple,
-  Portal,
-  Dialog,
-  Menu,
+  Caption,
   Divider,
-} from "react-native-paper";
-import color from "color";
-import { Resource } from "types/Resource";
+  IconButton,
+  Menu,
+  Text,
+  TextInput as PaperInput,
+  Title,
+  TouchableRipple,
+  useTheme
+} from 'react-native-paper';
+import color from 'color';
+import { Resource } from 'types/Resource';
 
-import { API_URL, HOST_URL } from "constants/env";
-import { Navigation } from "types/Navigation";
-import Paragraph from "components/ui/Paragraph";
-import { useAuth } from "hooks/useAuth";
-import { fetchRSR } from "utils/fetchRSR";
+import { API_URL, HOST_URL } from 'constants/env';
+import { Navigation } from 'types/Navigation';
+import Paragraph from 'components/ui/Paragraph';
+import { useAuth } from 'hooks/useAuth';
+import { fetchRSR } from 'utils/fetchRSR';
 
-import { UserMinimum } from "types/User";
+import { UserMinimum } from 'types/User';
 
-import { HeartIcon as HeartIconSolid } from "react-native-heroicons/solid";
+import { HeartIcon as HeartIconSolid } from 'react-native-heroicons/solid';
 import {
   ChatIcon,
   CheckIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
+  CollectionIcon,
   DotsVerticalIcon,
   ExclamationIcon,
   HeartIcon as HeartIconOutline,
   PencilIcon,
-  TrashIcon,
-} from "react-native-heroicons/outline";
-import { Comment } from "types/Resource/Comment";
-import ViewMoreText from "react-native-view-more-text";
-import { formatDistance } from "date-fns";
-import { fr } from "date-fns/locale";
-import TextInput from "components/ui/TextInput";
-import { colors } from "core/theme";
+  TrashIcon
+} from 'react-native-heroicons/outline';
+import { Comment } from 'types/Resource/Comment';
+import { formatDistance } from 'date-fns';
+import { fr } from 'date-fns/locale';
+import TextInput from 'components/ui/TextInput';
+import { colors } from 'core/theme';
+import { usePreferences } from 'hooks/usePreferences';
+import RBSheet from 'react-native-raw-bottom-sheet';
+import { ScrollView } from 'react-native-gesture-handler';
 
-import { TextInput as PaperInput } from "react-native-paper";
-import { usePreferences } from "hooks/usePreferences";
-import RBSheet from "react-native-raw-bottom-sheet";
-import { ScrollView } from "react-native-gesture-handler";
-
-import { ExternalLink } from "./Page/ExternalLink";
-import { PhysicalItem } from "./Page/PhysicalItem";
-import { Location } from "./Page/Location";
-import { Event } from "./Page/Event";
-import { listEmptyComponent, RenderCommentItem } from "./Page/Comment";
+import { ExternalLink } from './Page/ExternalLink';
+import { PhysicalItem } from './Page/PhysicalItem';
+import { Location } from './Page/Location';
+import { Event } from './Page/Event';
+import { listEmptyComponent, RenderCommentItem } from './Page/Comment';
 
 interface Props extends Resource {
   navigation: Navigation;
@@ -73,13 +62,10 @@ export const DetailedResource = (props: Props) => {
 
   const [comments, setComments] = useState<Comment[]>(props.comments || []);
   const [comment, setComment] = useState({ value: "", error: "" });
-  const [commentsLoading, setCommentsLoading] = useState(false);
 
   const refDeleteSheet = React.useRef();
   const refReportSheet = React.useRef();
 
-  // const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
-  // const [reportModalVisible, setReportModalVisible] = useState<boolean>(false);
 
   const like = async () => {
     if (user) {
@@ -206,6 +192,25 @@ export const DetailedResource = (props: Props) => {
               }}
               icon={(props) => <ExclamationIcon color={props.color} />}
               title="Signaler"
+            />
+            <Divider />
+            <Menu.Item
+                onPress={() => {
+                  props.navigation.push("PlaylistSelect", {
+                    slug: props.slug,
+                    owner: props.owner,
+                    data: props.data,
+                    createdAt: props.createdAt,
+                    description: props.description,
+                    likes: props.likes,
+                    comments: props.comments,
+                    validated: props.validated,
+                    tags: props.tags,
+                  });
+                  closeMenu();
+                }}
+                icon={(props) => <CollectionIcon size={24} color={props.color} />}
+                title="Ajouter une playlist"
             />
             {user.data.uid === props.owner.uid && (
               <>
