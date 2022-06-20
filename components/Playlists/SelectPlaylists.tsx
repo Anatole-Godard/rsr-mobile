@@ -182,7 +182,6 @@ const PlaylistCreator = ({
   const { user } = useAuth();
 
   const create = async () => {
-    console.warn(key);
     if (key) {
       const res = await fetchRSR(`${API_URL}/user/${user.data.uid}/resources/playlists/create`,
         user.session,
