@@ -6,8 +6,8 @@ import useFetchRSR from '../../hooks/useFetchRSR';
 import { FlatList, KeyboardAvoidingView, Text, View } from 'react-native';
 import LottieView from 'lottie-react-native';
 import Paragraph from '../../components/ui/Paragraph';
-import { List, Searchbar } from 'react-native-paper';
-import { theme } from '../../core/theme';
+import { List, Searchbar, useTheme } from 'react-native-paper';
+import { colors, theme } from '../../core/theme';
 import { usePreferences } from '../../hooks/usePreferences';
 import { API_URL } from '../../constants/env';
 import { ResourceCard } from '../../components/Resources/Resource';
@@ -18,6 +18,8 @@ interface Props {
 }
 
 export const PlaylistsScreen = (props: Props) => {
+  const paperTheme = useTheme();
+
   const { user } = useAuth();
   const { colorScheme } = usePreferences();
 
@@ -82,24 +84,41 @@ export const PlaylistsScreen = (props: Props) => {
     </View>
   );
 
-  const RenderCards = ({ item }: { item: string }) => (
-    <List.Accordion title={item} id={item}>
-      {playlists && playlists?.[item]?.map((resource) => (
-        <ResourceCard {...resource} onPress={async () => {
-          const res = await fetchRSR(API_URL + '/resource/' + resource.slug, user?.session);
-          const body = await res.json();
-          props.navigation &&
-          props.navigation.push('Details', {
-            ...body.data.attributes
-          });
-        }} />
-      ))}
-    </List.Accordion>
-  );
+  const RenderCards = ({ item }: { item: string }) =>
+    (<List.Accordion title={item} id={item}>
+        {playlists?.[item].length > 0 ? playlists?.[item]?.map((resource) => (
+          <ResourceCard {...resource} onPress={async () => {
+            const res = await fetchRSR(API_URL + '/resource/' + resource.slug, user?.session);
+            const body = await res.json();
+            props.navigation &&
+            props.navigation.push('Details', {
+              ...body.data.attributes
+            });
+          }} />
+        )) : (
+          <View style={{
+            flexDirection: 'row',
+            padding: 15,
+            margin: 15,
+            borderRadius: 5,
+            elevation: 1
+          }}>
+            <Text>
+              Aucune playlist associée
+            </Text>
+          </View>
+        )}
+      </List.Accordion>
+    );
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1 }}
+      style={{
+        flex: 1, backgroundColor:
+          !paperTheme.dark
+            ? colors.trueGray[200]
+            : colors.trueGray[800]
+      }}
       behavior='padding'
       keyboardVerticalOffset={56}
     >
@@ -116,7 +135,7 @@ export const PlaylistsScreen = (props: Props) => {
       {(playlists || { keys: [] }).keys.length > 0 ? (
         <List.AccordionGroup>
           <FlatList
-            data={filtered?.keys}
+            data={filtered?.keys || playlists?.keys}
             ListEmptyComponent={listEmptyComponent}
             renderItem={({ item }) => (
               <View>
