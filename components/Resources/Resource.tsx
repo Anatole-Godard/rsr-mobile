@@ -25,8 +25,6 @@ import { ExternalLink } from '../../types/Resource/ExternalLink';
 import { Event } from '../../types/Resource/Event';
 
 
-// type: 'location' | 'physical_item' | 'external_link' | 'event' | 'other';
-// attributes: GeoJSON_Point | PhysicalItem | ExternalLink | Event | any;
 const ResourceDataView = ({
                             type
                           }: {
