@@ -3,7 +3,7 @@ import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { Playlist } from '../../types/Playlist/Playlist';
 import useFetchRSR from '../../hooks/useFetchRSR';
-import { FlatList, KeyboardAvoidingView, ScrollView, Text, View } from 'react-native';
+import { FlatList, KeyboardAvoidingView, Text, View } from 'react-native';
 import LottieView from 'lottie-react-native';
 import Paragraph from '../../components/ui/Paragraph';
 import { List, Searchbar } from 'react-native-paper';
@@ -11,7 +11,6 @@ import { theme } from '../../core/theme';
 import { usePreferences } from '../../hooks/usePreferences';
 import { API_URL } from '../../constants/env';
 import { ResourceCard } from '../../components/Resources/Resource';
-import { Resource } from '../../types/Resource';
 import { fetchRSR } from '../../utils/fetchRSR';
 
 interface Props {
@@ -24,13 +23,9 @@ export const PlaylistsScreen = (props: Props) => {
 
   const {
     data: playlists,
-    error,
-    loading,
     revalidate
   }: {
     data?: Playlist;
-    error?: any;
-    loading: boolean;
     revalidate: () => void;
   } = useFetchRSR(
     `${API_URL}/user/${user.data.uid}/resources/playlists`,
@@ -41,30 +36,23 @@ export const PlaylistsScreen = (props: Props) => {
 
   function filter(value: string) {
     try {
-      console.warn(value);
       // if there's no hits found, set filtered back to all items
       if (value.length <= 0) {
         setFiltered(playlists);
 
         // else, search on the provided 'key'
       } else {
-        let filteredList: Playlist = { keys: [] };
         const keysList = playlists?.keys.filter((v) => {
-            const checked = (v)
+            return (v)
               .toString()
               .toLowerCase()
               .includes(value.toLowerCase());
-            if (checked) {
-              filteredList[v] = playlists[v];
-            }
           }
         );
-        console.warn(filteredList);
-        //setFiltered(filteredList);
+        setFiltered({ 'keys': keysList || [] });
       }
     } catch (e) {
       revalidate();
-      console.warn(user.data.uid);
     }
   }
 
@@ -96,7 +84,7 @@ export const PlaylistsScreen = (props: Props) => {
 
   const RenderCards = ({ item }: { item: string }) => (
     <List.Accordion title={item} id={item}>
-      {playlists && playlists?.[item]?.map((resource, idx) => (
+      {playlists && playlists?.[item]?.map((resource) => (
         <ResourceCard {...resource} onPress={async () => {
           const res = await fetchRSR(API_URL + '/resource/' + resource.slug, user?.session);
           const body = await res.json();
@@ -128,11 +116,11 @@ export const PlaylistsScreen = (props: Props) => {
       {(playlists || { keys: [] }).keys.length > 0 ? (
         <List.AccordionGroup>
           <FlatList
-            data={playlists?.keys}
+            data={filtered?.keys}
             ListEmptyComponent={listEmptyComponent}
-            renderItem={({ item, index }) => (
+            renderItem={({ item }) => (
               <View>
-                <RenderCards item={item} index={item} /></View>
+                <RenderCards item={item} /></View>
             )} />
         </List.AccordionGroup>
       ) : (
