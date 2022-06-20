@@ -3,7 +3,7 @@ import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { Playlist } from '../../types/Playlist/Playlist';
 import useFetchRSR from '../../hooks/useFetchRSR';
-import { FlatList, KeyboardAvoidingView, Text, View } from 'react-native';
+import { FlatList, KeyboardAvoidingView, RefreshControl, Text, View } from 'react-native';
 import LottieView from 'lottie-react-native';
 import Paragraph from '../../components/ui/Paragraph';
 import { List, Searchbar, useTheme } from 'react-native-paper';
@@ -25,9 +25,11 @@ export const PlaylistsScreen = (props: Props) => {
 
   const {
     data: playlists,
+    loading: loading,
     revalidate
   }: {
     data?: Playlist;
+    loading: boolean;
     revalidate: () => void;
   } = useFetchRSR(
     `${API_URL}/user/${user.data.uid}/resources/playlists`,
@@ -140,11 +142,32 @@ export const PlaylistsScreen = (props: Props) => {
             renderItem={({ item }) => (
               <View>
                 <RenderCards item={item} /></View>
-            )} />
+            )}
+            refreshControl={
+              <RefreshControl
+                refreshing={loading}
+                onRefresh={() => revalidate()}
+                title='Tirer pour rafraîchir'
+                tintColor={
+                  theme[colorScheme === 'dark' ? 'light' : 'dark'].colors.surface
+                }
+                titleColor={
+                  theme[colorScheme === 'dark' ? 'light' : 'dark'].colors.surface
+                }
+              />
+            } />
         </List.AccordionGroup>
       ) : (
-        <View>
-          <Text>No playlists</Text>
+        <View style={{
+          flexDirection: 'row',
+          padding: 15,
+          margin: 15,
+          borderRadius: 5,
+          elevation: 1
+        }}>
+          <Text>
+            Aucune playlist
+          </Text>
         </View>
       )}
     </KeyboardAvoidingView>
