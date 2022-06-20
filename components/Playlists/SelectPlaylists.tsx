@@ -63,6 +63,7 @@ export const SelectPlaylists = (props: Props) => {
   };
 
   const paperTheme = useTheme();
+  
   return (
     <View style={{
       flex: 1,
