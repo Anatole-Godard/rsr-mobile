@@ -68,13 +68,13 @@ export const SelectPlaylists = (props: Props) => {
     <View style={{
       flex: 1,
       flexDirection: 'column',
-      justifyContent: 'space-between',
       paddingBottom: 48,
-      padding: 20, backgroundColor: paperTheme.colors.surface
+      padding: 20,
+      backgroundColor: paperTheme.colors.surface
     }}>
       {!error && !loading ? (
         <>
-          <View style={{ width: '100%' }}>
+          <View style={{ width: '100%' , marginBottom : 16}}>
             <Text
               style={{ fontSize: 18, fontWeight: 'bold', textAlign: 'left', color: paperTheme.colors.primary }}>
               Enregister dans...
@@ -218,7 +218,8 @@ const PlaylistCreator = ({
                   : colors.trueGray[800],
               borderRadius: 5,
               padding: 10,
-              height: 44
+              height: 44,
+              marginTop : 16
             }}>
               <TouchableRipple
                 onPress={() => setOpen(false)}
@@ -268,7 +269,7 @@ const PlaylistCreator = ({
             </View>
           </>
         ) : (
-          <TouchableRipple onPress={() => setOpen(true)} rippleColor={undefined} style={{ width: '100%' }}>
+          <TouchableRipple onPress={() => setOpen(true)} rippleColor={undefined} style={{ width: '100%', marginTop : 16 }}>
             <View style={{
               width: '100%',
               display: 'flex',
