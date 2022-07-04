@@ -1,27 +1,21 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  FlatList,
-  KeyboardAvoidingView,
-  ScrollView,
-} from "react-native";
-import { ChannelMessage } from "components/Channel/Message";
-import { Message } from "types/Message";
-import io from "socket.io-client";
-import { Channel } from "types/Channel";
-import { Navigation } from "types/Navigation";
-import { useAuth } from "hooks/useAuth";
-import { fetchRSR } from "utils/fetchRSR";
-import { API_URL, HOST_URL } from "constants/env";
+import React, { useEffect, useLayoutEffect, useState } from 'react';
+import { FlatList, KeyboardAvoidingView, StyleSheet, View } from 'react-native';
+import { ChannelMessage } from 'components/Channel/Message';
+import { Message } from 'types/Message';
+import io from 'socket.io-client';
+import { Channel } from 'types/Channel';
+import { Navigation } from 'types/Navigation';
+import { useAuth } from 'hooks/useAuth';
+import { fetchRSR } from 'utils/fetchRSR';
+import { API_URL, HOST_URL } from 'constants/env';
 
-import { Appbar, TextInput as PaperInput, useTheme } from "react-native-paper";
-import { CheckIcon, PencilIcon } from "react-native-heroicons/outline";
-import TextInput from "components/ui/TextInput";
+import { Appbar, TextInput as PaperInput, useTheme } from 'react-native-paper';
+import { CheckIcon, PencilIcon } from 'react-native-heroicons/outline';
+import TextInput from 'components/ui/TextInput';
 
-import LottieView from "lottie-react-native";
-import Paragraph from "components/ui/Paragraph";
-import { messageValidator } from "core/validators";
+import LottieView from 'lottie-react-native';
+import Paragraph from 'components/ui/Paragraph';
+import { messageValidator } from 'core/validators';
 
 interface Props {
   navigation: Navigation;
@@ -33,18 +27,18 @@ interface Props {
 export const ChannelSlug = (props: Props) => {
   const { user } = useAuth();
   useLayoutEffect(() => {
-    if (user && user.data.uid !== props.route.params.owner.uid)
+    if (user && user.data.uid === props.route.params.owner.uid)
       props.navigation.setOptions({
         headerRight: () => (
           <Appbar.Action
             onPress={() =>
-              props.navigation.push("ChannelEdit", { ...props.route.params })
+              props.navigation.push('ChannelEdit', { ...props.route.params })
             }
             icon={(props) => (
               <PencilIcon size={props.size} color={props.color} />
             )}
           />
-        ),
+        )
       });
   }, [props.navigation]);
 
