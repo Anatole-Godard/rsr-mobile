@@ -98,7 +98,7 @@ export const ChannelSlug = (props: Props) => {
     >
       <FlatList
         data={chat}
-        renderItem={({ item }) => <ChannelMessage {...item} />}
+        renderItem={({ item }) => <ChannelMessage {...item}  channelSlug={props.route.params.slug}/>}
         keyExtractor={(item: Message) => item._id || item.createdAt.toString()}
         ListEmptyComponent={() => (
           <View style={styles.animationContainer}>
