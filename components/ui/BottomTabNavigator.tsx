@@ -23,6 +23,7 @@ import {
   ChatAlt2Icon as ChatAlt2IconSolid,
   HomeIcon as HomeIconSolid,
   ShoppingBagIcon as ShoppingBagIconSolid,
+  CollectionIcon as CollectionIconSolid
 } from "react-native-heroicons/solid";
 import { useDrawerStatus } from "@react-navigation/drawer";
 import { NotificationsScreen } from "pages/Notifications";
@@ -94,7 +95,7 @@ export const BottomTabNavigator = (props: Props) => {
           options={{
             tabBarIcon: (props) =>
               props.focused ? (
-                <CollectionIcon color={props.color} />
+                <CollectionIconSolid color={props.color} />
               ) : (
                 <CollectionIcon color={props.color} />
               ),
