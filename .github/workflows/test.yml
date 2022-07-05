@@ -1,0 +1,17 @@
+name: "Test"
+on:
+  - pull_request
+
+jobs:
+  unit-tests:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "16.x"
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Launch unit tests
+        run: yarn test
