@@ -1,28 +1,47 @@
 /**
+ * It fetches a resource from the RSR API.
+ *
  * TODO: add revalidate jwt method if (response === 401 || response === 403)
  * TODO: mutate user object when refreshing token
  *
- * @param url
- * @param user
- * @param options
+ * @param {string} url - The URL to fetch.
+ * @param {any} session - the session object that contains the token and uid
+ * @param {any} [options] - any
+ * @returns A promise that resolves to a response object.
  */
 export const fetchRSR = async (
   url: string,
-  session: any, // TODO: check if we can only define one part of the type here
+  session: { token: string; uid: string },
   options?: any
-): Promise<Response| any> => {
-  const res = await fetch(url, {
+): Promise<Response> => {
+  if (!url) throw new Error("url is required");
+  if (!session) throw new Error("session is required");
+  if (!session.token) throw new Error("session.token is required");
+  if (!session.uid) throw new Error("session.uid is required");
+
+  return fetch(url, {
     ...options,
     headers: {
-      ...options?.headers,
-      appsource: "mobile",
       Authorization: "Bearer " + session.token,
+      ...options?.headers,
+      appsource: "web",
       "Content-Type": "application/json",
       uid: session.uid,
     },
-  });
-  if (res.ok) return res;
-  const body = await res.json();
-  return Promise.reject(body.error);
-
+  })
+    .then((res) => {
+      if (res.ok) {
+        return Promise.resolve(res);
+      } else {
+        return Promise.reject(res);
+      }
+    })
+    .catch((err) => {
+      return Promise.reject({
+        error: {
+          message: err.message,
+          location: "fetchRSR",
+        },
+      });
+    });
 };
