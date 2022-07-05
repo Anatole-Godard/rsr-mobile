@@ -1,22 +1,24 @@
-import React from "react";
+import React from 'react';
 import {
-  LinkIcon as ExternalLinkIconOutline,
-  HandIcon as HandIconOutline,
-  LocationMarkerIcon as LocationMarkerIconOutline,
-  LockClosedIcon as LockClosedIconOutline,
-  GlobeIcon as GlobeIconOutline,
   BanIcon as BanIconOutline,
   CalendarIcon as CalendarIconOutline,
-} from "react-native-heroicons/outline";
+  GlobeIcon as GlobeIconOutline,
+  HandIcon as HandIconOutline,
+  LinkIcon as LinkIconOutline,
+  LocationMarkerIcon as LocationMarkerIconOutline,
+  LockClosedIcon as LockClosedIconOutline,
+  QuestionMarkCircleIcon as QuestionMarkCircleIconOutline
+} from 'react-native-heroicons/outline';
 import {
-  LinkIcon as ExternalLinkIconSolid,
-  HandIcon as HandIconSolid,
-  LocationMarkerIcon as LocationMarkerIconSolid,
-  LockClosedIcon as LockClosedIconSolid,
-  GlobeIcon as GlobeIconSolid,
   BanIcon as BanIconSolid,
   CalendarIcon as CalendarIconSolid,
-} from "react-native-heroicons/solid";
+  GlobeIcon as GlobeIconSolid,
+  HandIcon as HandIconSolid,
+  LinkIcon as LinkIconSolid,
+  LocationMarkerIcon as LocationMarkerIconSolid,
+  LockClosedIcon as LockClosedIconSolid,
+  QuestionMarkCircleIcon as QuestionMarkCircleIconSolid
+} from 'react-native-heroicons/solid';
 
 export const types = [
   {
@@ -38,13 +40,19 @@ export const types = [
     label: "Lien externe",
     value: "external_link",
     hasImage: true,
-    icon: { outline: ExternalLinkIconOutline, solid: ExternalLinkIconSolid },
+    icon: { outline: LinkIconOutline, solid: LinkIconSolid },
   },
   {
     label: "Événement",
     value: "event",
     hasImage: true,
-    icon: { outline: CalendarIconOutline, solid: CalendarIconSolid },
+    icon: { outline: CalendarIconOutline, solid: QuestionMarkCircleIconSolid },
+  },
+  {
+    label: "Personalisé",
+    value: "other",
+    hasImage: true,
+    icon: { outline: QuestionMarkCircleIconOutline, solid: CalendarIconSolid },
   },
 ];
 
