@@ -1,21 +1,21 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { FlatList, KeyboardAvoidingView, StyleSheet, View } from 'react-native';
-import { ChannelMessage } from 'components/Channel/Message';
-import { Message } from 'types/Message';
-import io from 'socket.io-client';
-import { Channel } from 'types/Channel';
-import { Navigation } from 'types/Navigation';
-import { useAuth } from 'hooks/useAuth';
-import { fetchRSR } from 'utils/fetchRSR';
-import { API_URL, HOST_URL } from 'constants/env';
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { FlatList, KeyboardAvoidingView, StyleSheet, View } from "react-native";
+import { ChannelMessage } from "components/Channel/Message";
+import { Message } from "types/Message";
+import io from "socket.io-client";
+import { Channel } from "types/Channel";
+import { Navigation } from "types/Navigation";
+import { useAuth } from "hooks/useAuth";
+import { fetchRSR } from "utils/fetchRSR";
+import { API_URL, HOST_URL } from "constants/env";
 
-import { Appbar, TextInput as PaperInput, useTheme } from 'react-native-paper';
-import { CheckIcon, PencilIcon } from 'react-native-heroicons/outline';
-import TextInput from 'components/ui/TextInput';
+import { Appbar, TextInput as PaperInput, useTheme } from "react-native-paper";
+import { CheckIcon, PencilIcon } from "react-native-heroicons/outline";
+import TextInput from "components/ui/TextInput";
 
-import LottieView from 'lottie-react-native';
-import Paragraph from 'components/ui/Paragraph';
-import { messageValidator } from 'core/validators';
+import LottieView from "lottie-react-native";
+import Paragraph from "components/ui/Paragraph";
+import { messageValidator } from "core/validators";
 
 interface Props {
   navigation: Navigation;
@@ -32,13 +32,13 @@ export const ChannelSlug = (props: Props) => {
         headerRight: () => (
           <Appbar.Action
             onPress={() =>
-              props.navigation.push('ChannelEdit', { ...props.route.params })
+              props.navigation.push("ChannelEdit", { ...props.route.params })
             }
             icon={(props) => (
               <PencilIcon size={props.size} color={props.color} />
             )}
           />
-        )
+        ),
       });
   }, [props.navigation]);
 
@@ -50,13 +50,9 @@ export const ChannelSlug = (props: Props) => {
 
   const theme = useTheme();
 
-  useEffect((): any => {
+  useEffect(() => {
     const socket = io(HOST_URL, {
       path: "/api/channel/[slug]/socket",
-    });
-
-    socket.on("connect", () => {
-      console.log("SOCKET CONNECTED!", socket.id);
     });
 
     // update chat on new message dispatched
@@ -64,11 +60,13 @@ export const ChannelSlug = (props: Props) => {
       setChat((oldChat) => [...oldChat, message]);
     });
 
-    if (socket) return () => socket.disconnect();
+    return () => {
+      if (socket) socket.disconnect();
+    };
   }, []);
 
   const sendMsg = async () => {
-    let error = messageValidator(message.value);
+    const error = messageValidator(message.value);
     setMessage({ ...message, error });
     if (user && error === "") {
       const resp = await fetchRSR(
@@ -98,7 +96,9 @@ export const ChannelSlug = (props: Props) => {
     >
       <FlatList
         data={chat}
-        renderItem={({ item }) => <ChannelMessage {...item}  channelSlug={props.route.params.slug}/>}
+        renderItem={({ item }) => (
+          <ChannelMessage {...item} channelSlug={props.route.params.slug} />
+        )}
         keyExtractor={(item: Message) => item._id || item.createdAt.toString()}
         ListEmptyComponent={() => (
           <View style={styles.animationContainer}>

@@ -49,8 +49,8 @@ export const BottomTabNavigator = (props: Props) => {
     ? (overlay(6, theme[colorScheme].colors.surface) as string)
     : theme[colorScheme].colors.surface;
 
-  let history = props.navigation.getState()?.routes?.[0]?.state?.history;
-  let state =
+  const history = props.navigation.getState()?.routes?.[0]?.state?.history;
+  const state =
     history?.[history.length - 1]?.key?.split("-")?.[0]?.toString() ||
     "Accueil";
 

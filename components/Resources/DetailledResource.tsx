@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import React, { useState } from 'react';
 import { Dimensions, StyleSheet, View } from 'react-native';
 import {
@@ -87,7 +88,9 @@ export const DetailedResource = (props: Props) => {
           method: "DELETE",
         }
       );
-      let current = refDeleteSheet?.current || { close: () => {} };
+      const current = refDeleteSheet?.current || { close: () => {
+        return;
+      } };
       current.close();
       if (res.ok) props.navigation.goBack();
     }
@@ -107,7 +110,9 @@ export const DetailedResource = (props: Props) => {
             link: `/resource/${props.slug}`
           })
         });
-      let current = refReportSheet?.current || { close: () => {} };
+      const current = refReportSheet?.current || { close: () => {
+        return;
+      } };
       current.close();
     }
   };
@@ -190,7 +195,9 @@ export const DetailedResource = (props: Props) => {
           >
             <Menu.Item
               onPress={() => {
-                let current = refReportSheet?.current || { open: () => {} };
+                const current = refReportSheet?.current || { open: () => {
+                  return;
+                } };
                 current.open();
                 closeMenu();
               }}

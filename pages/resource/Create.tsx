@@ -6,15 +6,7 @@ import { colors, theme } from "core/theme";
 import { nameValidator } from "core/validators";
 import { usePreferences } from "hooks/usePreferences";
 import React, { Fragment, useEffect, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  Image,
-  Dimensions,
-  TouchableOpacity,
-  FlatList,
-  SafeAreaView,
-} from "react-native";
+import { View, StyleSheet, Image, Dimensions } from "react-native";
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
@@ -23,9 +15,6 @@ import {
   CheckIcon,
   ClockIcon,
   CurrencyDollarIcon,
-  ExternalLinkIcon,
-  HandIcon,
-  LocationMarkerIcon,
   PhotographIcon,
   TagIcon,
   TrashIcon,
@@ -43,11 +32,8 @@ import { useAuth } from "hooks/useAuth";
 
 import { TextInput as PaperInput } from "react-native-paper";
 import { fetchRSR } from "utils/fetchRSR";
-import { API_URL, HOST_URL } from "constants/env";
+import { API_URL } from "constants/env";
 import { ScrollView } from "react-native-gesture-handler";
-import { UserMinimum } from "types/User";
-import { useSearch } from "hooks/useSearch";
-import { CheckCircleIcon } from "react-native-heroicons/solid";
 import { Input } from "types/Input";
 import { DatePickerModal } from "react-native-paper-dates";
 import { format } from "date-fns";
@@ -129,7 +115,7 @@ export const ResourceCreate = (props: Props) => {
   const [image, setImage] = useState<string | null>(null);
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
+    const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [4, 3],
@@ -137,7 +123,7 @@ export const ResourceCreate = (props: Props) => {
     });
 
     if (!result.cancelled) {
-      setImage(result.uri);
+      setImage((result as ImagePicker.ImageInfo).uri);
     }
   };
 
@@ -209,14 +195,15 @@ export const ResourceCreate = (props: Props) => {
           });
         }
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.log(err);
       }
     }
   };
 
   const formatResource = () => {
-    let data: Resource["data"] = {
-      type: type,
+    const data: Resource["data"] = {
+      type: type as Resource["data"]["type"],
       attributes: {},
     };
     if (type === "physical_item") {
@@ -268,7 +255,7 @@ export const ResourceCreate = (props: Props) => {
       data,
       visibility,
       // members,
-    };
+    } as Resource;
   };
 
   useEffect(() => {
@@ -278,7 +265,7 @@ export const ResourceCreate = (props: Props) => {
         `https://api-adresse.data.gouv.fr/reverse/?lat=${position.latitude}&lon=${position.longitude}&format=json`
       );
       //   const body = await response.json();
-      let json = JSON.parse(response as string);
+      const json = JSON.parse(response as string);
       if (json?.features[0] != null)
         setLocation(json.features[0]?.properties?.label);
       else setLocation("");
@@ -442,7 +429,6 @@ export const ResourceCreate = (props: Props) => {
               ) : null
             )}
           </RadioButton.Group>
-          
         </ScrollView>
       )}
 
@@ -649,7 +635,7 @@ export const ResourceCreate = (props: Props) => {
                 icon={(props) => (
                   <CalendarIcon size={props.size} color={props.color} />
                 )}
-                style={{marginTop:12}}
+                style={{ marginTop: 12 }}
               >
                 Sélectionner une date
               </Button>
@@ -681,7 +667,7 @@ export const ResourceCreate = (props: Props) => {
                   fontFamily: "Spectral",
                   textAlign: "justify",
                   marginBottom: 8,
-                  marginTop: 12
+                  marginTop: 12,
                 }}
               >
                 La sélection de l'heure n'est pas encore disponible sur mobile,
@@ -769,7 +755,7 @@ export const ResourceCreate = (props: Props) => {
                           paddingTop: 8,
                           borderTopWidth: StyleSheet.hairlineWidth,
                           flex: 1,
-                          marginRight:8
+                          marginRight: 8,
                         }}
                       >
                         <Text style={{ fontFamily: "Spectral", fontSize: 16 }}>
@@ -803,11 +789,13 @@ export const ResourceCreate = (props: Props) => {
           }}
         >
           <DetailedResource
+            seenBy={[]}
+            updatedAt={""}
             navigation={{
-              navigate: function (scene: string): void {
+              navigate: function (): void {
                 throw new Error("Function not implemented.");
               },
-              push: function (scene: string, params: any): void {
+              push: function (): void {
                 throw new Error("Function not implemented.");
               },
             }}

@@ -22,6 +22,7 @@ export function AuthProvider({
 }: {
   children: React.ReactNode;
 }): JSX.Element {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [user, setUser] = useState<any | null>(null);
 
   const signIn = async (email: string, password: string) => {
@@ -44,21 +45,14 @@ export function AuthProvider({
 
   const signOut = async () => {
     try {
-      const response = await fetchRSR(API_URL + "/auth/revoke", user.session, {
+      await fetchRSR(API_URL + "/auth/revoke", user.session, {
         method: "POST",
       });
-      const body = await response.json();
-
-      // if (response.ok) {
       await AsyncStorage.removeItem("@user");
       setUser(null);
-      // }
     } catch (error) {
-      let err: { name: string } = error as any;
-      // if (err.name === "TokenExpiredError") {
       await AsyncStorage.removeItem("@user");
       setUser(null);
-      // }
     }
   };
 
@@ -84,6 +78,7 @@ export function AuthProvider({
         Vibration.vibrate([1000]);
       } else setUser(null);
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error(error);
     }
   };
@@ -97,8 +92,6 @@ export function AuthProvider({
     // set AsyncStorage
   };
 
-  useEffect(() => {}, [user]);
-
   useEffect(() => {
     if (user) AsyncStorage.setItem("@user", JSON.stringify(user));
     else {
@@ -110,6 +103,7 @@ export function AuthProvider({
             }
           })
           .catch((err) => {
+            // eslint-disable-next-line no-console
             console.error(err);
           });
     }
@@ -125,15 +119,22 @@ export function AuthProvider({
 }
 
 interface AuthContextType {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   user: any;
+  // eslint-disable-next-line no-unused-vars
   signIn: (email: string, password: string) => void;
   signOut: () => void;
   register: (
+    // eslint-disable-next-line no-unused-vars
     email: string,
+    // eslint-disable-next-line no-unused-vars
     password: string,
+    // eslint-disable-next-line no-unused-vars
     fullName: string,
+    // eslint-disable-next-line no-unused-vars
     birthDate: string
   ) => void;
+  // eslint-disable-next-line no-unused-vars
   changePicture: (picture: string) => void;
 }
 

@@ -8,7 +8,7 @@ import { ClockIcon } from "react-native-heroicons/outline";
 import { Text } from "react-native-paper";
 import { Event as EventType } from "types/Resource/Event";
 
-interface Props extends EventType {}
+type Props = EventType
 
 export const Event = (props: Props) => {
   const { properties } = props;

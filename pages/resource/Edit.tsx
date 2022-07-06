@@ -10,9 +10,6 @@ import {
   CheckIcon,
   ClockIcon,
   CurrencyDollarIcon,
-  ExternalLinkIcon,
-  HandIcon,
-  LocationMarkerIcon,
   PhotographIcon,
   TagIcon,
   TrashIcon,
@@ -106,8 +103,8 @@ export const ResourceEditScreen = (props: Props) => {
     value: props.route.params.description || "",
     error: "",
   });
-  const [type, setType] = useState(
-    props.route.params.data.type || types[0].value
+  const [type, setType] = useState<Resource["data"]["type"]>(
+    (props.route.params.data.type || types[0].value) as Resource["data"]["type"]
   );
 
   const [visibility, setVisibility] = useState(
@@ -126,7 +123,7 @@ export const ResourceEditScreen = (props: Props) => {
   const [image, setImage] = useState<string | null>(null);
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
+    const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [4, 3],
@@ -134,7 +131,7 @@ export const ResourceEditScreen = (props: Props) => {
     });
 
     if (!result.cancelled) {
-      setImage(result.uri);
+      setImage((result as ImagePicker.ImageInfo)?.uri);
     }
   };
 
@@ -216,13 +213,14 @@ export const ResourceEditScreen = (props: Props) => {
           });
         }
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.log(err);
       }
     }
   };
 
   const formatResource = () => {
-    let data: Resource["data"] = {
+    const data: Resource["data"] = {
       type: type,
       attributes: {},
     };
@@ -284,7 +282,7 @@ export const ResourceEditScreen = (props: Props) => {
         `https://api-adresse.data.gouv.fr/reverse/?lat=${position.latitude}&lon=${position.longitude}&format=json`
       );
       //   const body = await response.json();
-      let json = JSON.parse(response as string);
+      const json = JSON.parse(response as string);
       if (json?.features[0] != null)
         setLocation(json.features[0]?.properties?.label);
       else setLocation("");
@@ -370,7 +368,9 @@ export const ResourceEditScreen = (props: Props) => {
             <Text style={styles.label}>Type de ressource</Text>
           </View>
           <RadioButton.Group
-            onValueChange={(value) => setType(value)}
+            onValueChange={(value) =>
+              setType(value as Resource["data"]["type"])
+            }
             value={type}
           >
             {types.map((t) => (

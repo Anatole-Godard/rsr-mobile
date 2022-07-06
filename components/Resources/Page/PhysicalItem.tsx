@@ -1,14 +1,15 @@
 import { theme } from "core/theme";
 import { usePreferences } from "hooks/usePreferences";
 import React from "react";
-import { Dimensions, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
+import { Media } from "types/Resource/Media";
 
 interface PhysicalItemProps {
   properties: {
     name: string;
     description: string;
-    image?: any;
+    medias?: Media[];
     price: number | null;
     category: string;
   };
@@ -17,7 +18,7 @@ interface PhysicalItemProps {
 export const PhysicalItem = (props: PhysicalItemProps) => {
   const { colorScheme } = usePreferences();
   const {
-    properties: { name, description, image, price, category },
+    properties: { price, category, medias },
   } = props;
   return (
     <View
@@ -26,8 +27,8 @@ export const PhysicalItem = (props: PhysicalItemProps) => {
         backgroundColor: theme[colorScheme].colors.surface,
       }}
     >
-      {image && <View style={styles.leftColumn}></View>}
-      <View style={{ ...styles.rightColumn, width: image ? "75%" : "100%" }}>
+      {medias && <View style={styles.leftColumn}></View>}
+      <View style={{ ...styles.rightColumn, width: medias ? "75%" : "100%" }}>
         {category && (
           <>
             <Text style={styles.label}>Catégorie</Text>

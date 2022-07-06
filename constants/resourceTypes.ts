@@ -80,6 +80,8 @@ export type ResourceVisibility = {
 };
 
 type Icon = {
+  // eslint-disable-next-line no-unused-vars
   outline: (props: React.ComponentProps<typeof BanIconOutline>) => JSX.Element;
+  // eslint-disable-next-line no-unused-vars
   solid: (props: React.ComponentProps<typeof BanIconOutline>) => JSX.Element;
 };

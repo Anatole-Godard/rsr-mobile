@@ -29,12 +29,14 @@ function NotificationProvider({
       .then((res) => res.json())
       .then((res) => {
         if (res.error) {
-          console.log(res.error);
+          // eslint-disable-next-line no-console
+          console.error(res.error);
         } else {
           setNotifications(res.data.attributes);
         }
         return res.ok;
       })
+      // eslint-disable-next-line no-console
       .catch((err) => console.error(err.message, id));
 
   const removeAllNotification = () =>
@@ -55,6 +57,7 @@ function NotificationProvider({
           })
           .catch((err) => {
             if (err.name === "TokenExpiredError") signOut();
+            // eslint-disable-next-line no-console
             console.error(err.name);
           });
       }, NOTIFICATIONS_DEBOUNCE_TIME);
@@ -79,7 +82,9 @@ function NotificationProvider({
 
 interface NotificationContextType {
   notifications: Notification[];
+  // eslint-disable-next-line no-unused-vars
   setNotifications: (notifications: Notification[]) => void;
+  // eslint-disable-next-line no-unused-vars
   removeNotification: (id: string) => void;
   removeAllNotification: () => void;
 }

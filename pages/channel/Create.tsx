@@ -35,6 +35,7 @@ import { fetchRSR } from "utils/fetchRSR";
 
 import * as ImagePicker from "expo-image-picker";
 import { DetailledChannel } from "components/Channel/DetailledChannel";
+import { Media } from "types/Resource/Media";
 
 interface Props {
   navigation: Navigation;
@@ -108,10 +109,10 @@ export const ChannelCreate = (props: Props) => {
 
   const [privateChannel, setPrivateChannel] = useState<boolean>(false);
 
-  const [image, setImage] = useState<string | null>(null);
+  const [image, setImage] = useState<Media[]>([]);
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
+    const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [4, 3],
@@ -119,7 +120,17 @@ export const ChannelCreate = (props: Props) => {
     });
 
     if (!result.cancelled) {
-      setImage(result.uri);
+      setImage([
+        {
+          url: (result as ImagePicker.ImageInfo).uri,
+          name: "image",
+          type: "image",
+          size: (
+            (result as ImagePicker.ImageInfo).width *
+            (result as ImagePicker.ImageInfo).height
+          ).toString(),
+        },
+      ]);
     }
   };
 
@@ -134,6 +145,7 @@ export const ChannelCreate = (props: Props) => {
             )
           )
         )
+        // eslint-disable-next-line no-console
         .catch((err) => console.log(err));
     }
   }, [user]);
@@ -177,6 +189,7 @@ export const ChannelCreate = (props: Props) => {
           });
         }
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.log(err);
       }
     }

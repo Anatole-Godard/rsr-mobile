@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { format, formatDistance } from 'date-fns';
 import fr from "date-fns/locale/fr";
 import { useAuth } from "hooks/useAuth";
@@ -106,7 +107,9 @@ const SentMessage = (props: ChannelMessageDetailsProps) => {
         marginBottom: 10,
       }}
       onLongPress={() => {
-      let current = refRBSheet?.current || { open: () => {} };
+      const current = refRBSheet?.current || { open: () => {
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+      } };
       current.open();
     }}
     >
@@ -251,7 +254,9 @@ const SentMessage = (props: ChannelMessageDetailsProps) => {
         <Button
           onPress={async () => {
             await props.reportMessage();
-            let current = refRBSheet?.current || { close: () => {} };
+            const current = refRBSheet?.current || { close: () => {
+              // eslint-disable-next-line @typescript-eslint/no-empty-function
+            } };
             current.close();
           }}
           mode='contained'
@@ -286,7 +291,9 @@ const ReceivedMessage = (props: ChannelMessageDetailsProps) => {
         marginBottom: 10,
       }}
       onLongPress={() => {
-        let current = refRBSheet?.current || { open: () => {} };
+        const current = refRBSheet?.current || { open: () => {
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+        } };
         current.open();
       }}
     >
@@ -428,7 +435,8 @@ const ReceivedMessage = (props: ChannelMessageDetailsProps) => {
         <Button
           onPress={async () => {
             await props.reportMessage();
-            let current = refRBSheet?.current || { close: () => {} };
+            // eslint-disable-next-line no-empty-function
+            const current = refRBSheet?.current || { close: () => {} };
             current.close();
           }}
           mode='contained'

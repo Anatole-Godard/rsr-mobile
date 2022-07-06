@@ -11,13 +11,12 @@ import { BlurView } from "expo-blur";
 interface LocationProps extends GeoJSON_Point {
   properties: {
     name: string;
-    location?: string;
+    location: string;
   };
 }
 
 export const Location = (props: LocationProps) => {
   const { colorScheme } = usePreferences();
-  const {} = props;
   return (
     <View
       style={{

@@ -6,7 +6,7 @@ export type Report = {
     document: UserMinimum | ResourceMinimum;
     type: "user" | "document";
     validated: boolean;
-    context: String;
+    context: string;
     createdAt: Date;
     uid: string;
 };
