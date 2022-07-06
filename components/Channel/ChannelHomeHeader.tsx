@@ -6,7 +6,6 @@ import React, { useEffect, useState } from "react";
 import {
   FlatList,
   Image,
-  RefreshControl,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -34,14 +33,11 @@ export const ChannelHomeHeader = (props: Props) => {
   const { colorScheme } = usePreferences();
   const { user } = useAuth();
   const [channels, setChannels] = useState<Channel[]>([]);
-  const [loading, setLoading] = useState(true);
 
   const fetchData = async () => {
-    setLoading(true);
     const res = await fetchRSR(API_URL + "/channel", user?.session);
     const body = await res.json();
     setChannels(body.data.attributes);
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -90,7 +86,9 @@ const ChannelHome = (props: ChannelHomeProps) => {
         <TouchableOpacity
           onPress={props.onPress}
           onLongPress={() => {
-            let current = refRBSheet?.current || { open: () => {} };
+            const current = refRBSheet?.current || { open: () => {
+              // eslint-disable-next-line @typescript-eslint/no-empty-function
+            } };
             current.open();
           }}
           style={{
@@ -181,7 +179,9 @@ const ChannelHome = (props: ChannelHomeProps) => {
           <View style={styles.topRow}>
             <TouchableOpacity
               onPress={() => {
-                let current = refRBSheet?.current || { close: () => {} };
+                const current = refRBSheet?.current || { close: () => {
+                  // eslint-disable-next-line @typescript-eslint/no-empty-function
+                } };
                 current.close();
                 props.onPress();
               }}

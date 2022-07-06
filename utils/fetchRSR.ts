@@ -12,7 +12,7 @@
 export const fetchRSR = async (
   url: string,
   session: { token: string; uid: string },
-  options?: any
+  options?: RequestInit
 ): Promise<Response> => {
   if (!url) throw new Error("url is required");
   if (!session) throw new Error("session is required");

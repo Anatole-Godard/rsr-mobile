@@ -55,7 +55,9 @@ export function RenderCommentItem({
               link: `/resource/${resourceId}`
             })
           });
-        const current = refRBSheet.current || { close: () => {} };
+        const current = refRBSheet.current || { close: () => {
+          return;
+        } };
         current.close();
       }
   };
@@ -141,7 +143,9 @@ export function RenderCommentItem({
         <View style={{ width: "10%", zIndex : 100 }}>
           <IconButton
             onPress={() => {
-              let current = refRBSheet?.current || { open: () => {} };
+              const current = refRBSheet?.current || { open: () => {
+                return;
+              } };
               current.open();
             }}
             size={18}

@@ -25,7 +25,7 @@ export const SelectPlaylists = (props: Props) => {
     revalidate
   }: {
     data?: Playlist;
-    error?: any;
+    error?: Error;
     loading: boolean;
     revalidate: () => void;
   } = useFetchRSR(
@@ -138,7 +138,9 @@ const PlaylistCheckbox = ({
   paperTheme: ReactNativePaper.Theme;
   name: string;
   inPlaylist: boolean;
+  // eslint-disable-next-line no-unused-vars
   onCheck: (e: boolean) => void;
+  // eslint-disable-next-line no-unused-vars
   onDelete: (key: string) => void;
 }) => {
   return (

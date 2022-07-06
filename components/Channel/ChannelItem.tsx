@@ -13,7 +13,6 @@ import fr from "date-fns/locale/fr";
 import {
   TrashIcon,
   UserGroupIcon,
-  UsersIcon,
 } from "react-native-heroicons/outline";
 
 export interface ChannelItemProps extends Channel {
@@ -32,6 +31,7 @@ const RightAction = ({ slug }: { slug: string }) => {
       }}
     >
       <TouchableOpacity
+        // eslint-disable-next-line no-console
         onPress={() => console.log("quit" + slug)}
         style={{
           justifyContent: "center",

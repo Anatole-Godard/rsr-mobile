@@ -1,8 +1,10 @@
+import { Media } from "./Media";
+
 export type PhysicalItem = {
   properties: {
     name: string;
     description: string;
-    image: any;
+    medias: Media[];
     price: number | null;
     category: string;
   };

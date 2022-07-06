@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export const fr = {
   save: "Enregistrer",
   selectSingle: "Sélectionner une date",

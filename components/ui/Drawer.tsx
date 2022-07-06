@@ -4,21 +4,26 @@ import { DrawerItem, DrawerContentScrollView } from "@react-navigation/drawer";
 import { Avatar, Title, Drawer, Switch } from "react-native-paper";
 import {
   ChatAlt2Icon,
-  CogIcon, CollectionIcon,
+  CogIcon,
+  CollectionIcon,
   HomeIcon,
   MoonIcon,
   ShoppingBagIcon,
   SunIcon,
   UserCircleIcon,
-  UserRemoveIcon
-} from 'react-native-heroicons/outline';
+  UserRemoveIcon,
+} from "react-native-heroicons/outline";
 import { useAuth } from "hooks/useAuth";
 
 import { HOST_URL } from "@env";
 import { usePreferences } from "hooks/usePreferences";
 import { theme } from "core/theme";
+import { Navigation } from "types/Navigation";
 
-export function DrawerContent({ navigation, ...props }: any) {
+export function DrawerContent({
+  navigation,
+  ...props
+}: typeof DrawerContentScrollView & { navigation: Navigation }) {
   const { user, signOut } = useAuth();
   const { colorScheme, toggleColorScheme } = usePreferences();
 
@@ -31,6 +36,8 @@ export function DrawerContent({ navigation, ...props }: any) {
       {...props}
       style={{
         backgroundColor: theme[colorScheme].colors.background,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         color: theme[colorScheme].colors.text,
       }}
     >
@@ -68,7 +75,9 @@ export function DrawerContent({ navigation, ...props }: any) {
             labelStyle={textStyle}
           />
           <DrawerItem
-            icon={() => <CollectionIcon color={theme[colorScheme].colors.primary} />}
+            icon={() => (
+              <CollectionIcon color={theme[colorScheme].colors.primary} />
+            )}
             label="Playlists"
             onPress={() => navigation.navigate("Playlists")}
             labelStyle={textStyle}
@@ -92,9 +101,7 @@ export function DrawerContent({ navigation, ...props }: any) {
         </Drawer.Section>
         <Drawer.Section title="Préferences">
           <DrawerItem
-            icon={() => (
-              <CogIcon color={theme[colorScheme].colors.primary} />
-            )}
+            icon={() => <CogIcon color={theme[colorScheme].colors.primary} />}
             label="Paramètres"
             onPress={() => navigation.navigate("Settings")}
             labelStyle={textStyle}

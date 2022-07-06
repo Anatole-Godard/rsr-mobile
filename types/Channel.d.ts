@@ -1,7 +1,7 @@
-import { User, UserMinimum } from "@definitions/User";
+import { UserMinimum } from "@definitions/User";
 import { Message } from "@definitions/Message";
-import { Resource } from "@definitions/Resource";
 import { Activity } from "./Activity";
+import { Media } from "./Resource/Media";
 
 export type Channel = {
   owner: UserMinimum;
@@ -11,7 +11,7 @@ export type Channel = {
   activities: Activity[];
   members: UserMinimum[];
   createdAt: Date | string;
-  image?: any;
+  image?: Media;
   description?: string;
   visibility: "public" | "private";
 };
@@ -21,7 +21,7 @@ export type ChannelMinimum = {
   name: string;
   slug: string;
   createdAt: Date | string;
-  image?: any;
+  image?: Media;
   description?: string;
   visibility: "public" | "private";
 };

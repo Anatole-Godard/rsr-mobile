@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import {
   FlatList,
   KeyboardAvoidingView,
-  StyleSheet,
   View,
 } from "react-native";
 import { useAuth } from "hooks/useAuth";
@@ -26,7 +25,7 @@ interface Props {
 export const ResourcesScreen = (props: Props) => {
   const { user } = useAuth();
   const { colorScheme } = usePreferences();
-  const [loading, setLoading] = useState<boolean>(true);
+  // const [loading, setLoading] = useState<boolean>(true);
 
   const [resources, setResources] = useState<Resource[]>([]);
   const { search, onChange, filtered } = useSearch("slug", resources);
@@ -138,26 +137,3 @@ export const ResourcesScreen = (props: Props) => {
   );
 };
 
-const styles = StyleSheet.create({
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 22,
-  },
-  modalView: {
-    margin: 20,
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-});

@@ -17,7 +17,6 @@ type Action<T> =
   | { type: "fetched"; payload: T }
   | { type: "error"; payload: Error };
 
-
 /**
  * It fetches data from a given url and stores it in a cache
  * @param {string} [propsURL] - The url to fetch data from.
@@ -27,7 +26,7 @@ type Action<T> =
  */
 function useFetchRSR<T = unknown>(
   propsURL?: string,
-  session?: any,
+  session?: { uid: string; token: string },
   options?: RequestInit
 ): State<T> {
   const [url, setUrl] = useState(propsURL);
@@ -40,6 +39,7 @@ function useFetchRSR<T = unknown>(
     error: undefined,
     data: undefined,
     loading: true,
+    // eslint-disable-next-line no-console
     revalidate: () => console.log("nothing to fetch"),
     payload: undefined,
   };
@@ -53,12 +53,12 @@ function useFetchRSR<T = unknown>(
         return { ...initialState, loading: true };
       case "fetched":
         setData(
-          (action.payload as unknown as { data: { attributes: any } })?.data
+          (action.payload as unknown as { data: { attributes: T } })?.data
             .attributes
         );
         return {
           ...initialState,
-          data: (action.payload as unknown as { data: { attributes: any } })
+          data: (action.payload as unknown as { data: { attributes: T } })
             ?.data.attributes,
           loading: false,
           revalidate: () => setRevalidate(true),
@@ -67,7 +67,7 @@ function useFetchRSR<T = unknown>(
       case "error":
         return {
           ...initialState,
-          error: (action.payload as unknown as { error: any })?.error,
+          error: (action.payload as unknown as { error: Error })?.error,
           loading: false,
           revalidate: () => setRevalidate(true),
           payload: action.payload,

@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  Dispatch,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 const PreferencesContext = createContext({});
 
 import * as Notifications from "expo-notifications";
@@ -16,7 +22,10 @@ export function PreferencesProvider({
 }: {
   children: React.ReactNode;
   colorScheme: "light" | "dark";
-  setColorScheme: any;
+  setColorScheme: Dispatch<
+    // eslint-disable-next-line no-unused-vars
+    ("light" | "dark") | ((colorScheme: "light" | "dark") => "light" | "dark")
+  >;
 }): JSX.Element {
   const toggleColorScheme = () => {
     setColorScheme((colorScheme: "light" | "dark") =>
@@ -55,7 +64,7 @@ export function PreferencesProvider({
     link?: string;
   }) => {
     if (notificationPermission) {
-      let notificationId = await Notifications.scheduleNotificationAsync({
+      await Notifications.scheduleNotificationAsync({
         content: {
           title: "RSR",
           body,
@@ -65,7 +74,6 @@ export function PreferencesProvider({
           seconds: 1,
         },
       });
-      console.log(notificationId); // can be saved in AsyncStorage or send to server
     }
   };
 
@@ -108,6 +116,7 @@ export function PreferencesProvider({
 type PreferencesContextType = {
   colorScheme: "light" | "dark";
   toggleColorScheme: () => void;
+  // eslint-disable-next-line no-unused-vars
   sendNotificationImmediately: (params: {
     body: string;
     link?: string;

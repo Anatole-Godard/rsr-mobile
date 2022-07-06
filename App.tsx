@@ -32,7 +32,7 @@ export default function App() {
     _colorScheme || "light"
   );
 
-  let [fontsLoaded] = useFonts({
+  const [fontsLoaded] = useFonts({
     Marianne: require("./assets/fonts/Marianne-Regular.ttf"),
     "Marianne-Bold": require("./assets/fonts/Marianne-Bold.ttf"),
     "Marianne-ExtraBold": require("./assets/fonts/Marianne-ExtraBold.ttf"),

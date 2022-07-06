@@ -72,6 +72,7 @@ export const StackNavigator = () => {
     <Stack.Navigator
       initialRouteName="Tabs"
       screenOptions={{
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         header: ({ options, navigation, back }: any) => {
           const title =
             options.headerTitle !== undefined
@@ -111,7 +112,8 @@ export const StackNavigator = () => {
                   style={{ marginLeft: 10 }}
                   onPress={() => {
                     (
-                      navigation as any as DrawerNavigationProp<{}>
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      navigation as any as DrawerNavigationProp<any>
                     ).openDrawer();
                   }}
                 >
