@@ -6,7 +6,7 @@ import { useSafeArea } from "react-native-safe-area-context";
 import { useIsFocused } from "@react-navigation/native";
 
 import overlay from "libs/overlay";
-import { ResourcesScreen } from "pages/resource/all";
+import { ResourcesScreen } from "pages/resource/All";
 import { HomeScreen } from "pages/Home";
 import { ChannelScreen } from "pages/channel/All";
 import { theme } from "core/theme";
@@ -23,6 +23,7 @@ import {
   ChatAlt2Icon as ChatAlt2IconSolid,
   HomeIcon as HomeIconSolid,
   ShoppingBagIcon as ShoppingBagIconSolid,
+  CollectionIcon as CollectionIconSolid
 } from "react-native-heroicons/solid";
 import { useDrawerStatus } from "@react-navigation/drawer";
 import { NotificationsScreen } from "pages/Notifications";
@@ -48,8 +49,8 @@ export const BottomTabNavigator = (props: Props) => {
     ? (overlay(6, theme[colorScheme].colors.surface) as string)
     : theme[colorScheme].colors.surface;
 
-  let history = props.navigation.getState()?.routes?.[0]?.state?.history;
-  let state =
+  const history = props.navigation.getState()?.routes?.[0]?.state?.history;
+  const state =
     history?.[history.length - 1]?.key?.split("-")?.[0]?.toString() ||
     "Accueil";
 
@@ -94,7 +95,7 @@ export const BottomTabNavigator = (props: Props) => {
           options={{
             tabBarIcon: (props) =>
               props.focused ? (
-                <CollectionIcon color={props.color} />
+                <CollectionIconSolid color={props.color} />
               ) : (
                 <CollectionIcon color={props.color} />
               ),

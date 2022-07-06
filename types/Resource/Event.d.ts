@@ -1,6 +1,5 @@
 import { UserMinimum } from "@definitions/User";
-import { ExternalLinkWithoutRedundancy } from "./ExternalLink";
-import { GeoJSONPointWithoutRedundancy } from "./GeoJSON";
+import { Media } from "./Media";
 
 export interface Event {
   //   location: {
@@ -11,7 +10,7 @@ export interface Event {
     name: string;
     startDate: string | Date;
     endDate?: string | Date;
-    image?: any;
+    medias?: Media[];
     participants: UserMinimum[];
   };
 }

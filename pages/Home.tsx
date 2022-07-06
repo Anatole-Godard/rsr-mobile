@@ -27,6 +27,7 @@ type Props = {
 };
 
 interface ResourceHomeProps extends Resource {
+  // eslint-disable-next-line no-unused-vars
   onPress: (slug: string) => void;
 }
 

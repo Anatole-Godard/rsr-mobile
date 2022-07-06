@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { FlatList, KeyboardAvoidingView, RefreshControl, View } from "react-native";
+import {
+  FlatList,
+  KeyboardAvoidingView,
+  RefreshControl,
+  View,
+} from "react-native";
 import { useAuth } from "hooks/useAuth";
 import { API_URL } from "constants/env";
 import { Resource } from "types/Resource";

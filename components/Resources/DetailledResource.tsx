@@ -87,10 +87,9 @@ export const DetailedResource = (props: Props) => {
           method: "DELETE"
         }
       );
-      let current = refDeleteSheet?.current || {
-        close: () => {
-        }
-      };
+      const current = refDeleteSheet?.current || { close: () => {
+        return;
+      } };
       current.close();
       if (res.ok) props.navigation.goBack();
     }
@@ -98,18 +97,21 @@ export const DetailedResource = (props: Props) => {
 
   const report = async () => {
     if (user) {
-      //TODO:@Anatole-Godard : report resource
-      // const res = await fetchRSR(
-      //   `${API_URL}/resource/${props.slug}/report`,
-      //   user.session,
-      //   {
-      //     method: "DELETE",
-      //   }
-      // );
-      let current = refReportSheet?.current || {
-        close: () => {
-        }
-      };
+      await fetchRSR(`${API_URL}/report/create`,
+        user?.session,
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            type: 'resource',
+            documentUid: props.slug,
+            context: props.slug,
+            message: 'Demande de signalement faite sur l\'app mobile',
+            link: `/resource/${props.slug}`
+          })
+        });
+      const current = refReportSheet?.current || { close: () => {
+        return;
+      } };
       current.close();
     }
   };
@@ -192,10 +194,9 @@ export const DetailedResource = (props: Props) => {
           >
             <Menu.Item
               onPress={() => {
-                let current = refReportSheet?.current || {
-                  open: () => {
-                  }
-                };
+                const current = refReportSheet?.current || { open: () => {
+                  return;
+                } };
                 current.open();
                 closeMenu();
               }}
@@ -315,7 +316,7 @@ export const DetailedResource = (props: Props) => {
                       navigation={props.navigation}
                       item={c}
                       key={key}
-                    />
+                    resourceId={props.slug}/>
                   ))
                   : listEmptyComponent()}
               </View>

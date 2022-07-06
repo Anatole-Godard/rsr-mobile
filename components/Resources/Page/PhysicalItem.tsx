@@ -19,7 +19,7 @@ interface PhysicalItemProps {
 export const PhysicalItem = (props: PhysicalItemProps) => {
   const { colorScheme } = usePreferences();
   const {
-    properties: { price, category }
+    properties: { price, category, medias }
   } = props;
   return (
     <>

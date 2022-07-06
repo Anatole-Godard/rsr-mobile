@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { StyleSheet, Text, KeyboardAvoidingView, Platform, View } from "react-native";
+import { StyleProp, StyleSheet, Text, TextStyle, View } from "react-native";
 import { TextInput as Input } from "react-native-paper";
 import { colors, theme } from "core/theme";
 import { usePreferences } from "hooks/usePreferences";
@@ -7,7 +7,7 @@ import color from "color";
 
 type Props = React.ComponentProps<typeof Input> & {
   errorText?: string;
-  style?: any;
+  style?: StyleProp<TextStyle>;
 };
 
 const TextInput = ({ errorText, ...props }: Props) => {
@@ -27,7 +27,7 @@ const TextInput = ({ errorText, ...props }: Props) => {
         mode="outlined"
         {...props}
         style={{
-          ...props.style,
+          ...Object(props.style),
           backgroundColor:
             colorScheme === "light"
               ? colors.trueGray[200]

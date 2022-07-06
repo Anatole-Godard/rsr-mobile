@@ -113,7 +113,7 @@ export const ResourceCreate = (props: Props) => {
   const [image, setImage] = useState<string | null>(null);
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
+    const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [4, 3],
@@ -121,7 +121,7 @@ export const ResourceCreate = (props: Props) => {
     });
 
     if (!result.cancelled) {
-      setImage(result.uri);
+      setImage((result as ImagePicker.ImageInfo).uri);
     }
   };
 
@@ -193,14 +193,15 @@ export const ResourceCreate = (props: Props) => {
           });
         }
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.log(err);
       }
     }
   };
 
   const formatResource = () => {
-    let data: Resource["data"] = {
-      type: type,
+    const data: Resource["data"] = {
+      type: type as Resource["data"]["type"],
       attributes: {}
     };
     if (type === "physical_item") {
@@ -252,7 +253,7 @@ export const ResourceCreate = (props: Props) => {
       data,
       visibility
       // members,
-    };
+    } as Resource;
   };
 
   useEffect(() => {
@@ -262,7 +263,7 @@ export const ResourceCreate = (props: Props) => {
         `https://api-adresse.data.gouv.fr/reverse/?lat=${position.latitude}&lon=${position.longitude}&format=json`
       );
       //   const body = await response.json();
-      let json = JSON.parse(response as string);
+      const json = JSON.parse(response as string);
       if (json?.features[0] != null)
         setLocation(json.features[0]?.properties?.label);
       else setLocation("");
@@ -426,7 +427,6 @@ export const ResourceCreate = (props: Props) => {
               ) : null
             )}
           </RadioButton.Group>
-
         </ScrollView>
       )}
 
@@ -665,7 +665,7 @@ export const ResourceCreate = (props: Props) => {
                   fontFamily: "Spectral",
                   textAlign: "justify",
                   marginBottom: 8,
-                  marginTop: 12
+                  marginTop: 12,
                 }}
               >
                 La sélection de l'heure n'est pas encore disponible sur mobile,
@@ -753,7 +753,7 @@ export const ResourceCreate = (props: Props) => {
                           paddingTop: 8,
                           borderTopWidth: StyleSheet.hairlineWidth,
                           flex: 1,
-                          marginRight: 8
+                          marginRight: 8,
                         }}
                       >
                         <Text style={{ fontFamily: "Spectral", fontSize: 16 }}>
@@ -787,6 +787,8 @@ export const ResourceCreate = (props: Props) => {
           }}
         >
           <DetailedResource
+            seenBy={[]}
+            updatedAt={""}
             navigation={{
               navigate: function(): void {
                 throw new Error("Function not implemented.");

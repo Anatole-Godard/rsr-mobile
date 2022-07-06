@@ -13,14 +13,13 @@ import Carousel from "../../Carousel/Carousel";
 interface LocationProps extends GeoJSON_Point {
   properties: {
     name: string;
-    location?: string;
+    location: string;
     medias?: Media[];
   };
 }
 
 export const Location = (props: LocationProps) => {
   const { colorScheme } = usePreferences();
-  const {} = props;
   return (
     <>
       {props.properties.medias &&

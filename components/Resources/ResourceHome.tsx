@@ -121,6 +121,7 @@ const ResourceDataView = ({
 };
 
 interface Props extends Resource {
+  // eslint-disable-next-line no-unused-vars
   onPress: (slug: string) => void;
 }
 
@@ -143,7 +144,6 @@ export const ResourceHome = (props: Props) => {
     .alpha(0.8)
     .rgb()
     .string();
-
   const like = async () => {
     if (user) {
       const res = await fetchRSR(
@@ -313,7 +313,9 @@ export const ResourceHome = (props: Props) => {
 
               <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <TouchableOpacity
-                  onPress={() => {}}
+                  onPress={() => {
+                    return;
+                  }}
                   hitSlop={{ top: 10, bottom: 10 }}
                 >
                   <View style={styles.iconContainer}>
@@ -324,7 +326,10 @@ export const ResourceHome = (props: Props) => {
                   </View>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => {}}
+                  // eslint-disable-next-line @typescript-eslint/no-empty-function
+                  onPress={() => {
+                    return;
+                  }}
                   hitSlop={{ top: 10, bottom: 10 }}
                 >
                   <View style={styles.iconContainer}>

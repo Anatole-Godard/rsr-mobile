@@ -1,4 +1,5 @@
 import { API_URL as API, HOST_URL as HOST, NOTIFICATIONS_DEBOUNCE_TIME as NDT } from "@env";
+// eslint-disable-next-line no-console
 console.log({ API, HOST, NDT });
 export const API_URL = API;
 export const HOST_URL = HOST;

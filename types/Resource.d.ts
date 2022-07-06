@@ -15,6 +15,7 @@ export type Resource = {
   tags?: TagDocument[] | string[];
   data: {
     type: "location" | "physical_item" | "external_link" | "event" | "other";
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     attributes: GeoJSON_Point | PhysicalItem | ExternalLink | Event | Other | any;
   };
   likes: UserMinimum[];
@@ -34,6 +35,7 @@ export type ResourceMinimum = {
   tags?: TagDocument[] | string[];
   data: {
     type: "location" | "physical_item" | "external_link" | "event" | "other";
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     attributes: GeoJSON_Point | PhysicalItem | ExternalLink | Event | Other | any;
   };
   validated: boolean;

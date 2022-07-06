@@ -78,7 +78,7 @@ const ListItem = ({
   last = false,
   onPress,
 }: {
-  icon: any;
+  icon: JSX.Element;
   label: string;
   description: string;
   last?: boolean;
@@ -94,7 +94,7 @@ const ListItem = ({
         borderBottomWidth: !last ? StyleSheet.hairlineWidth : 0,
         borderBottomColor: theme.colors.text,
       }}
-      onPress={onPress ? () => onPress() : () => console.log("navigate")}
+      onPress={onPress ? () => onPress() : null}
     >
       <View
         style={{

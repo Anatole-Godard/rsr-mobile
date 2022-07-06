@@ -1,6 +1,6 @@
 export const fetchXHR = async (method: string, url: string | URL) => {
     return new Promise(function (resolve, reject) {
-      let xhr = new XMLHttpRequest();
+      const xhr = new XMLHttpRequest();
       xhr.open(method, url);
       xhr.onload = function () {
         if (this.status >= 200 && this.status < 300) {
