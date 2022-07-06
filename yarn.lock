@@ -8275,9 +8275,9 @@ react-native-paper-toast@^1.2.0:
   resolved "https://registry.npmjs.org/react-native-paper-toast/-/react-native-paper-toast-1.2.2.tgz"
   integrity sha512-AY8Kz3o56gTOMgRUHijfBFuBJhAYZbAiFziPrK9NTOJ9l1m0TUOVaS4zX7YCPOYoFQgf921VW6pptEVPw9XnRw==
 
-react-native-paper@^4.10.1:
+react-native-paper@^4.12.2:
   version "4.12.2"
-  resolved "https://registry.npmjs.org/react-native-paper/-/react-native-paper-4.12.2.tgz"
+  resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-4.12.2.tgz#31ed8011afd994d54dd403ed0099295fc1616d26"
   integrity sha512-DDqds8E6IMbOFW7PwUgB0pP6qhFcwn/s0N+SOpqB1XYtGm0r9WMrmA8q026Mn7OCkWeMTjgnrILGJxJ7b2CRHw==
   dependencies:
     "@callstack/react-theme-provider" "^3.0.7"
