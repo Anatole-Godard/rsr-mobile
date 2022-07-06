@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   BanIcon as BanIconOutline,
   CalendarIcon as CalendarIconOutline,
@@ -8,7 +7,7 @@ import {
   LocationMarkerIcon as LocationMarkerIconOutline,
   LockClosedIcon as LockClosedIconOutline,
   QuestionMarkCircleIcon as QuestionMarkCircleIconOutline
-} from 'react-native-heroicons/outline';
+} from "react-native-heroicons/outline";
 import {
   BanIcon as BanIconSolid,
   CalendarIcon as CalendarIconSolid,
@@ -18,14 +17,14 @@ import {
   LocationMarkerIcon as LocationMarkerIconSolid,
   LockClosedIcon as LockClosedIconSolid,
   QuestionMarkCircleIcon as QuestionMarkCircleIconSolid
-} from 'react-native-heroicons/solid';
+} from "react-native-heroicons/solid";
 
 export const types = [
   {
     label: "Objet physique",
     value: "physical_item",
     hasImage: true,
-    icon: { outline: HandIconOutline, solid: HandIconSolid },
+    icon: { outline: HandIconOutline, solid: HandIconSolid }
   },
   {
     label: "Position",
@@ -33,61 +32,43 @@ export const types = [
     hasImage: false,
     icon: {
       outline: LocationMarkerIconOutline,
-      solid: LocationMarkerIconSolid,
-    },
+      solid: LocationMarkerIconSolid
+    }
   },
   {
     label: "Lien externe",
     value: "external_link",
     hasImage: true,
-    icon: { outline: LinkIconOutline, solid: LinkIconSolid },
+    icon: { outline: LinkIconOutline, solid: LinkIconSolid }
   },
   {
     label: "Événement",
     value: "event",
     hasImage: true,
-    icon: { outline: CalendarIconOutline, solid: QuestionMarkCircleIconSolid },
+    icon: { outline: CalendarIconOutline, solid: QuestionMarkCircleIconSolid }
   },
   {
-    label: "Personalisé",
+    label: "Personnalisé",
     value: "other",
     hasImage: true,
-    icon: { outline: QuestionMarkCircleIconOutline, solid: CalendarIconSolid },
-  },
+    icon: { outline: QuestionMarkCircleIconOutline, solid: CalendarIconSolid }
+  }
 ];
-
-export type ResourceType = {
-  label: string;
-  value: string;
-  hasImage: boolean;
-  icon: Icon;
-};
 
 export const visibilities = [
   {
     label: "Publique",
     value: "public",
-    icon: { outline: GlobeIconOutline, solid: GlobeIconSolid },
+    icon: { outline: GlobeIconOutline, solid: GlobeIconSolid }
   },
   {
     label: "Privée",
     value: "private",
-    icon: { outline: LockClosedIconOutline, solid: LockClosedIconSolid },
+    icon: { outline: LockClosedIconOutline, solid: LockClosedIconSolid }
   },
   {
     label: "Non répertoriée",
     value: "unlisted",
-    icon: { outline: BanIconOutline, solid: BanIconSolid },
-  },
+    icon: { outline: BanIconOutline, solid: BanIconSolid }
+  }
 ];
-
-export type ResourceVisibility = {
-  label: string;
-  value: string;
-  icon: Icon;
-};
-
-type Icon = {
-  outline: (props: React.ComponentProps<typeof BanIconOutline>) => JSX.Element;
-  solid: (props: React.ComponentProps<typeof BanIconOutline>) => JSX.Element;
-};

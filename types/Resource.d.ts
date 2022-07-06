@@ -1,10 +1,11 @@
-import { Comment } from './Resource/Comment';
-import { Event } from './Resource/Event';
-import type { ExternalLink } from './Resource/ExternalLink';
-import type { GeoJSON_Point } from './Resource/GeoJSON';
-import type { PhysicalItem } from './Resource/PhysicalItem';
-import { TagDocument } from './Resource/Tag';
-import type { UserMinimum } from './User';
+import { Comment } from "./Resource/Comment";
+import { Event } from "./Resource/Event";
+import type { ExternalLink } from "./Resource/ExternalLink";
+import type { GeoJSON_Point } from "./Resource/GeoJSON";
+import type { PhysicalItem } from "./Resource/PhysicalItem";
+import type { Other } from "./Resource/Other";
+import { TagDocument } from "./Resource/Tag";
+import type { UserMinimum } from "./User";
 
 export type Resource = {
   slug: string;
@@ -13,14 +14,14 @@ export type Resource = {
   description?: string;
   tags?: TagDocument[] | string[];
   data: {
-    type: 'location' | 'physical_item' | 'external_link' | 'event' | 'other';
-    attributes: GeoJSON_Point | PhysicalItem | ExternalLink | Event | any;
+    type: "location" | "physical_item" | "external_link" | "event" | "other";
+    attributes: GeoJSON_Point | PhysicalItem | ExternalLink | Event | Other | any;
   };
   likes: UserMinimum[];
   comments?: Comment[];
   validated: boolean;
   seenBy: UserMinimum[];
-  visibility: 'public' | 'private' | 'unlisted';
+  visibility: "public" | "private" | "unlisted";
   members?: UserMinimum[];
   updatedAt: Date | string;
 };
@@ -32,11 +33,11 @@ export type ResourceMinimum = {
   description?: string;
   tags?: TagDocument[] | string[];
   data: {
-    type: 'location' | 'physical_item' | 'external_link' | 'event' | 'other';
-    attributes: GeoJSON_Point | PhysicalItem | ExternalLink | Event | any;
+    type: "location" | "physical_item" | "external_link" | "event" | "other";
+    attributes: GeoJSON_Point | PhysicalItem | ExternalLink | Event | Other | any;
   };
   validated: boolean;
-  visibility: 'public' | 'private' | 'unlisted';
+  visibility: "public" | "private" | "unlisted";
   members?: UserMinimum[];
   seenBy: UserMinimum[];
   updatedAt: Date | string;
