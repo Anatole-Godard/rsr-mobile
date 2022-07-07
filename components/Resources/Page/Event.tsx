@@ -7,8 +7,14 @@ import { StyleSheet, View } from "react-native";
 import { ClockIcon } from "react-native-heroicons/outline";
 import { Text } from "react-native-paper";
 import { Event as EventType } from "types/Resource/Event";
+import { Media } from "../../../types/Resource/Media";
+import Carousel from "../../Carousel/Carousel";
 
-type Props = EventType
+interface Props extends EventType {
+  properties: {
+    medias?: Media[];
+  };
+}
 
 export const Event = (props: Props) => {
   const { properties } = props;
@@ -17,6 +23,15 @@ export const Event = (props: Props) => {
   const { colorScheme } = usePreferences();
   return (
     <>
+      {props.properties.medias &&
+        <View style={{
+          width: "100%",
+          height: 200,
+          marginBottom: 8
+        }}>
+          <Carousel images={props.properties.medias} />
+        </View>
+      }
       {startDate.toString() !== "" && (
         <View
           style={{
@@ -25,8 +40,7 @@ export const Event = (props: Props) => {
             padding: 8,
             borderRadius: 8,
             width: "100%",
-            height:"100%",
-            justifyContent: "center",
+            justifyContent: "center"
           }}
         >
           <View style={{ flexDirection: "row" }}>
@@ -35,7 +49,7 @@ export const Event = (props: Props) => {
                 flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
-                width: 48,
+                width: 48
               }}
             >
               <ClockIcon size={24} color={theme[colorScheme].colors.secondary} />
@@ -43,7 +57,7 @@ export const Event = (props: Props) => {
                 <Text
                   style={{
                     fontFamily: "Spectral",
-                    fontSize: 12,
+                    fontSize: 12
                   }}
                 >
                   FROM
@@ -53,7 +67,7 @@ export const Event = (props: Props) => {
             <View style={{ flexDirection: "column", marginLeft: 12 }}>
               <Text style={{ fontFamily: "Spectral", fontSize: 16 }}>
                 {format(new Date(startDate.toString()), "PPPP", {
-                  locale: fr,
+                  locale: fr
                 })}
               </Text>
               <Text style={{ fontFamily: "Spectral", fontSize: 12 }}>
@@ -65,7 +79,7 @@ export const Event = (props: Props) => {
             <View
               style={{
                 flexDirection: "row",
-                marginTop: 8,
+                marginTop: 8
               }}
             >
               <View
@@ -73,7 +87,7 @@ export const Event = (props: Props) => {
                   flexDirection: "column",
                   justifyContent: "center",
                   alignItems: "center",
-                  width: 48,
+                  width: 48
                 }}
               >
                 <ClockIcon
@@ -84,7 +98,7 @@ export const Event = (props: Props) => {
                   style={{
                     fontFamily: "Spectral",
                     fontSize: 12,
-                    marginTop: 4,
+                    marginTop: 4
                   }}
                 >
                   TO
@@ -97,17 +111,17 @@ export const Event = (props: Props) => {
                   paddingTop: 8,
                   borderTopWidth: StyleSheet.hairlineWidth,
                   flex: 1,
-                  marginRight: 8,
+                  marginRight: 8
                 }}
               >
                 <Text style={{ fontFamily: "Spectral", fontSize: 16 }}>
                   {format(new Date(endDate.toString()), "PPPP", {
-                    locale: fr,
+                    locale: fr
                   })}
                 </Text>
                 <Text style={{ fontFamily: "Spectral", fontSize: 12 }}>
                   {format(new Date(endDate.toString()), "p", {
-                    locale: fr,
+                    locale: fr
                   })}
                 </Text>
               </View>

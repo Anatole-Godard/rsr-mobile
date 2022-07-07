@@ -1,44 +1,38 @@
-import React, { useState } from "react";
-import { StyleSheet, View, TouchableOpacity } from "react-native";
-import {
-  Surface,
-  Title,
-  Caption,
-  Text,
-  Avatar,
-  TouchableRipple,
-} from "react-native-paper";
-import color from "color";
-import { Resource } from "types/Resource";
-import { usePreferences } from "hooks/usePreferences";
-import { colors, theme } from "core/theme";
+import React, { useState } from 'react';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Avatar, Caption, Surface, Text, Title, TouchableRipple } from 'react-native-paper';
+import color from 'color';
+import { Resource } from 'types/Resource';
+import { usePreferences } from 'hooks/usePreferences';
+import { colors, theme } from 'core/theme';
 
-import { API_URL, HOST_URL } from "constants/env";
+import { API_URL, HOST_URL } from 'constants/env';
 
 import {
   CalendarIcon,
   ChatIcon,
-  ExternalLinkIcon,
   HandIcon,
   HeartIcon as HeartIconOutline,
+  LinkIcon,
   LocationMarkerIcon,
-} from "react-native-heroicons/outline";
-import { HeartIcon as HeartIconSolid } from "react-native-heroicons/solid";
+  QuestionMarkCircleIcon
+} from 'react-native-heroicons/outline';
+import { HeartIcon as HeartIconSolid } from 'react-native-heroicons/solid';
 
-import { formatDistance } from "date-fns";
-import fr from "date-fns/locale/fr";
-import { Swipeable } from "react-native-gesture-handler";
-import { UserMinimum } from "types/User";
-import { useAuth } from "hooks/useAuth";
-import { useToast } from "react-native-paper-toast";
-import { fetchRSR } from "utils/fetchRSR";
-import { types, visibilities } from "constants/resourceTypes";
-import { useNavigation } from "@react-navigation/native";
+import { formatDistance } from 'date-fns';
+import fr from 'date-fns/locale/fr';
+import { Swipeable } from 'react-native-gesture-handler';
+import { UserMinimum } from 'types/User';
+import { useAuth } from 'hooks/useAuth';
+import { useToast } from 'react-native-paper-toast';
+import { fetchRSR } from 'utils/fetchRSR';
+import { types, visibilities } from 'constants/resourceTypes';
+import { useNavigation } from '@react-navigation/native';
 
 const ResourceDataView = ({
   type,
 }: {
-  type: "location" | "physical_item" | "external_link" | string;
+  type: 'location' | 'physical_item' | 'external_link' | 'event' | 'other';
 }) => {
   const { colorScheme } = usePreferences();
   let style;
@@ -67,6 +61,12 @@ const ResourceDataView = ({
         colorScheme === "light" ? colors.red[100] : colors.red[800],
       borderColor: colors.red[500],
     };
+  if (type === "other")
+    style = {
+      backgroundColor:
+        colorScheme === "light" ? colors.gray[100] : colors.gray[800],
+      borderColor: colors.gray[500],
+    };
   return (
     <View
       style={{
@@ -94,7 +94,7 @@ const ResourceDataView = ({
         />
       )}
       {type === "external_link" && (
-        <ExternalLinkIcon
+        <LinkIcon
           size={24}
           color={
             colorScheme === "light" ? colors.amber[700] : colors.amber[300]
@@ -105,6 +105,12 @@ const ResourceDataView = ({
         <CalendarIcon
           size={24}
           color={colorScheme === "light" ? colors.red[700] : colors.red[300]}
+        />
+      )}
+      {type === "other" && (
+        <QuestionMarkCircleIcon
+          size={24}
+          color={colorScheme === "light" ? colors.gray[700] : colors.gray[300]}
         />
       )}
       <Text style={{ fontFamily: "Spectral" }}>
@@ -138,8 +144,6 @@ export const ResourceHome = (props: Props) => {
     .alpha(0.8)
     .rgb()
     .string();
-
- 
   const like = async () => {
     if (user) {
       const res = await fetchRSR(
