@@ -23,13 +23,13 @@ export const PhysicalItem = (props: PhysicalItemProps) => {
   } = props;
   return (
     <>
-      {props.properties.medias &&
+      {medias &&
         <View style={{
           width: "100%",
           height: 200,
           marginBottom: 8
         }}>
-          <Carousel images={props.properties.medias} />
+          <Carousel images={medias} />
         </View>}
       <View
         style={{

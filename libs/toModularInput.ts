@@ -14,8 +14,8 @@ export const toModularInput = (
   if (!(properties instanceof Object))
     throw new Error("properties must be an object");
 
-  const array: Input[] = Object.values(
-    (properties as { [key: string]: any | Input }) || []
+  return Object.values(
+    (properties as { [key: string]: never | Input }) || []
   ).filter(
     (property) =>
       property?.type !== undefined &&
@@ -23,6 +23,4 @@ export const toModularInput = (
       property?.slug !== undefined &&
       property?.value !== undefined
   );
-
-  return array;
 };

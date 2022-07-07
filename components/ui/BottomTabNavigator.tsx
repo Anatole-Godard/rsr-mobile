@@ -6,7 +6,7 @@ import { useSafeArea } from "react-native-safe-area-context";
 import { useIsFocused } from "@react-navigation/native";
 
 import overlay from "libs/overlay";
-import { ResourcesScreen } from "pages/resource/All";
+import { ResourcesScreen } from "pages/resource/all";
 import { HomeScreen } from "pages/Home";
 import { ChannelScreen } from "pages/channel/All";
 import { theme } from "core/theme";
