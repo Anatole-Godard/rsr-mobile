@@ -10,7 +10,7 @@ import { HOST_URL } from "constants/env";
 import { UserMinimum } from "types/User";
 import { useAuth } from "hooks/useAuth";
 
-interface Props extends Channel {}
+type Props = Channel
 
 export const DetailledChannel = (props: Props) => {
   const { user } = useAuth();

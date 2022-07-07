@@ -1,9 +1,4 @@
 import React from "react";
-import { Navigation } from "types/Navigation";
-
-interface Props {
-  navigation: Navigation;
-}
 
 import { Dimensions } from "react-native";
 import { useTheme } from "react-native-paper";
@@ -14,7 +9,7 @@ import { MessagesTab } from "components/Notifications/MessagesTab";
 
 const initialLayout = { width: Dimensions.get("window").width };
 
-export const NotificationsScreen = (props: Props) => {
+export const NotificationsScreen = () => {
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
     { key: "resources", title: "Ressources" },
@@ -28,7 +23,7 @@ export const NotificationsScreen = (props: Props) => {
     messages: () => <MessagesTab />,
   });
 
-  const renderTabBar = (props: any) => (
+  const renderTabBar = (props) => (
     <TabBar
       {...props}
       indicatorStyle={{ backgroundColor: theme.colors.primary }}

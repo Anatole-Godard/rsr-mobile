@@ -9,7 +9,7 @@ import {
 } from "react-native-paper";
 import color from "color";
 import { Notification } from "types/Notification";
-import { StarIcon, TrashIcon } from "react-native-heroicons/outline";
+import {  TrashIcon } from "react-native-heroicons/outline";
 import Paragraph from "components/ui/Paragraph";
 import { HOST_URL } from "constants/env";
 import { notifications } from "./types";

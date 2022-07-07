@@ -1,5 +1,4 @@
 import React from "react";
-import { useAuth } from "hooks/useAuth";
 import { usePreferences } from "hooks/usePreferences";
 import { List, Switch, useTheme } from "react-native-paper";
 import { View } from "react-native";
@@ -9,7 +8,6 @@ export const SettingsDisplayScreen = () => {
   const theme = useTheme();
   const { toggleChannelStoriesDisplay, channelStoriesDisplay } =
     usePreferences();
-  const { user } = useAuth();
   return (
     <View
       style={{
@@ -40,7 +38,7 @@ export const SettingsDisplayScreen = () => {
               style={{ marginHorizontal: 0 }}
             />
           )}
-          right={(props) => (
+          right={() => (
             <Switch
               style={{ marginTop: 10 }}
               value={channelStoriesDisplay}

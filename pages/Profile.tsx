@@ -1,34 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 
-import { API_URL, HOST_URL } from "constants/env";
-import {
-  FlatList,
-  ImageBackground,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { Avatar, Text, useTheme } from "react-native-paper";
-import { Navigation } from "types/Navigation";
-import { UserMinimum } from "types/User";
-import { colors, theme as core } from "core/theme";
+import { API_URL, HOST_URL } from 'constants/env';
+import { Dimensions, FlatList, ImageBackground, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Avatar, Text, useTheme } from 'react-native-paper';
+import { Navigation } from 'types/Navigation';
+import { UserMinimum } from 'types/User';
+import { colors, theme as core } from 'core/theme';
+import { useAuth } from 'hooks/useAuth';
+import { ExclamationIcon } from 'react-native-heroicons/outline';
+import { usePreferences } from 'hooks/usePreferences';
+import { Resource } from 'types/Resource';
+import { fetchRSR } from 'utils/fetchRSR';
+import { ResourceHome } from 'components/Resources/ResourceHome';
 
 interface Props {
   navigation: Navigation;
   route: { params: UserMinimum };
 }
-
-import { Dimensions } from "react-native";
-import { useAuth } from "hooks/useAuth";
-import {
-  ExclamationIcon,
-  PencilIcon,
-  // PlusCircleIcon,
-} from "react-native-heroicons/outline";
-import { usePreferences } from "hooks/usePreferences";
-import { Resource } from "types/Resource";
-import { fetchRSR } from "utils/fetchRSR";
-import { ResourceHome } from "components/Resources/ResourceHome";
 
 export const ProfileScreen = (props: Props) => {
   const { user } = useAuth();
@@ -81,14 +69,7 @@ export const ProfileScreen = (props: Props) => {
               height: 32,
             }}
           >
-            {uid === user.data.uid ? (
-              <TouchableOpacity style={styles.button}>
-                <PencilIcon size={16} color={core.dark.colors.text} />
-                <Text style={{ color: core.dark.colors.text, marginLeft: 3 }}>
-                  Éditer
-                </Text>
-              </TouchableOpacity>
-            ) : (
+            {uid !== user.data.uid && (
               <TouchableOpacity style={styles.button}>
                 <ExclamationIcon size={16} color={core.dark.colors.text} />
                 <Text style={{ color: core.dark.colors.text, marginLeft: 3 }}>

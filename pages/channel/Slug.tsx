@@ -1,11 +1,5 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  FlatList,
-  KeyboardAvoidingView,
-  ScrollView,
-} from "react-native";
+import React, {useEffect, useLayoutEffect, useRef, useState} from "react";
+import { FlatList, KeyboardAvoidingView, StyleSheet, View } from "react-native";
 import { ChannelMessage } from "components/Channel/Message";
 import { Message } from "types/Message";
 import io from "socket.io-client";
@@ -33,7 +27,7 @@ interface Props {
 export const ChannelSlug = (props: Props) => {
   const { user } = useAuth();
   useLayoutEffect(() => {
-    if (user && user.data.uid !== props.route.params.owner.uid)
+    if (user && user.data.uid === props.route.params.owner.uid)
       props.navigation.setOptions({
         headerRight: () => (
           <Appbar.Action
@@ -55,26 +49,28 @@ export const ChannelSlug = (props: Props) => {
   });
 
   const theme = useTheme();
-
-  useEffect((): any => {
+  const flatListRef = useRef();
+  useEffect(() => {
     const socket = io(HOST_URL, {
       path: "/api/channel/[slug]/socket",
-    });
-
-    socket.on("connect", () => {
-      console.log("SOCKET CONNECTED!", socket.id);
     });
 
     // update chat on new message dispatched
     socket.on("message", (message: Message) => {
       setChat((oldChat) => [...oldChat, message]);
+      const current = flatListRef?.current || { scrollToEnd: (options) => {
+          return;
+        } };
+      current.scrollToEnd({ behavior: 'smooth' });
     });
 
-    if (socket) return () => socket.disconnect();
+    return () => {
+      if (socket) socket.disconnect();
+    };
   }, []);
 
   const sendMsg = async () => {
-    let error = messageValidator(message.value);
+    const error = messageValidator(message.value);
     setMessage({ ...message, error });
     if (user && error === "") {
       const resp = await fetchRSR(
@@ -102,9 +98,11 @@ export const ChannelSlug = (props: Props) => {
       keyboardVerticalOffset={72}
       style={{ ...styles.container, backgroundColor: theme.colors.background }}
     >
-      <FlatList
+      <FlatList ref={flatListRef}
         data={chat}
-        renderItem={({ item }) => <ChannelMessage {...item} />}
+        renderItem={({ item }) => (
+          <ChannelMessage {...item} channelSlug={props.route.params.slug} />
+        )}
         keyExtractor={(item: Message) => item._id || item.createdAt.toString()}
         ListEmptyComponent={() => (
           <View style={styles.animationContainer}>

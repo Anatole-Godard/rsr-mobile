@@ -1,3 +1,5 @@
+import "react-native-gesture-handler";
+import "core/ignoreWarnings";
 import React, { useState } from "react";
 
 /// Navigation
@@ -13,7 +15,6 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useColorScheme } from "react-native";
 import { AuthProvider } from "hooks/useAuth";
 import { useFonts } from "expo-font";
-import AppLoading from "expo-app-loading";
 import { PreferencesProvider } from "hooks/usePreferences";
 import { theme } from "core/theme";
 import { ToastProvider } from "react-native-paper-toast";
@@ -31,7 +32,7 @@ export default function App() {
     _colorScheme || "light"
   );
 
-  let [fontsLoaded] = useFonts({
+  const [fontsLoaded] = useFonts({
     Marianne: require("./assets/fonts/Marianne-Regular.ttf"),
     "Marianne-Bold": require("./assets/fonts/Marianne-Bold.ttf"),
     "Marianne-ExtraBold": require("./assets/fonts/Marianne-ExtraBold.ttf"),
@@ -39,7 +40,7 @@ export default function App() {
   });
 
   if (!fontsLoaded) {
-    return <AppLoading />;
+    return null;
   }
 
   return (

@@ -1,6 +1,6 @@
 import { DetailedResource } from "components/Resources/DetailledResource";
 import React from "react";
-import { View, StyleSheet, KeyboardAvoidingView } from "react-native";
+import {  StyleSheet, KeyboardAvoidingView } from "react-native";
 import { useTheme } from "react-native-paper";
 import { Navigation } from "types/Navigation";
 import { Resource } from "types/Resource";

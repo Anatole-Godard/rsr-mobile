@@ -6,15 +6,7 @@ import { colors, theme } from "core/theme";
 import { nameValidator } from "core/validators";
 import { usePreferences } from "hooks/usePreferences";
 import React, { Fragment, useEffect, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  Image,
-  Dimensions,
-  TouchableOpacity,
-  FlatList,
-  SafeAreaView,
-} from "react-native";
+import { Dimensions, Image, StyleSheet, View } from "react-native";
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
@@ -23,14 +15,11 @@ import {
   CheckIcon,
   ClockIcon,
   CurrencyDollarIcon,
-  ExternalLinkIcon,
-  HandIcon,
-  LocationMarkerIcon,
   PhotographIcon,
   TagIcon,
-  TrashIcon,
+  TrashIcon
 } from "react-native-heroicons/outline";
-import { IconButton, RadioButton, Text } from "react-native-paper";
+import { IconButton, RadioButton, Text, TextInput as PaperInput } from "react-native-paper";
 import { Navigation } from "types/Navigation";
 
 import * as ImagePicker from "expo-image-picker";
@@ -40,14 +29,9 @@ import MapInput, { MapInputVariants } from "react-native-map-input";
 import { fetchXHR } from "utils/fetchXHR";
 import { DetailedResource } from "components/Resources/DetailledResource";
 import { useAuth } from "hooks/useAuth";
-
-import { TextInput as PaperInput } from "react-native-paper";
 import { fetchRSR } from "utils/fetchRSR";
-import { API_URL, HOST_URL } from "constants/env";
+import { API_URL } from "constants/env";
 import { ScrollView } from "react-native-gesture-handler";
-import { UserMinimum } from "types/User";
-import { useSearch } from "hooks/useSearch";
-import { CheckCircleIcon } from "react-native-heroicons/solid";
 import { Input } from "types/Input";
 import { DatePickerModal } from "react-native-paper-dates";
 import { format } from "date-fns";
@@ -67,8 +51,8 @@ export const ResourceCreate = (props: Props) => {
     steps: {
       current: 1,
       total: 3,
-      name: "Définir la ressource",
-    },
+      name: "Définir la ressource"
+    }
   });
 
   useEffect(() => {
@@ -77,39 +61,39 @@ export const ResourceCreate = (props: Props) => {
         progress: [
           { value: 0, indeterminate: true },
           { value: 0 },
-          { value: 0 },
+          { value: 0 }
         ],
         steps: {
           current: 1,
           total: 3,
-          name: "Définir la ressource",
-        },
+          name: "Définir la ressource"
+        }
       });
     if (step === 1)
       setStepIndicator({
         progress: [
           { value: 1 },
           { value: 0, indeterminate: true },
-          { value: 0 },
+          { value: 0 }
         ],
         steps: {
           current: 2,
           total: 3,
-          name: "Détailler la ressource",
-        },
+          name: "Détailler la ressource"
+        }
       });
     if (step === 2)
       setStepIndicator({
         progress: [
           { value: 1 },
           { value: 1 },
-          { value: 0, indeterminate: true },
+          { value: 0, indeterminate: true }
         ],
         steps: {
           current: 3,
           total: 3,
-          name: "Confirmer",
-        },
+          name: "Confirmer"
+        }
       });
   }, [step]);
 
@@ -129,15 +113,15 @@ export const ResourceCreate = (props: Props) => {
   const [image, setImage] = useState<string | null>(null);
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
+    const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 1,
+      quality: 1
     });
 
     if (!result.cancelled) {
-      setImage(result.uri);
+      setImage((result as ImagePicker.ImageInfo).uri);
     }
   };
 
@@ -150,7 +134,7 @@ export const ResourceCreate = (props: Props) => {
     latitude: 49.441147,
     longitude: 1.089014,
     latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
+    longitudeDelta: 0.0421
   });
   const [location, setLocation] = useState<string | null>(null);
 
@@ -166,9 +150,9 @@ export const ResourceCreate = (props: Props) => {
 
   const onConfirm = React.useCallback(
     ({
-      startDate,
-      endDate,
-    }: {
+       startDate,
+       endDate
+     }: {
       startDate: Date | undefined;
       endDate: Date | undefined;
     }) => {
@@ -200,24 +184,25 @@ export const ResourceCreate = (props: Props) => {
       try {
         const res = await fetchRSR(API_URL + "/resource/create", user.session, {
           method: "POST",
-          body: JSON.stringify(formatResource()),
+          body: JSON.stringify(formatResource())
         });
         const body = await res.json();
         if (res.ok && body.data.attributes) {
           props.navigation.push("Details", {
-            ...body.data.attributes,
+            ...body.data.attributes
           });
         }
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.log(err);
       }
     }
   };
 
   const formatResource = () => {
-    let data: Resource["data"] = {
-      type: type,
-      attributes: {},
+    const data: Resource["data"] = {
+      type: type as Resource["data"]["type"],
+      attributes: {}
     };
     if (type === "physical_item") {
       data.attributes = {
@@ -226,20 +211,20 @@ export const ResourceCreate = (props: Props) => {
           description: description.value,
           price: parseFloat(price.value),
           category: category.value,
-          image: null,
-        },
+          image: null
+        }
       };
     } else if (type === "location") {
       data.attributes = {
         type: "Feature",
         geometry: {
           type: "Point",
-          coordinates: [position.latitude, position.longitude],
+          coordinates: [position.latitude, position.longitude]
         },
         properties: {
           name: name.value,
-          location,
-        },
+          location
+        }
       };
     } else if (type === "external_link") {
       data.attributes = {
@@ -247,8 +232,8 @@ export const ResourceCreate = (props: Props) => {
           name: name.value,
           description: description.value,
           url: externalLink.value,
-          image: null,
-        },
+          image: null
+        }
       };
     } else if (type === "event") {
       data.attributes = {
@@ -257,18 +242,18 @@ export const ResourceCreate = (props: Props) => {
           description: description.value,
           startDate: startDate.value,
           endDate: endDate.value,
-          participants: [],
-        },
+          participants: []
+        }
       };
     }
 
     return {
       description: description.value,
-      // tags: tags.map((tag) => tag.value),
+      tags: [],
       data,
-      visibility,
+      visibility
       // members,
-    };
+    } as Resource;
   };
 
   useEffect(() => {
@@ -278,7 +263,7 @@ export const ResourceCreate = (props: Props) => {
         `https://api-adresse.data.gouv.fr/reverse/?lat=${position.latitude}&lon=${position.longitude}&format=json`
       );
       //   const body = await response.json();
-      let json = JSON.parse(response as string);
+      const json = JSON.parse(response as string);
       if (json?.features[0] != null)
         setLocation(json.features[0]?.properties?.label);
       else setLocation("");
@@ -295,7 +280,7 @@ export const ResourceCreate = (props: Props) => {
     <View
       style={{
         ...styles.wrapper,
-        backgroundColor: theme[colorScheme].colors.background,
+        backgroundColor: theme[colorScheme].colors.background
       }}
     >
       <StepIndicator
@@ -308,14 +293,14 @@ export const ResourceCreate = (props: Props) => {
         <ScrollView
           style={{
             ...styles.container,
-            backgroundColor: theme[colorScheme].colors.background,
+            backgroundColor: theme[colorScheme].colors.background
           }}
         >
           <View
             style={{
               ...styles.separator,
               borderColor: theme[colorScheme].colors.secondary,
-              marginTop: 0,
+              marginTop: 0
               // ...styles.topSeparator,
             }}
           >
@@ -323,8 +308,8 @@ export const ResourceCreate = (props: Props) => {
             <Text style={styles.label}>Propriétés de la ressource</Text>
           </View>
           <TextInput
-            label="Nom de la ressource"
-            returnKeyType="next"
+            label='Nom de la ressource'
+            returnKeyType='next'
             value={name.value}
             onChangeText={(text) => setName({ value: text, error: "" })}
             error={!!name.error}
@@ -332,8 +317,8 @@ export const ResourceCreate = (props: Props) => {
             // autoCapitalize="none"
           />
           <TextInput
-            label="Description de la ressource"
-            returnKeyType="next"
+            label='Description de la ressource'
+            returnKeyType='next'
             dense
             value={description.value}
             onChangeText={(text) => setDescription({ value: text, error: "" })}
@@ -341,24 +326,24 @@ export const ResourceCreate = (props: Props) => {
             errorText={description.error}
             style={{
               height: 48 * 2,
-              justifyContent: "flex-start",
+              justifyContent: "flex-start"
             }}
             multiline
-            textAlignVertical="top"
+            textAlignVertical='top'
             // autoCapitalize="none"
           />
 
           <View
             style={{
               ...styles.separator,
-              borderColor: theme[colorScheme].colors.secondary,
+              borderColor: theme[colorScheme].colors.secondary
             }}
           >
             {types
               .find((t) => t.value === type)
               ?.icon.outline({
                 size: 24,
-                color: theme[colorScheme].colors.secondary,
+                color: theme[colorScheme].colors.secondary
               })}
             <Text style={styles.label}>Type de ressource</Text>
           </View>
@@ -381,7 +366,7 @@ export const ResourceCreate = (props: Props) => {
                     borderColor:
                       type === t.value
                         ? theme[colorScheme].colors.primary
-                        : theme[colorScheme].colors.placeholder,
+                        : theme[colorScheme].colors.placeholder
                   }}
                 />
                 <View style={{ marginBottom: 8 }}></View>
@@ -392,14 +377,14 @@ export const ResourceCreate = (props: Props) => {
           <View
             style={{
               ...styles.separator,
-              borderColor: theme[colorScheme].colors.secondary,
+              borderColor: theme[colorScheme].colors.secondary
             }}
           >
             {visibilities
               .find((t) => t.value === visibility)
               ?.icon.outline({
                 size: 24,
-                color: theme[colorScheme].colors.secondary,
+                color: theme[colorScheme].colors.secondary
               })}
             <Text style={styles.label}>Visibilité de la ressource</Text>
           </View>
@@ -407,7 +392,7 @@ export const ResourceCreate = (props: Props) => {
             style={{
               fontFamily: "Spectral",
               textAlign: "justify",
-              marginBottom: 8,
+              marginBottom: 8
             }}
           >
             La création de ressource non répertoriée n'est pas disponible sur
@@ -434,7 +419,7 @@ export const ResourceCreate = (props: Props) => {
                       borderColor:
                         visibility === v.value
                           ? theme[colorScheme].colors.primary
-                          : theme[colorScheme].colors.placeholder,
+                          : theme[colorScheme].colors.placeholder
                     }}
                   />
                   <View style={{ marginBottom: 8 }}></View>
@@ -442,7 +427,6 @@ export const ResourceCreate = (props: Props) => {
               ) : null
             )}
           </RadioButton.Group>
-          
         </ScrollView>
       )}
 
@@ -450,14 +434,14 @@ export const ResourceCreate = (props: Props) => {
         <View
           style={{
             ...styles.container,
-            backgroundColor: theme[colorScheme].colors.background,
+            backgroundColor: theme[colorScheme].colors.background
           }}
         >
           <View
             style={{
               ...styles.separator,
               borderColor: theme[colorScheme].colors.secondary,
-              marginTop: 0,
+              marginTop: 0
             }}
           >
             <BookOpenIcon
@@ -473,7 +457,7 @@ export const ResourceCreate = (props: Props) => {
           {type === "physical_item" && (
             <View>
               <Button
-                mode="outlined"
+                mode='outlined'
                 onPress={pickImage}
                 icon={(props) => (
                   <PhotographIcon size={props.size} color={props.color} />
@@ -487,7 +471,7 @@ export const ResourceCreate = (props: Props) => {
                     width: "100%",
                     flexDirection: "row",
                     justifyContent: "center",
-                    alignItems: "center",
+                    alignItems: "center"
                   }}
                 >
                   <Image
@@ -506,7 +490,7 @@ export const ResourceCreate = (props: Props) => {
 
               <TextInput
                 label="Prix de l'objet"
-                returnKeyType="next"
+                returnKeyType='next'
                 value={price.value}
                 onChangeText={(text) => setPrice({ value: text, error: "" })}
                 error={!!price.error}
@@ -527,7 +511,7 @@ export const ResourceCreate = (props: Props) => {
               />
               <TextInput
                 label="Catégorie de l'objet"
-                returnKeyType="next"
+                returnKeyType='next'
                 value={category.value}
                 onChangeText={(text) => setCategory({ value: text, error: "" })}
                 error={!!category.error}
@@ -544,19 +528,19 @@ export const ResourceCreate = (props: Props) => {
                   setPosition({
                     ...position,
                     longitude: coordinates.longitude,
-                    latitude: coordinates.latitude,
+                    latitude: coordinates.latitude
                   })
                 }
                 variant={MapInputVariants.BY_MARKER}
                 style={{
                   height: Dimensions.get("window").height / 2.75,
-                  borderRadius: 8,
+                  borderRadius: 8
                 }}
                 zoomEnabled
               />
               <TextInput
-                label="Adresse"
-                returnKeyType="next"
+                label='Adresse'
+                returnKeyType='next'
                 value={location?.toString()}
                 onChangeText={(text) => setLocation(text)}
                 style={styles.input}
@@ -566,7 +550,7 @@ export const ResourceCreate = (props: Props) => {
           {type === "external_link" && (
             <View>
               <Button
-                mode="outlined"
+                mode='outlined'
                 onPress={pickImage}
                 icon={(props) => (
                   <PhotographIcon size={props.size} color={props.color} />
@@ -580,7 +564,7 @@ export const ResourceCreate = (props: Props) => {
                     width: "100%",
                     flexDirection: "row",
                     justifyContent: "center",
-                    alignItems: "center",
+                    alignItems: "center"
                   }}
                 >
                   <Image
@@ -598,8 +582,8 @@ export const ResourceCreate = (props: Props) => {
               )}
 
               <TextInput
-                label="Lien externe"
-                returnKeyType="next"
+                label='Lien externe'
+                returnKeyType='next'
                 value={externalLink.value}
                 onChangeText={(text) =>
                   setExternalLink({ value: text, error: "" })
@@ -613,7 +597,7 @@ export const ResourceCreate = (props: Props) => {
           {type === "event" && (
             <View>
               <Button
-                mode="outlined"
+                mode='outlined'
                 onPress={pickImage}
                 icon={(props) => (
                   <PhotographIcon size={props.size} color={props.color} />
@@ -627,7 +611,7 @@ export const ResourceCreate = (props: Props) => {
                     width: "100%",
                     flexDirection: "row",
                     justifyContent: "center",
-                    alignItems: "center",
+                    alignItems: "center"
                   }}
                 >
                   <Image
@@ -645,17 +629,17 @@ export const ResourceCreate = (props: Props) => {
               )}
               <Button
                 onPress={() => setDatePickerOpen(true)}
-                mode="outlined"
+                mode='outlined'
                 icon={(props) => (
                   <CalendarIcon size={props.size} color={props.color} />
                 )}
-                style={{marginTop:12}}
+                style={{ marginTop: 12 }}
               >
                 Sélectionner une date
               </Button>
               <DatePickerModal
-                locale="fr"
-                mode="range"
+                locale='fr'
+                mode='range'
                 visible={datePickerOpen}
                 onDismiss={onDismiss}
                 startDate={
@@ -669,9 +653,9 @@ export const ResourceCreate = (props: Props) => {
                 //   disabledDates: [new Date()] // optional
                 // }}
                 // onChange={} // same props as onConfirm but triggered without confirmed by user
-                saveLabel="Confimer" // optional
+                saveLabel='Confimer' // optional
                 // uppercase={false} // optional, default is true
-                label="Sélectionner une date" // optional
+                label='Sélectionner une date' // optional
                 // startLabel="From" // optional
                 // endLabel="To" // optional
                 // animationType="slide" // optional, default is slide on ios/android and none on web
@@ -681,7 +665,7 @@ export const ResourceCreate = (props: Props) => {
                   fontFamily: "Spectral",
                   textAlign: "justify",
                   marginBottom: 8,
-                  marginTop: 12
+                  marginTop: 12,
                 }}
               >
                 La sélection de l'heure n'est pas encore disponible sur mobile,
@@ -695,7 +679,7 @@ export const ResourceCreate = (props: Props) => {
                     flexDirection: "column",
                     backgroundColor: theme[colorScheme].colors.surface,
                     padding: 8,
-                    borderRadius: 8,
+                    borderRadius: 8
                   }}
                 >
                   <View style={{ flexDirection: "row" }}>
@@ -704,7 +688,7 @@ export const ResourceCreate = (props: Props) => {
                         flexDirection: "column",
                         justifyContent: "center",
                         alignItems: "center",
-                        width: 48,
+                        width: 48
                       }}
                     >
                       <ClockIcon
@@ -715,7 +699,7 @@ export const ResourceCreate = (props: Props) => {
                         <Text
                           style={{
                             fontFamily: "Spectral",
-                            fontSize: 12,
+                            fontSize: 12
                           }}
                         >
                           FROM
@@ -725,7 +709,7 @@ export const ResourceCreate = (props: Props) => {
                     <View style={{ flexDirection: "column", marginLeft: 12 }}>
                       <Text style={{ fontFamily: "Spectral", fontSize: 16 }}>
                         {format(new Date(startDate.value), "PPPP", {
-                          locale: fr,
+                          locale: fr
                         })}
                       </Text>
                       <Text style={{ fontFamily: "Spectral", fontSize: 12 }}>
@@ -737,7 +721,7 @@ export const ResourceCreate = (props: Props) => {
                     <View
                       style={{
                         flexDirection: "row",
-                        marginTop: 8,
+                        marginTop: 8
                       }}
                     >
                       <View
@@ -745,7 +729,7 @@ export const ResourceCreate = (props: Props) => {
                           flexDirection: "column",
                           justifyContent: "center",
                           alignItems: "center",
-                          width: 48,
+                          width: 48
                         }}
                       >
                         <ClockIcon
@@ -756,7 +740,7 @@ export const ResourceCreate = (props: Props) => {
                           style={{
                             fontFamily: "Spectral",
                             fontSize: 12,
-                            marginTop: 4,
+                            marginTop: 4
                           }}
                         >
                           TO
@@ -769,17 +753,17 @@ export const ResourceCreate = (props: Props) => {
                           paddingTop: 8,
                           borderTopWidth: StyleSheet.hairlineWidth,
                           flex: 1,
-                          marginRight:8
+                          marginRight: 8,
                         }}
                       >
                         <Text style={{ fontFamily: "Spectral", fontSize: 16 }}>
                           {format(new Date(endDate.value), "PPPP", {
-                            locale: fr,
+                            locale: fr
                           })}
                         </Text>
                         <Text style={{ fontFamily: "Spectral", fontSize: 12 }}>
                           {format(new Date(endDate.value), "p", {
-                            locale: fr,
+                            locale: fr
                           })}
                         </Text>
                       </View>
@@ -799,23 +783,25 @@ export const ResourceCreate = (props: Props) => {
             ...styles.container,
             elevation: 0,
             borderRadius: 8,
-            backgroundColor: theme[colorScheme].colors.background,
+            backgroundColor: theme[colorScheme].colors.background
           }}
         >
           <DetailedResource
+            seenBy={[]}
+            updatedAt={""}
             navigation={{
-              navigate: function (scene: string): void {
+              navigate: function(): void {
                 throw new Error("Function not implemented.");
               },
-              push: function (scene: string, params: any): void {
+              push: function(): void {
                 throw new Error("Function not implemented.");
-              },
+              }
             }}
             slug={""}
             owner={{
               fullName: user.data.fullName,
               photoURL: user.data.photoURL,
-              uid: user.data.uid,
+              uid: user.data.uid
             }}
             createdAt={new Date().toISOString()}
             likes={[]}
@@ -832,7 +818,7 @@ export const ResourceCreate = (props: Props) => {
           icon={(props) => (
             <ArrowRightIcon size={props.size} color={props.color} />
           )}
-          mode="outlined"
+          mode='outlined'
           onPress={_onNextStep}
         >
           Suivant
@@ -845,7 +831,7 @@ export const ResourceCreate = (props: Props) => {
             icon={(props) => (
               <ArrowLeftIcon size={props.size} color={props.color} />
             )}
-            mode="outlined"
+            mode='outlined'
             onPress={_previousStep}
           >
             Précédent
@@ -854,7 +840,7 @@ export const ResourceCreate = (props: Props) => {
             icon={(props) => (
               <ArrowRightIcon size={props.size} color={props.color} />
             )}
-            mode="contained"
+            mode='contained'
             onPress={_onNextStep}
           >
             Suivant
@@ -868,7 +854,7 @@ export const ResourceCreate = (props: Props) => {
             icon={(props) => (
               <ArrowLeftIcon size={props.size} color={props.color} />
             )}
-            mode="outlined"
+            mode='outlined'
             onPress={_previousStep}
           >
             Précédent
@@ -877,7 +863,7 @@ export const ResourceCreate = (props: Props) => {
             icon={(props) => (
               <CheckIcon size={props.size} color={props.color} />
             )}
-            mode="contained"
+            mode='contained'
             onPress={_onSubmit}
           >
             Créer
@@ -894,16 +880,16 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "space-between",
     paddingBottom: 48,
-    padding: 20,
+    padding: 20
   },
   container: {
     flex: 1,
-    width: "100%",
+    width: "100%"
   },
   label: {
     marginLeft: 8,
     fontSize: 16,
-    fontFamily: "Marianne-Bold",
+    fontFamily: "Marianne-Bold"
   },
   input: {
     // lineHeight: 12,
@@ -915,7 +901,7 @@ const styles = StyleSheet.create({
     marginTop: 0,
     marginVertical: 0,
     borderTopWidth: 0,
-    paddingTop: 12,
+    paddingTop: 12
   },
   separator: {
     flexDirection: "row",
@@ -923,21 +909,21 @@ const styles = StyleSheet.create({
     marginTop: 18,
     marginVertical: 12,
     borderTopWidth: 1,
-    paddingTop: 12,
+    paddingTop: 12
   },
   tag: {
     backgroundColor: theme.light.colors.background,
-    height: 28,
+    height: 28
   },
   tagText: {
-    fontFamily: "Spectral",
+    fontFamily: "Spectral"
   },
   radioLabel: {
-    fontFamily: "Spectral",
+    fontFamily: "Spectral"
   },
   resourceType: {
     paddingVertical: 2,
     borderWidth: 1,
-    borderRadius: 4,
-  },
+    borderRadius: 4
+  }
 });

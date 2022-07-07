@@ -1,13 +1,12 @@
 import React from "react";
 
 import Paragraph from "components/ui/Paragraph";
-import { HOST_URL } from "constants/env";
+import { API_URL, HOST_URL } from 'constants/env';
 import { colors } from "core/theme";
 import { formatDistance } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useRef } from "react";
 import { Dimensions, StyleSheet, View } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import {
   ChevronDownIcon,
   ChevronUpIcon,
@@ -25,26 +24,47 @@ import RBSheet from "react-native-raw-bottom-sheet";
 import ViewMoreText from "react-native-view-more-text";
 import { Navigation } from "types/Navigation";
 import { Comment } from "types/Resource/Comment";
+import { fetchRSR } from '../../../utils/fetchRSR';
+import { useAuth } from '../../../hooks/useAuth';
 
 
 export function RenderCommentItem({
   item,
   navigation,
+  resourceId,
 }: {
   item: Comment;
   navigation: Navigation;
+  resourceId: string;
 }) {
   const refRBSheet = useRef();
   const theme = useTheme();
+  const { user } = useAuth();
 
   const reportComment = async () => {
-    //TODO:@Anatole-Godard : report comment
+      if (user) {
+        await fetchRSR(`${API_URL}/report/create`,
+          user?.session,
+          {
+            method: 'POST',
+            body: JSON.stringify({
+              type: 'comment',
+              documentUid: item.owner.uid,
+              context: item.content,
+              message: 'Demande de signalement faite sur l\'app mobile',
+              link: `/resource/${resourceId}`
+            })
+          });
+        const current = refRBSheet.current || { close: () => {
+          return;
+        } };
+        current.close();
+      }
   };
 
   return (
     <>
-      <TouchableOpacity
-        activeOpacity={0.7}
+      <View
         style={{
           flexDirection: "row",
           padding: 12,
@@ -52,10 +72,6 @@ export function RenderCommentItem({
           backgroundColor: theme.colors.background,
           maxWidth: Dimensions.get("window").width - 32,
           width: "100%",
-        }}
-        onLongPress={() => {
-          let current = refRBSheet?.current || { open: () => {} };
-          current.open();
         }}
       >
         <View style={{ width: "15%" }}>
@@ -124,19 +140,21 @@ export function RenderCommentItem({
             </Paragraph>
           </ViewMoreText>
         </View>
-        <View style={{ width: "10%" }}>
+        <View style={{ width: "10%", zIndex : 100 }}>
           <IconButton
             onPress={() => {
-              let current = refRBSheet?.current || { open: () => {} };
+              const current = refRBSheet?.current || { open: () => {
+                return;
+              } };
               current.open();
             }}
             size={18}
             icon={(props) => (
-              <ExclamationIcon {...props} color={theme.colors.text} />
+              <ExclamationIcon {...props} color={theme.colors.error} />
             )}
           />
         </View>
-      </TouchableOpacity>
+      </View>
       <RBSheet
         ref={refRBSheet}
         closeOnDragDown={true}
@@ -148,6 +166,8 @@ export function RenderCommentItem({
             backgroundColor: theme.colors.surface,
             flexDirection: "column",
             alignItems: "center",
+            paddingHorizontal: 24,
+            flex: 1,
           },
         }}
       >
@@ -204,10 +224,11 @@ export function RenderCommentItem({
           onPress={reportComment}
           mode="contained"
           style={{
-            // marginTop: 12,
             backgroundColor: colors.amber[200],
             elevation: 0,
-            width: "90%",
+            flexDirection: "row",
+            alignItems: "center",
+            width: "100%",
           }}
           labelStyle={{
             color: colors.amber[700],

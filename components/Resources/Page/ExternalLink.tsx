@@ -1,23 +1,19 @@
 import React, { useCallback } from "react";
 import { theme } from "core/theme";
 import { usePreferences } from "hooks/usePreferences";
-import {
-  Alert,
-  Dimensions,
-  Linking,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Alert, Dimensions, Linking, StyleSheet, Text, View } from "react-native";
 import { LinkIcon } from "react-native-heroicons/outline";
 import { TouchableRipple } from "react-native-paper";
 import Color from "color";
+import Carousel from "../../Carousel/Carousel";
+import { Media } from "../../../types/Resource/Media";
 
 interface ExternalLinkProps {
   properties: {
     name: string;
     description?: string;
     url: string;
+    medias?: Media[];
   };
 }
 
@@ -39,29 +35,49 @@ export const ExternalLink = (props: ExternalLinkProps) => {
   }, [props.properties.url]);
 
   return (
-    <TouchableRipple
-      onPress={handlePress}
-      rippleColor={Color(theme[colorScheme].colors.surface)
-        .alpha(0.8)
-        .rgb()
-        .string()}
-      style={styles.container}
-    >
-      <>
-        <View style={styles.leftColumn}>
-          <LinkIcon size={24} color={theme[colorScheme].colors.primary} />
+    <>
+      {props.properties.medias &&
+        <View style={{
+          width: "100%",
+          height: 200,
+          marginBottom: 8
+        }}>
+          <Carousel images={props.properties.medias} />
         </View>
-        <View style={styles.rightColumn}>
-          <Text
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            style={{ ...styles.text, color: theme[colorScheme].colors.primary }}
-          >
-            {props.properties.url}
-          </Text>
-        </View>
-      </>
-    </TouchableRipple>
+      }
+      <View style={{
+        display: "flex",
+        justifyContent: "center",
+        flexDirection: "row",
+        alignItems: "center",
+        width: "100%"
+      }}>
+
+        <TouchableRipple
+          onPress={handlePress}
+          rippleColor={Color(theme[colorScheme].colors.surface)
+            .alpha(0.8)
+            .rgb()
+            .string()}
+          style={styles.container}
+        >
+          <>
+            <View style={styles.leftColumn}>
+              <LinkIcon size={24} color={theme[colorScheme].colors.primary} />
+            </View>
+            <View style={styles.rightColumn}>
+              <Text
+                numberOfLines={1}
+                ellipsizeMode='tail'
+                style={{ ...styles.text, color: theme[colorScheme].colors.primary }}
+              >
+                {props.properties.url}
+              </Text>
+            </View>
+          </>
+        </TouchableRipple>
+      </View>
+    </>
   );
 };
 
@@ -75,16 +91,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 8,
     backgroundColor: theme.light.colors.surface,
-    justifyContent: "space-between",
+    justifyContent: "space-between"
   },
   leftColumn: {
-    width: "10%",
+    width: "10%"
   },
   rightColumn: {
-    width: "82%",
+    width: "82%"
   },
   text: {
     fontFamily: "Marianne-ExtraBold",
-    fontSize: 16,
-  },
+    fontSize: 16
+  }
 });

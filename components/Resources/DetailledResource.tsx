@@ -1,24 +1,17 @@
 import React, { useState } from "react";
+import { ScrollView, StyleSheet, View } from "react-native";
 import {
-  StyleSheet,
-  View,
-  FlatList,
-  Dimensions,
-  TouchableOpacity,
-} from "react-native";
-import {
-  Title,
-  Caption,
   Avatar,
-  useTheme,
-  IconButton,
-  Text,
   Button,
-  TouchableRipple,
-  Portal,
-  Dialog,
-  Menu,
+  Caption,
   Divider,
+  IconButton,
+  Menu,
+  Text,
+  TextInput as PaperInput,
+  Title,
+  TouchableRipple,
+  useTheme
 } from "react-native-paper";
 import color from "color";
 import { Resource } from "types/Resource";
@@ -35,30 +28,26 @@ import { HeartIcon as HeartIconSolid } from "react-native-heroicons/solid";
 import {
   ChatIcon,
   CheckIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
+  CollectionIcon,
   DotsVerticalIcon,
   ExclamationIcon,
   HeartIcon as HeartIconOutline,
   PencilIcon,
-  TrashIcon,
+  TrashIcon
 } from "react-native-heroicons/outline";
 import { Comment } from "types/Resource/Comment";
-import ViewMoreText from "react-native-view-more-text";
 import { formatDistance } from "date-fns";
 import { fr } from "date-fns/locale";
 import TextInput from "components/ui/TextInput";
 import { colors } from "core/theme";
-
-import { TextInput as PaperInput } from "react-native-paper";
 import { usePreferences } from "hooks/usePreferences";
 import RBSheet from "react-native-raw-bottom-sheet";
-import { ScrollView } from "react-native-gesture-handler";
 
 import { ExternalLink } from "./Page/ExternalLink";
 import { PhysicalItem } from "./Page/PhysicalItem";
 import { Location } from "./Page/Location";
 import { Event } from "./Page/Event";
+import { Other } from "./Page/Other";
 import { listEmptyComponent, RenderCommentItem } from "./Page/Comment";
 
 interface Props extends Resource {
@@ -73,13 +62,10 @@ export const DetailedResource = (props: Props) => {
 
   const [comments, setComments] = useState<Comment[]>(props.comments || []);
   const [comment, setComment] = useState({ value: "", error: "" });
-  const [commentsLoading, setCommentsLoading] = useState(false);
 
   const refDeleteSheet = React.useRef();
   const refReportSheet = React.useRef();
 
-  // const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
-  // const [reportModalVisible, setReportModalVisible] = useState<boolean>(false);
 
   const like = async () => {
     if (user) {
@@ -98,10 +84,12 @@ export const DetailedResource = (props: Props) => {
         `${API_URL}/resource/${props.slug}/delete`,
         user.session,
         {
-          method: "DELETE",
+          method: "DELETE"
         }
       );
-      let current = refDeleteSheet?.current || { close: () => {} };
+      const current = refDeleteSheet?.current || { close: () => {
+        return;
+      } };
       current.close();
       if (res.ok) props.navigation.goBack();
     }
@@ -109,15 +97,21 @@ export const DetailedResource = (props: Props) => {
 
   const report = async () => {
     if (user) {
-      //TODO:@Anatole-Godard : report resource
-      // const res = await fetchRSR(
-      //   `${API_URL}/resource/${props.slug}/report`,
-      //   user.session,
-      //   {
-      //     method: "DELETE",
-      //   }
-      // );
-      let current = refReportSheet?.current || { close: () => {} };
+      await fetchRSR(`${API_URL}/report/create`,
+        user?.session,
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            type: 'resource',
+            documentUid: props.slug,
+            context: props.slug,
+            message: 'Demande de signalement faite sur l\'app mobile',
+            link: `/resource/${props.slug}`
+          })
+        });
+      const current = refReportSheet?.current || { close: () => {
+        return;
+      } };
       current.close();
     }
   };
@@ -130,8 +124,8 @@ export const DetailedResource = (props: Props) => {
         {
           method: "POST",
           body: JSON.stringify({
-            commentContent: comment.value,
-          }),
+            commentContent: comment.value
+          })
         }
       );
       const body = await res.json();
@@ -175,7 +169,7 @@ export const DetailedResource = (props: Props) => {
             style={{
               fontFamily: "Marianne-ExtraBold",
               lineHeight: 24,
-              width: "100%",
+              width: "100%"
             }}
           >
             {props.data.attributes.properties.name}
@@ -200,12 +194,33 @@ export const DetailedResource = (props: Props) => {
           >
             <Menu.Item
               onPress={() => {
-                let current = refReportSheet?.current || { open: () => {} };
+                const current = refReportSheet?.current || { open: () => {
+                  return;
+                } };
                 current.open();
                 closeMenu();
               }}
               icon={(props) => <ExclamationIcon color={props.color} />}
-              title="Signaler"
+              title='Signaler'
+            />
+            <Divider />
+            <Menu.Item
+              onPress={() => {
+                props.navigation.push("PlaylistSelect", {
+                  slug: props.slug,
+                  owner: props.owner,
+                  data: props.data,
+                  createdAt: props.createdAt,
+                  description: props.description,
+                  likes: props.likes,
+                  comments: props.comments,
+                  validated: props.validated,
+                  tags: props.tags
+                });
+                closeMenu();
+              }}
+              icon={(props) => <CollectionIcon size={24} color={props.color} />}
+              title='Ajouter une playlist'
             />
             {user.data.uid === props.owner.uid && (
               <>
@@ -221,12 +236,12 @@ export const DetailedResource = (props: Props) => {
                       likes: props.likes,
                       comments: props.comments,
                       validated: props.validated,
-                      tags: props.tags,
+                      tags: props.tags
                     });
                     closeMenu();
                   }}
                   icon={(props) => <PencilIcon size={24} color={props.color} />}
-                  title="Éditer"
+                  title='Éditer'
                 />
               </>
             )}
@@ -239,13 +254,12 @@ export const DetailedResource = (props: Props) => {
             ...styles.content,
             color: contentColor,
             fontSize: 16,
-            lineHeight: 24,
+            lineHeight: 24
           }}
         >
           {props.description}
         </Paragraph>
         <ResourceView {...props} />
-
         {props.page && (
           <>
             <View style={styles.bottomRow}>
@@ -264,22 +278,22 @@ export const DetailedResource = (props: Props) => {
                 <IconButton
                   style={{ marginRight: -2 }}
                   onPress={like}
-                  color="#FF4F5B"
+                  color='#FF4F5B'
                   size={18}
                   icon={
                     likes.find((u: UserMinimum) => u.uid === user?.data.uid)
                       ? (props) => (
-                          <HeartIconSolid
-                            color={props.color}
-                            size={props.size}
-                          />
-                        )
+                        <HeartIconSolid
+                          color={props.color}
+                          size={props.size}
+                        />
+                      )
                       : (props) => (
-                          <HeartIconOutline
-                            color={props.color}
-                            size={props.size}
-                          />
-                        )
+                        <HeartIconOutline
+                          color={props.color}
+                          size={props.size}
+                        />
+                      )
                   }
                 />
                 <Text>{likes.length}</Text>
@@ -298,19 +312,19 @@ export const DetailedResource = (props: Props) => {
               <View style={{ flex: 1, marginBottom: 6 }}>
                 {comments.length > 0
                   ? comments.map((c: Comment, key) => (
-                      <RenderCommentItem
-                        navigation={props.navigation}
-                        item={c}
-                        key={key}
-                      />
-                    ))
+                    <RenderCommentItem
+                      navigation={props.navigation}
+                      item={c}
+                      key={key}
+                    resourceId={props.slug}/>
+                  ))
                   : listEmptyComponent()}
               </View>
 
               <View style={{ width: "100%" }}>
                 <TextInput
-                  label="Écrire un commentaire"
-                  returnKeyType="next"
+                  label='Écrire un commentaire'
+                  returnKeyType='next'
                   value={comment.value}
                   onChangeText={(text) =>
                     setComment({ value: text, error: "" })
@@ -343,8 +357,8 @@ export const DetailedResource = (props: Props) => {
                   flexDirection: "column",
                   alignItems: "center",
                   paddingHorizontal: 24,
-                  flex: 1,
-                },
+                  flex: 1
+                }
               }}
             >
               <View style={styles.topRow}>
@@ -359,7 +373,7 @@ export const DetailedResource = (props: Props) => {
                     style={{
                       fontFamily: "Marianne-ExtraBold",
                       lineHeight: 24,
-                      width: "100%",
+                      width: "100%"
                     }}
                   >
                     {props.data.attributes.properties.name}
@@ -375,7 +389,7 @@ export const DetailedResource = (props: Props) => {
                   ...styles.content,
                   color: contentColor,
                   fontSize: 18,
-                  lineHeight: 24,
+                  lineHeight: 24
                 }}
                 numberOfLines={3}
               >
@@ -386,7 +400,7 @@ export const DetailedResource = (props: Props) => {
                   height: StyleSheet.hairlineWidth,
                   backgroundColor: theme.colors.text,
                   marginVertical: 12,
-                  width: "100%",
+                  width: "100%"
                 }}
               />
               <Paragraph style={{ lineHeight: 20, marginTop: 12 }}>
@@ -396,18 +410,18 @@ export const DetailedResource = (props: Props) => {
 
               <Button
                 onPress={deleteResource}
-                mode="contained"
+                mode='contained'
                 style={{
                   // marginTop: 12,
                   backgroundColor: colors.red[200],
                   elevation: 0,
                   width: "100%",
                   flexDirection: "row",
-                  alignItems: "center",
+                  alignItems: "center"
                 }}
                 labelStyle={{
                   color: colors.red[700],
-                  textAlign: "center",
+                  textAlign: "center"
                 }}
                 icon={(props) => (
                   <TrashIcon color={props.color} size={props.size} />
@@ -429,8 +443,8 @@ export const DetailedResource = (props: Props) => {
                   flexDirection: "column",
                   alignItems: "center",
                   paddingHorizontal: 24,
-                  flex: 1,
-                },
+                  flex: 1
+                }
               }}
             >
               <View style={styles.topRow}>
@@ -445,7 +459,7 @@ export const DetailedResource = (props: Props) => {
                     style={{
                       fontFamily: "Marianne-ExtraBold",
                       lineHeight: 24,
-                      width: "100%",
+                      width: "100%"
                     }}
                   >
                     {props.data.attributes.properties.name}
@@ -461,7 +475,7 @@ export const DetailedResource = (props: Props) => {
                   ...styles.content,
                   color: contentColor,
                   fontSize: 18,
-                  lineHeight: 24,
+                  lineHeight: 24
                 }}
                 numberOfLines={3}
               >
@@ -472,7 +486,7 @@ export const DetailedResource = (props: Props) => {
                   height: StyleSheet.hairlineWidth,
                   backgroundColor: theme.colors.text,
                   marginVertical: 12,
-                  width: "100%",
+                  width: "100%"
                 }}
               />
               <Paragraph style={{ lineHeight: 20, marginTop: 12 }}>
@@ -482,17 +496,17 @@ export const DetailedResource = (props: Props) => {
 
               <Button
                 onPress={report}
-                mode="contained"
+                mode='contained'
                 style={{
                   // marginTop: 12,
                   backgroundColor: colors.amber[200],
                   elevation: 0,
                   flexDirection: "row",
                   alignItems: "center",
-                  width: "100%",
+                  width: "100%"
                 }}
                 labelStyle={{
-                  color: colors.amber[700],
+                  color: colors.amber[700]
                 }}
                 icon={(props) => (
                   <ExclamationIcon color={props.color} size={props.size} />
@@ -511,7 +525,7 @@ export const DetailedResource = (props: Props) => {
 const ResourceView = (props: Resource) => {
   const { colorScheme } = usePreferences();
   const {
-    data: { type, attributes },
+    data: { type, attributes }
   } = props;
 
   let style;
@@ -520,46 +534,43 @@ const ResourceView = (props: Resource) => {
     style = {
       backgroundColor:
         colorScheme === "light" ? colors.indigo[100] : colors.indigo[800],
-      borderColor: colors.indigo[500],
+      borderColor: colors.indigo[500]
     };
   if (type === "physical_item")
     style = {
       backgroundColor:
         colorScheme === "light" ? colors.emerald[100] : colors.emerald[800],
-      borderColor: colors.emerald[500],
+      borderColor: colors.emerald[500]
     };
   if (type === "external_link")
     style = {
       backgroundColor:
         colorScheme === "light" ? colors.amber[100] : colors.amber[800],
-      borderColor: colors.amber[500],
+      borderColor: colors.amber[500]
     };
   if (type === "event")
     style = {
       backgroundColor:
         colorScheme === "light" ? colors.red[100] : colors.red[800],
-      borderColor: colors.red[500],
+      borderColor: colors.red[500]
     };
 
   return (
     <View
       style={{
         ...style,
-        height:
-          type === "location"
-            ? Dimensions.get("screen").height / 3
-            : Dimensions.get("screen").height / 6,
         borderRadius: 8,
         borderWidth: StyleSheet.hairlineWidth,
-        justifyContent: "center",
         alignItems: "center",
-        padding: 2,
+        padding: 6,
+        maxHeight: 1000
       }}
     >
       {type === "external_link" && <ExternalLink {...attributes} />}
       {type === "physical_item" && <PhysicalItem {...attributes} />}
       {type === "location" && <Location {...attributes} />}
       {type === "event" && <Event {...attributes} />}
+      {type === "other" && <Other {...attributes} />}
     </View>
   );
 };
@@ -568,30 +579,30 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 16,
-    paddingBottom: 20,
+    paddingBottom: 20
   },
   avatar: {
     // marginRight: 20,
   },
   topRow: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "center"
   },
   handle: {
     marginRight: 3,
-    lineHeight: 12,
+    lineHeight: 12
   },
   content: {
     marginTop: 25,
     fontSize: 20,
-    lineHeight: 30,
+    lineHeight: 30
   },
   image: {
     borderWidth: StyleSheet.hairlineWidth,
     marginTop: 25,
     borderRadius: 20,
     width: "100%",
-    height: 280,
+    height: 280
   },
 
   bottomRow: {
@@ -600,22 +611,22 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginTop: 20,
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.trueGray[300],
+    borderTopColor: colors.trueGray[300]
   },
   bottomRowLeft: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "center"
   },
   bottomRowRight: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "center"
   },
   emptyContainer: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center",
+    alignItems: "center"
   },
   dot: {
-    fontSize: 3,
-  },
+    fontSize: 3
+  }
 });

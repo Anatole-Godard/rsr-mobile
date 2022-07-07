@@ -41,6 +41,7 @@ import { colors, theme } from "core/theme";
 import { StepIndicator } from "components/ui/StepIndicator";
 import TextInput from "components/ui/TextInput";
 import { DetailledChannel } from "components/Channel/DetailledChannel";
+import { Media } from "types/Resource/Media";
 
 interface Props {
   navigation: Navigation;
@@ -112,10 +113,10 @@ export const ChannelEditScreen = (props: Props) => {
     props.route.params.visibility === "private" || false
   );
 
-  const [image, setImage] = useState<string | null>(null);
+  const [image, setImage] = useState<Media[] | null>(null);
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
+    const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [4, 3],
@@ -123,7 +124,17 @@ export const ChannelEditScreen = (props: Props) => {
     });
 
     if (!result.cancelled) {
-      setImage(result.uri);
+      setImage([
+        {
+          url: (result as ImagePicker.ImageInfo).uri,
+          type: "image",
+          name: "image",
+          size: (
+            (result as ImagePicker.ImageInfo).height *
+            (result as ImagePicker.ImageInfo).width
+          ).toString(),
+        },
+      ]);
     }
   };
 
@@ -138,6 +149,7 @@ export const ChannelEditScreen = (props: Props) => {
             )
           )
         )
+        // eslint-disable-next-line no-console
         .catch((err) => console.log(err));
     }
   }, [user]);
@@ -181,6 +193,7 @@ export const ChannelEditScreen = (props: Props) => {
           });
         }
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.log(err);
       }
     }
@@ -396,11 +409,11 @@ export const ChannelEditScreen = (props: Props) => {
               }}
             >
               <Image
-                source={{ uri: image }}
+                source={{ uri: image[0].url }}
                 style={{ width: "80%", height: 200, borderRadius: 4 }}
               />
               <IconButton
-                onPress={() => setImage(null)}
+                onPress={() => setImage([])}
                 size={36}
                 icon={(props) => (
                   <TrashIcon size={props.size} color={props.color} />

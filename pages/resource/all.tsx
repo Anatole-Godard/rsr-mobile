@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   FlatList,
   KeyboardAvoidingView,
-  StyleSheet,
+  RefreshControl,
   View,
 } from "react-native";
 import { useAuth } from "hooks/useAuth";
@@ -10,7 +10,7 @@ import { API_URL } from "constants/env";
 import { Resource } from "types/Resource";
 import { usePreferences } from "hooks/usePreferences";
 import { useSearch } from "hooks/useSearch";
-import {  Searchbar } from "react-native-paper";
+import { Searchbar } from "react-native-paper";
 import { theme } from "core/theme";
 import Paragraph from "components/ui/Paragraph";
 import LottieView from "lottie-react-native";
@@ -26,27 +26,19 @@ interface Props {
 export const ResourcesScreen = (props: Props) => {
   const { user } = useAuth();
   const { colorScheme } = usePreferences();
-  const [loading, setLoading] = useState<boolean>(true);
 
   const [resources, setResources] = useState<Resource[]>([]);
   const { search, onChange, filtered } = useSearch("slug", resources);
-
-
-  // const filters = [
-  //   "Animaux",
-  //   "Santé",
-  //   "Education",
-  //   "Environnement",
-  //   "Sécurité",
-  //   "Culture",
-  //   "Sport",
-  //   "Autre",
-  // ];
-
-  const fetchData = () =>
+  const [loading, setLoading] = useState(true);
+  const fetchData = () => {
+    setLoading(true);
     fetchRSR(API_URL + "/resource", user?.session)
       .then((res) => res.json())
-      .then((body) => setResources(body.data.attributes));
+      .then((body) => {
+        setResources(body.data.attributes);
+        setLoading(false);
+      });
+  };
 
   useEffect(() => {
     fetchData();
@@ -58,14 +50,14 @@ export const ResourcesScreen = (props: Props) => {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        marginTop: 256,
+        marginTop: 256
       }}
     >
       <LottieView
         autoPlay={true}
         style={{
           width: 128,
-          height: 128,
+          height: 128
         }}
         source={require("../../assets/lotties/empty.json")}
       />
@@ -81,83 +73,58 @@ export const ResourcesScreen = (props: Props) => {
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
-      behavior="padding"
+      behavior='padding'
       keyboardVerticalOffset={56}
     >
       <Searchbar
-        placeholder="Rechercher une ressource..."
+        placeholder='Rechercher une ressource...'
         onChangeText={onChange}
         value={search}
         style={{
           fontFamily: "Spectral",
           elevation: 0,
           backgroundColor: theme[colorScheme].colors.surface,
-          borderRadius: 0,
+          borderRadius: 0
         }}
       />
 
-      
 
       <FlatList
         ListEmptyComponent={listEmptyComponent}
         contentContainerStyle={{
-          backgroundColor: theme[colorScheme].colors.background,
+          backgroundColor: theme[colorScheme].colors.background
         }}
         style={{
           backgroundColor: theme[colorScheme].colors.background,
-          flex: 1,
+          flex: 1
         }}
         data={filtered.map((resource) => ({
           ...resource,
           onPress: () =>
             props.navigation &&
             props.navigation.push("Details", {
-              ...resource,
-            }),
+              ...resource
+            })
         }))}
         renderItem={({ item }) => <ResourceHome {...item} />}
         keyExtractor={(item: Resource) => item.slug.toString()}
         ItemSeparatorComponent={Separator}
-        // onRefresh={() => fetchData()}
-        // refreshing={loading}
-        // refreshControl={
-        //   <RefreshControl
-        //     refreshing={loading}
-        //     onRefresh={() => fetchData()}
-        //     title="Tirer pour rafraîchir"
-        //     tintColor={
-        //       theme[colorScheme === "dark" ? "light" : "dark"].colors.surface
-        //     }
-        //     titleColor={
-        //       theme[colorScheme === "dark" ? "light" : "dark"].colors.surface
-        //     }
-        //   />
-        // }
+        onRefresh={() => fetchData()}
+        refreshing={loading}
+        refreshControl={
+          <RefreshControl
+            refreshing={loading}
+            onRefresh={() => fetchData()}
+            title='Tirer pour rafraîchir'
+            tintColor={
+              theme[colorScheme === "dark" ? "light" : "dark"].colors.surface
+            }
+            titleColor={
+              theme[colorScheme === "dark" ? "light" : "dark"].colors.surface
+            }
+          />
+        }
       />
     </KeyboardAvoidingView>
   );
 };
-
-const styles = StyleSheet.create({
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 22,
-  },
-  modalView: {
-    margin: 20,
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-});
