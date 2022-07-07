@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, {useEffect, useLayoutEffect, useRef, useState} from "react";
 import { FlatList, KeyboardAvoidingView, StyleSheet, View } from "react-native";
 import { ChannelMessage } from "components/Channel/Message";
 import { Message } from "types/Message";
@@ -49,7 +49,7 @@ export const ChannelSlug = (props: Props) => {
   });
 
   const theme = useTheme();
-
+  const flatListRef = useRef();
   useEffect(() => {
     const socket = io(HOST_URL, {
       path: "/api/channel/[slug]/socket",
@@ -58,6 +58,10 @@ export const ChannelSlug = (props: Props) => {
     // update chat on new message dispatched
     socket.on("message", (message: Message) => {
       setChat((oldChat) => [...oldChat, message]);
+      const current = flatListRef?.current || { scrollToEnd: (options) => {
+          return;
+        } };
+      current.scrollToEnd({ behavior: 'smooth' });
     });
 
     return () => {
@@ -94,7 +98,7 @@ export const ChannelSlug = (props: Props) => {
       keyboardVerticalOffset={72}
       style={{ ...styles.container, backgroundColor: theme.colors.background }}
     >
-      <FlatList
+      <FlatList ref={flatListRef}
         data={chat}
         renderItem={({ item }) => (
           <ChannelMessage {...item} channelSlug={props.route.params.slug} />
